@@ -1,0 +1,11 @@
+<p>
+  home works!
+</p>
+<p>
+  You are {{isLoggedIn() ? 'logged in as ' + username() : 'not logged in'}}
+</p>
+
+<button type="button" class="button" [routerLink]="'/login'">Log In</button>
+<button type="button" class="button" [routerLink]="'/register'">Register</button>
+<br>
+<button type="button" class="button" [routerLink]="'/encounters'">Encounters</button>

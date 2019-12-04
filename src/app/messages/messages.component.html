@@ -1,0 +1,14 @@
+<div class="messages-container">
+  <div *ngFor="let message of (messages | async)" class="messages-list">
+    <div *ngIf="message.type == infoType" class="message info-message" @fadeInOut>
+        <fa-icon [icon]="faCheck"></fa-icon> 
+        <div class="message-text">{{ message.message }} </div>
+        <fa-icon [icon]="faClose" class="close-message-button" (click)="onCloseMessage(message.id)"></fa-icon>
+    </div>
+    <div *ngIf="message.type == errorType"  class="message error-message">
+        <fa-icon [icon]="faAngryFace"></fa-icon> 
+        <div class="message-text">{{ message.message }} </div>
+        <fa-icon [icon]="faClose" class="close-message-button" (click)="onCloseMessage(message.id)"></fa-icon>
+    </div>
+  </div>
+</div>

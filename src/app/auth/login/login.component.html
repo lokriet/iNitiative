@@ -1,0 +1,31 @@
+<form (ngSubmit)="onSignIn()" #f="ngForm" class="login-form">
+  <h3>Login</h3>
+  
+  <div class="inputs">
+    <label for="email">E-mail</label>
+    <input 
+        type="text" 
+        [(ngModel)]="email" 
+        id="email" 
+        name="email"
+        class="form-control" 
+        required>
+    <label for="password">Password</label>
+    <input 
+        type="password" 
+        [(ngModel)]="password" 
+        id="password" 
+        name="password"
+        class="form-control"
+        required
+        minlength="6">
+  </div>
+  
+  <button 
+      type="submit" 
+      class="button"
+      [disabled]="!f.valid">
+    Login
+  </button>
+</form>
+      

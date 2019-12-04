@@ -1,0 +1,18 @@
+// @import '../../../assets/scss/partials/shared-styles';
+// @import '../../../assets/scss/partials/form-styles';
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: 5rem 15rem;
+  gap: 1rem;
+  margin: 1rem 0;
+
+  label {
+    font-weight: 400;
+  }
+}
