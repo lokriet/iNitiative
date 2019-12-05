@@ -1,20 +1,22 @@
 import { NgModule } from '@angular/core';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AkitaNgRouterStoreModule } from '@datorama/akita-ng-router-store';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AuthModule } from './auth/auth.module';
+import { EncounterModule } from './encounter/encounter.module';
 import { HomeComponent } from './home/home.component';
 import { MessagesComponent } from './messages/messages.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { AuthModule } from './auth/auth.module';
-import { AngularFireAuthModule } from '@angular/fire/auth';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireModule } from '@angular/fire';
-import { EncounterModule } from './encounter/encounter.module';
+import { SetupModule } from './setup/setup.module';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { EncounterModule } from './encounter/encounter.module';
     // all other app modules before routing
     AuthModule,
     EncounterModule,
+    SetupModule,
 
     AppRoutingModule,
 
@@ -42,7 +45,8 @@ import { EncounterModule } from './encounter/encounter.module';
     AkitaNgRouterStoreModule.forRoot(),
 
     // other add-ons
-    FontAwesomeModule
+    FontAwesomeModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

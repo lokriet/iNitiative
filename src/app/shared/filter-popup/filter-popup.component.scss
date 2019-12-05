@@ -1,0 +1,72 @@
+.filter-container {
+  position: relative;
+
+  display: inline-block;
+}
+
+.popup {
+  position: absolute;
+  top: 1rem;
+  right: 0;
+  transform: translateX(100%);
+  background-color: white;
+
+  display: inline-block;
+  padding: 0.5rem;
+  width: 250px;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.string-filter {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+
+  .string-filter-text {
+    width: 12rem;
+  }
+
+  .string-filter-button {
+    width: 4rem;
+  }
+}
+
+.dates-filter {
+  display: flex;
+  flex-direction: column;
+
+  .filter-date-input,
+  .buttons {
+    display: flex;
+  }
+
+  .date-label {
+    width: 5rem;
+  }
+
+  .date-input {
+    width: 8rem;
+    margin-left: 0.5rem;
+  }
+  
+}
+
+.filter-icon {
+  position: relative;
+
+  display: inline-block;
+}
+
+.red-dot {
+  position: absolute;
+  top: -0.2rem;
+  right: -0.2rem;
+  background-color: red;
+  border-radius: 50%;
+  border: 1px solid white;
+  width: 0.45rem;
+  height: 0.45rem;;
+}

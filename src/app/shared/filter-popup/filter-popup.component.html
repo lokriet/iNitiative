@@ -1,0 +1,31 @@
+<div class="filter-container" #filterContainer>
+  <div class="filter-icon" (click)="onSwitchShowingPopup($event)">
+    <fa-icon [icon]="filterIcon"></fa-icon>
+    <div class="red-dot" *ngIf="!isFilterValueEmpty()"></div>
+  </div>
+  
+  <div class="popup" [class.hidden]="!showPopup" [style.right]="rightShift">
+    <div class="string-filter" *ngIf="filterType === 'string'"> 
+      <input class="string-filter-text" type="text" [(ngModel)]="stringFilterValue" (keydown.enter)="onApplyStringFilterValue()">
+      <div class="buttons">
+        <button class="string-filter-button" (click)="onApplyStringFilterValue()">Apply</button>
+        <button class="string-filter-button" (click)="onCancelChangingStringFilterValue()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="dates-filter" *ngIf="filterType === 'dates'">
+      <div class="filter-date-input">
+        <div class="date-label">Min date:</div> 
+        <input class="date-input" type="date" [(ngModel)]="minDateFilterValue">
+      </div>
+      <div class="filter-date-input">
+        <div class="date-label">Max date:</div> 
+        <input class="date-input" type="date" [(ngModel)]="maxDateFilterValue">
+      </div>
+      <div class="buttons">
+        <button (click)="onApplyDatesFilterValue()">Apply</button>
+        <button (click)="onCancelChangingDatesFilterValue()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

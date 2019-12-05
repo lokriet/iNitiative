@@ -1,3 +1,16 @@
-<p>
-  encounter-edit works!
-</p>
+<form (ngSubmit)="onSubmitForm()" #f="ngForm">
+  <div class="error-message" *ngIf="errorMessage !== null">{{errorMessage}}</div>
+  <input 
+      type="text" 
+      placeholder="Name" 
+      [(ngModel)]="encounterName"
+      name="encounterName"
+      required>
+
+  <button 
+      type="submit"
+      [disabled]="!f.valid"
+  >
+    Save
+  </button>
+</form>

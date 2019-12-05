@@ -1,6 +1,7 @@
 export interface Encounter {
   id: string;
   owner: string;
+  name: string;
   createdDate: number;
   lastModifiedDate: number;
 }

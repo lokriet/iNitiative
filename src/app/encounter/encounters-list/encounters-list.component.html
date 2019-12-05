@@ -1,5 +1,5 @@
-<div *ngIf="(encountersLoaded$ | async); else loaded">
-
+<div *ngIf="(encountersLoading$ | async); else loaded">
+  Loading
 </div>
 
 <ng-template #loaded>
@@ -7,33 +7,99 @@
   <button type="button" class="button" [routerLink]="'/encounters/new'">Start a new one</button>
 
   <div class="encounters-table">
-    <div class="encounters-table__header">
-      <div class="column-header">
-        <div class="column-header__name">Name</div>
-        <div class="column-header__sort-asc"><fa-icon [icon]="sortAscIcon"></fa-icon></div>
-        <div class="column-header__sort-desc"><fa-icon [icon]="sortDescIcon"></fa-icon></div>
-        <div class="column-header__filter"><fa-icon [icon]="filterIcon"></fa-icon></div>
+    <!-- table header -->
+    <div class="column-header">
+      <div class="column-header__name">Name</div>
+      <div class="column-header__sort-asc"
+           [class.selected]="isSortingByName() && isSortingAsc()"
+           (click)="changeSortOrder('name', true)">
+        <fa-icon [icon]="sortAscIcon"></fa-icon>
       </div>
-
-      <div class="column-header">
-        <div class="column-header__name">Created</div>
-        <div class="column-header__sort-asc"><fa-icon [icon]="sortAscIcon"></fa-icon></div>
-        <div class="column-header__sort-desc"><fa-icon [icon]="sortDescIcon"></fa-icon></div>
-        <div class="column-header__filter"><fa-icon [icon]="filterIcon"></fa-icon></div>
+      <div class="column-header__sort-desc"
+           [class.selected]="isSortingByName() && !isSortingAsc()"
+          (click)="changeSortOrder('name', false)">
+        <fa-icon [icon]="sortDescIcon"></fa-icon>
       </div>
-
-      <div class="column-header">
-        <div class="column-header__name">Modified</div>
-        <div class="column-header__sort-asc"><fa-icon [icon]="sortAscIcon"></fa-icon></div>
-        <div class="column-header__sort-desc"><fa-icon [icon]="sortDescIcon"></fa-icon></div>
-        <div class="column-header__filter"><fa-icon [icon]="filterIcon"></fa-icon></div>
+      <!-- <div 
+          class="column-header__filter"
+          (click)="onNameFilterClicked()">
+        <fa-icon [icon]="filterIcon"></fa-icon>
+      </div> -->
+      <div class="column-header__filter">
+        <app-filter-popup 
+          [filterType]="'string'" 
+          [ngModel]="nameFilter" 
+          name="nameFilter"
+          (ngModelChange)="onNameFilterChanged($event)"></app-filter-popup>
       </div>
     </div>
-    <div class="encounters-table__item" *ngFor="let encounter of (encounters$ | async)">
-      <app-encounter-view></app-encounter-view>
+
+    <div class="column-header">
+      <div class="column-header__name">Created</div>
+      <div  class="column-header__sort-asc"
+            [class.selected]="isSortingByCreatedDate() && isSortingAsc()"
+            (click)="changeSortOrder('createdDate', true)">
+        <fa-icon [icon]="sortAscIcon"></fa-icon>
+      </div>
+      <div class="column-header__sort-desc"
+          [class.selected]="isSortingByCreatedDate() && !isSortingAsc()"
+          (click)="changeSortOrder('createdDate', false)">
+        <fa-icon [icon]="sortDescIcon"></fa-icon>
+      </div>
+      <!-- <div 
+          class="column-header__filter"
+          (click)="onCreateDateFilterClicked()">
+        <fa-icon [icon]="filterIcon"></fa-icon>
+      </div> -->
+      <div class="column-header__filter">
+        <app-filter-popup 
+          [filterType]="'dates'" 
+          name="createdDatesFilter"
+          [ngModel]="createdDatesFilter"
+          (ngModelChange)="onCreatedDateFilterChanged($event)"></app-filter-popup>
+      </div>
     </div>
+
+    <div class="column-header">
+      <div class="column-header__name">Modified</div>
+      <div class="column-header__sort-asc"
+           [class.selected]="isSortingByModifiedDate() && isSortingAsc()"
+            (click)="changeSortOrder('lastModifiedDate', true)">
+        <fa-icon [icon]="sortAscIcon"></fa-icon>
+      </div>
+      <div class="column-header__sort-desc"
+          [class.selected]="isSortingByModifiedDate() && !isSortingAsc()"
+          (click)="changeSortOrder('lastModifiedDate', false)">
+        <fa-icon [icon]="sortDescIcon"></fa-icon>
+      </div>
+      <!-- <div 
+          class="column-header__filter"
+          (click)="onModifiedDateFilterClicked()">
+        <fa-icon [icon]="filterIcon"></fa-icon>
+      </div> -->
+      <div class="column-header__filter">
+        <app-filter-popup 
+          [filterType]="'dates'" 
+          name="modifiedDatesFilter"
+          [ngModel]="modifiedDatesFilter"
+          (ngModelChange)="onModifiedDateFilterChanged($event)"></app-filter-popup>
+      </div>
+    </div>
+
+    <div class="column-header"><!-- Delete column --></div>
+
+    <!-- table insides -->
+    <ng-container *ngFor="let encounter of (encounters$ | async)">
+      <div class="encounter-name">{{ encounter.name }} </div>
+      <div class="encounter-created">{{ encounter.createdDate | toDate }} </div>
+      <div class="encounter-name">{{ encounter.lastModifiedDate | toDate }} </div>
+      <button class="delete-button" (click)="onDeleteEncounter(encounter.id)">X</button>
+    </ng-container>
   </div>
 
   
 
+  <!-- <app-colors-popup></app-colors-popup> -->
+<!-- 
+  <app-filter-popup></app-filter-popup> -->
 </ng-template>
