@@ -1,0 +1,19 @@
+.damage-type-edit-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.color-picker,
+.name {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+
+  label {
+    margin-right: 0.5rem;
+  }
+}
+
+.type {
+  margin: 0.5rem 0;
+}

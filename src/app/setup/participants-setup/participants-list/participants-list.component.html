@@ -1,0 +1,158 @@
+<div *ngIf="(participantsLoading$ | async) || (damageTypesLoading$ | async); else loaded">
+    Loading...
+</div>
+  
+<ng-template #loaded>
+
+  <button type="button" class="button" [routerLink]="'/setup-participants/new'">Create a new one</button>
+
+  <div class="section-header">{{ participantType == null ? 'Participants' : participantType === 0 ? 'Players' : 'Monsters'}}</div>
+  <div class="participants-table" [class.short-grid]="participantType != null">
+    <!-- table header -->
+    <div class="column-header">
+      <!-- Color -->
+    </div>
+    <div class="column-header">
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('name')">
+          Name
+        </button>
+      </div>
+      <div class="column-header__sort-asc"
+            [class.selected]="isSortingByName() && isSortingAsc()"
+            (click)="changeSortOrder('name', true)">
+        <fa-icon [icon]="sortAscIcon"></fa-icon>
+      </div>
+      <div class="column-header__sort-desc"
+            [class.selected]="isSortingByName() && !isSortingAsc()"
+          (click)="changeSortOrder('name', false)">
+        <fa-icon [icon]="sortDescIcon"></fa-icon>
+      </div>
+      <div class="column-header__filter">
+        <app-filter-popup 
+          [filterType]="'string'" 
+          [ngModel]="nameFilter" 
+          name="nameFilter"
+          (ngModelChange)="onNameFilterChanged($event)"></app-filter-popup>
+      </div>
+    </div>
+
+    <div class="column-header"  *ngIf="participantType == null">
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('type')">
+          Type
+        </button>
+      </div>
+      <div class="column-header__sort-asc"
+            [class.selected]="isSortingByType() && isSortingAsc()"
+            (click)="changeSortOrder('type', true)">
+        <fa-icon [icon]="sortAscIcon"></fa-icon>
+      </div>
+      <div class="column-header__sort-desc"
+            [class.selected]="isSortingByType() && !isSortingAsc()"
+          (click)="changeSortOrder('type', false)">
+        <fa-icon [icon]="sortDescIcon"></fa-icon>
+      </div>
+      <div class="column-header__filter">
+        <app-filter-popup 
+          [filterType]="'list'" 
+          [listItems]="[{name: 'Player', value: 0}, {name: 'Monster', value: 1}]"
+          listItemLabelField="name"
+          [ngModel]="typeFilter" 
+          name="typeFilter"
+          (ngModelChange)="onTypeFilterChanged($event)"></app-filter-popup>
+      </div>
+    </div>
+
+    <div class="column-header">
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('initiativeModifier')">
+          Ini
+        </button>
+      </div>
+    </div>
+
+    <div class="column-header">
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('maxHp')">
+          HP
+        </button>
+      </div>
+    </div>
+
+    <div class="column-header">
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('armorClass')">
+          Armor
+        </button>
+      </div>
+    </div>
+
+    <div class="column-header">
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('speed')">
+          Speed
+        </button>
+      </div>
+    </div>
+
+    <div class="column-header">
+      <div class="column-header__name">
+        Immune
+      </div>
+    </div>
+
+    <div class="column-header">
+      <div class="column-header__name">
+        Resist
+      </div>
+    </div>
+
+    <div class="column-header">
+      <div class="column-header__name">
+        Weak
+      </div>
+    </div>
+    
+
+    <!-- table insides -->
+    <ng-container *ngFor="let participant of (allParticipants$ | async)">
+        <div 
+          class="color-value" 
+          [ngStyle]="{ backgroundColor: participant.color && participant.color.length > 0 ? participant.color : transparent }">
+        </div>
+
+      <div class="participant-name"> {{ participant.name }} </div>
+
+      <div class="type" *ngIf="participantType == null">
+        {{participant.type === 0 ? 'Player' : 'Monster'}}
+      </div>
+      <div class="number-field"> {{ participant.initiativeModifier }} </div>
+      <div class="number-field"> {{ participant.maxHp }} </div>
+      <div class="number-field"> {{ participant.armorClass }} </div>
+      <div class="number-field"> {{ participant.speed }} </div>
+
+      <div class="damage-types-list">
+        <div class="damage-type-item" *ngFor="let immunity of getDamageTypesByIds((allDamageTypes$ | async), participant.immunityIds)">
+          {{ immunity.name }}
+        </div>
+      </div>
+
+      <div class="damage-types-list">
+        <div class="damage-type-item" *ngFor="let resistance of getDamageTypesByIds((allDamageTypes$ | async), participant.resistanceIds)">
+          {{ resistance.name }}
+        </div>
+      </div>
+
+      <div class="damage-types-list">
+        <div class="damage-type-item" *ngFor="let vulnerability of getDamageTypesByIds((allDamageTypes$ | async), participant.vulnerabilityIds)">
+          {{ vulnerability.name }}
+        </div>
+      </div>
+      
+      <div class="buttons">
+        <button class="delete-button" (click)="onDeleteParticipant(participant.id)">X</button>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Order, SortBy } from '@datorama/akita';
-import { faFilter, faSortAlphaDown, faSortAlphaDownAlt } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSortAlphaDown, faSortAlphaUpAlt } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 
 import { Encounter } from '../state/encounter.model';
 import { EncounterQuery } from '../state/encounter.query';
 import { EncounterService } from '../state/encounter.service';
+import { DateFilterValue } from 'src/app/shared/filter-popup/filter-popup.component';
 
 @Component({
   selector: 'app-encounters-list',
@@ -14,8 +15,7 @@ import { EncounterService } from '../state/encounter.service';
 })
 export class EncountersListComponent implements OnInit {
   sortAscIcon = faSortAlphaDown;
-  sortDescIcon = faSortAlphaDownAlt;
-  filterIcon = faFilter;
+  sortDescIcon = faSortAlphaUpAlt;
 
   encountersLoading$: Observable<boolean>;
   encounters$: Observable<Encounter[]>;
@@ -24,8 +24,8 @@ export class EncountersListComponent implements OnInit {
   sortByOrder = Order.DESC;
 
   nameFilter: string;
-  createdDatesFilter;
-  modifiedDatesFilter;
+  createdDatesFilter: DateFilterValue;
+  modifiedDatesFilter: DateFilterValue;
 
   constructor(private encounterQuery: EncounterQuery,
               private encounterService: EncounterService) { }
@@ -33,7 +33,15 @@ export class EncountersListComponent implements OnInit {
   ngOnInit() {
     this.encountersLoading$ = this.encounterQuery.selectLoading();
 
-    this.encounters$ = this.encounterQuery.selectAll({sortBy: this.sortBy, sortByOrder: this.sortByOrder});
+    this.selectEncounters();
+  }
+
+  selectEncounters(): void {
+    this.encounters$ = this.encounterQuery.selectAll({
+      filterBy: this.checkFilter.bind(this),
+      sortBy: this.sortBy,
+      sortByOrder: this.sortByOrder
+    });
   }
 
   onDeleteEncounter(id: string) {
@@ -42,7 +50,7 @@ export class EncountersListComponent implements OnInit {
     }
   }
 
-  changeSortOrder(sortBy: SortBy<Encounter, any>, isAsc: boolean) {
+  changeSortOrder(sortBy: SortBy<Encounter, any>, isAsc: boolean, event) {
     if (this.sortBy === sortBy &&
          ((isAsc && this.sortByOrder === Order.ASC) ||
           (!isAsc && this.sortByOrder === Order.DESC))
@@ -52,7 +60,17 @@ export class EncountersListComponent implements OnInit {
 
     this.sortBy = sortBy;
     this.sortByOrder = isAsc ? Order.ASC : Order.DESC;
-    this.encounters$ = this.encounterQuery.selectAll({sortBy: this.sortBy, sortByOrder: this.sortByOrder});
+    this.selectEncounters();
+  }
+
+  switchSortOrder(sortBy: SortBy<Encounter, any>) {
+    if (this.sortBy === sortBy) {
+      this.sortByOrder = this.sortByOrder === Order.ASC ? Order.DESC : Order.ASC;
+    } else {
+      this.sortBy = sortBy;
+      this.sortByOrder = Order.ASC;
+    }
+    this.selectEncounters();
   }
 
   isSortingByName() {
@@ -71,16 +89,51 @@ export class EncountersListComponent implements OnInit {
     return this.sortByOrder === Order.ASC;
   }
 
-  onNameFilterChanged(event) {
-    console.log(event);
+  onNameFilterChanged(nameFilter) {
+    this.nameFilter = nameFilter;
+    this.selectEncounters();
   }
 
-  onModifiedDateFilterChanged(event) {
-    console.log(event);
+  onModifiedDateFilterChanged(modifiedDatesFilter) {
+    this.modifiedDatesFilter = modifiedDatesFilter;
+    this.selectEncounters();
   }
 
-  onCreatedDateFilterChanged(event) {
-    console.log(event);
+  onCreatedDateFilterChanged(createdDatesFilter) {
+    this.createdDatesFilter = createdDatesFilter;
+    this.selectEncounters();
+  }
+
+  checkFilter(encounter: Encounter): boolean {
+    if (!!this.nameFilter && this.nameFilter.length > 0 && !encounter.name.toLowerCase().includes(this.nameFilter.toLowerCase())) {
+      return false;
+    }
+
+    if (!!this.modifiedDatesFilter) {
+      const lastModifiedDate = new Date(encounter.lastModifiedDate);
+      lastModifiedDate.setHours(0, 0, 0, 0);
+      if (!!this.modifiedDatesFilter.minDate && this.modifiedDatesFilter.minDate.getTime() > lastModifiedDate.getTime()) {
+        return false;
+      }
+
+      if (!!this.modifiedDatesFilter.maxDate && this.modifiedDatesFilter.maxDate.getTime() < lastModifiedDate.getTime()) {
+        return false;
+      }
+    }
+
+    if (!!this.createdDatesFilter) {
+      const createdDate = new Date(encounter.createdDate);
+      createdDate.setHours(0, 0, 0, 0);
+      if (!!this.createdDatesFilter.minDate && this.createdDatesFilter.minDate.getTime() > createdDate.getTime()) {
+        return false;
+      }
+
+      if (!!this.createdDatesFilter.maxDate && this.createdDatesFilter.maxDate.getTime() < createdDate.getTime()) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
 }

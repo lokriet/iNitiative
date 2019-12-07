@@ -23,7 +23,6 @@ export class ColorsPopupComponent implements ControlValueAccessor {
   selectedColor = null;
 
   showPopup = false;
-  
 
   colors = [
     '#f6402c',
@@ -58,8 +57,8 @@ export class ColorsPopupComponent implements ControlValueAccessor {
     this.onChange(this.selectedColor);
   }
 
-  onOpenColorSelector() {
-    this.showPopup = true;
+  onSwitchColorSelector() {
+    this.showPopup = !this.showPopup;
   }
 
   onCloseColorSelector() {

@@ -7,6 +7,12 @@ import { SetupRoutingModule } from './setup-routing.module';
 import { ParticipantsListComponent } from './participants-setup/participants-list/participants-list.component';
 import { ParticipantViewComponent } from './participants-setup/participant-view/participant-view.component';
 import { ParticipantEditComponent } from './participants-setup/participant-edit/participant-edit.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { SharedModule } from '../shared/shared.module';
+import { FormsModule } from '@angular/forms';
+import { DamageTypeListComponent } from './damage-type-setup/damage-type-list/damage-type-list.component';
+import { DamageTypeEditComponent } from './damage-type-setup/damage-type-edit/damage-type-edit.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -15,11 +21,17 @@ import { ParticipantEditComponent } from './participants-setup/participant-edit/
     ParticipantsSetupComponent,
     ParticipantsListComponent,
     ParticipantViewComponent,
-    ParticipantEditComponent
+    ParticipantEditComponent,
+    DamageTypeListComponent,
+    DamageTypeEditComponent
   ],
   imports: [
     CommonModule,
-    SetupRoutingModule
+    SetupRoutingModule,
+    SharedModule,
+    FontAwesomeModule,
+    NgSelectModule,
+    FormsModule
   ]
 })
 export class SetupModule { }

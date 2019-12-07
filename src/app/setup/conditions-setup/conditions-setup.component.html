@@ -1,3 +1,69 @@
-<p>
-  conditions-setup works!
-</p>
+<div class="loading" *ngIf="(conditionsLoading$ | async); else loaded">
+  Loading...
+</div>
+
+<ng-template #loaded>
+  <form (ngSubmit)="onSubmitNewCondition()" #f="ngForm" class="new-condition-form">
+    <div class="color-picker">
+      <label>Color: </label><app-colors-popup [(ngModel)]="newConditionColor" name="color"></app-colors-popup>
+    </div>
+    <div class="name">
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="newConditionName" name="name" required>
+    </div>
+    <button type="submit" [disabled]="!f.valid">Add</button>
+  </form>
+
+  <div class="conditions-table">
+    <div class="column-header">
+      <!-- Color -->
+    </div>
+    <div class="column-header">
+      <div class="column-header__name">
+        <button (click)="switchSortOrder()">
+          Name
+        </button>
+      </div>
+      <div class="column-header__sort-asc"
+            [class.selected]="isSortingAsc()"
+            (click)="changeSortOrder(true)">
+        <fa-icon [icon]="sortAscIcon"></fa-icon>
+      </div>
+      <div class="column-header__sort-desc"
+            [class.selected]="!isSortingAsc()"
+          (click)="changeSortOrder(false)">
+        <fa-icon [icon]="sortDescIcon"></fa-icon>
+      </div>
+      <div class="column-header__filter">
+        <app-filter-popup 
+          [filterType]="'string'" 
+          [ngModel]="nameFilter" 
+          name="nameFilter"
+          (ngModelChange)="onNameFilterChanged($event)"></app-filter-popup>
+      </div>
+    </div>
+
+
+    <!-- table internals -->
+    <ng-container *ngFor="let condition of (allConditions$ | async); let i = index">
+      <div class="color-value">
+        <app-colors-popup [ngModel]="condition.color" (ngModelChange)="onChangeColor(condition, $event)" name="color"></app-colors-popup>
+      </div>
+
+      <div class="name-value">
+        <input 
+            type="text" 
+            class="name-value-input" 
+            [ngModel]="condition.name" 
+            [name]="'name'+i"
+            (keydown.enter)="onChangeName(condition, $event.target.value)">
+            <!-- {{condition.name}} -->
+      </div>
+
+      <div class="delete-button">
+        <button (click)="onDeleteCondition(condition.id)">X</button>
+      </div>
+    </ng-container>
+  </div>
+
+</ng-template>

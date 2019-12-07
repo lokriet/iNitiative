@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DamageTypeType } from '../state/damage-type/damage-type.model';
 
 @Component({
   selector: 'app-damage-type-setup',
@@ -6,10 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./damage-type-setup.component.scss']
 })
 export class DamageTypeSetupComponent implements OnInit {
+  damageTypes = DamageTypeType.DamageType;
+  effects = DamageTypeType.Effect;
 
-  constructor() { }
-
-  ngOnInit() {
+  ngOnInit(): void {
   }
-
+  
 }

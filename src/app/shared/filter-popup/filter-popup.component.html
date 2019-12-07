@@ -4,12 +4,13 @@
     <div class="red-dot" *ngIf="!isFilterValueEmpty()"></div>
   </div>
   
-  <div class="popup" [class.hidden]="!showPopup" [style.right]="rightShift">
+  <div class="popup" [class.hidden]="!showPopup" [style.right]="popupRightShift">
     <div class="string-filter" *ngIf="filterType === 'string'"> 
       <input class="string-filter-text" type="text" [(ngModel)]="stringFilterValue" (keydown.enter)="onApplyStringFilterValue()">
       <div class="buttons">
-        <button class="string-filter-button" (click)="onApplyStringFilterValue()">Apply</button>
-        <button class="string-filter-button" (click)="onCancelChangingStringFilterValue()">Cancel</button>
+        <button type="button" (click)="onClearStringFilterValue()">Clear</button>
+        <button type="button" class="string-filter-button" (click)="onApplyStringFilterValue()">Apply</button>
+        <button type="button" class="string-filter-button" (click)="onCancelChangingStringFilterValue()">Cancel</button>
       </div>
     </div>
 
@@ -23,8 +24,24 @@
         <input class="date-input" type="date" [(ngModel)]="maxDateFilterValue">
       </div>
       <div class="buttons">
-        <button (click)="onApplyDatesFilterValue()">Apply</button>
-        <button (click)="onCancelChangingDatesFilterValue()">Cancel</button>
+        <button type="button" (click)="onClearDatesFilterValue()">Clear</button>
+        <button type="button" (click)="onApplyDatesFilterValue()">Apply</button>
+        <button type="button" (click)="onCancelChangingDatesFilterValue()">Cancel</button>
+      </div>
+    </div>
+
+
+    <div class="list-filter" *ngIf="filterType === 'list' && !!listItems">
+      <div class="list-filter-item" *ngFor="let listItem of listItems; let i = index">
+        <label>
+          <input type="checkbox" [(ngModel)]="listFilterValue[i]">
+          {{ listItemLabelField ? listItem[listItemLabelField] : listItem.toString() }}
+        </label>
+      </div>
+      <div class="buttons">
+        <button type="button" (click)="onClearListFilterValue()">Clear</button>
+        <button type="button" (click)="onApplyListFilterValue()">Apply</button>
+        <button type="button" (click)="onCancelChangingListFilterValue()">Cancel</button>
       </div>
     </div>
   </div>

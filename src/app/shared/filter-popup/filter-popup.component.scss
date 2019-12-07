@@ -54,6 +54,11 @@
   
 }
 
+.list-filter {
+  display: flex;
+  flex-direction: column;
+}
+
 .filter-icon {
   position: relative;
 

@@ -1,3 +1,137 @@
-<p>
-  participant-edit works!
-</p>
+
+<div *ngIf="(damageTypesLoading$ | async) ||
+            (participantsLoading$ | async)
+            ; else loaded">Loading...</div>
+
+<ng-template #loaded>
+  <div class="participant-edit-view">
+    <form (ngSubmit)="onSubmit()" #f="ngForm" class="participant-edit-form">
+      <label>Type: </label>
+      <div>
+        <label>
+          <input type="radio" name="type" [value]="0" [(ngModel)]="type" required>Player
+        </label>
+        <label>
+          <input type="radio" name="type" [value]="1" [(ngModel)]="type" required>Monster
+        </label>
+      </div>
+
+      <!-- <div class="color-picker field"> -->
+        <label>Color: </label><app-colors-popup [(ngModel)]="color" name="color"></app-colors-popup>
+      <!-- </div> -->
+  
+      <!-- <div class="name field"> -->
+        <label>Name:</label>
+        <input type="text" [(ngModel)]="name" name="name" required>
+      <!-- </div> -->
+  
+      <!-- <div class="initiativeModifier field"> -->
+        <label>Initiative modifier:</label>
+        <input type="number" [(ngModel)]="initiativeModifier" name="initiativeModifier" required>
+      <!-- </div> -->
+  
+      <!-- <div class="hp field"> -->
+        <label>HP:</label>
+        <input type="number" [(ngModel)]="hp" name="hp" required min="0">
+      <!-- </div> -->
+  
+      <!-- <div class="armorClass field"> -->
+        <label>Armor class:</label>
+        <input type="number" [(ngModel)]="armorClass" name="armorClass" required min="0">
+      <!-- </div> -->
+  
+      <!-- <div class="speed field"> -->
+        <label>Speed:</label>
+        <input type="number" [(ngModel)]="speed" name="speed" required min="0">
+      <!-- </div> -->
+  
+      <!-- <div class="immunities field"> -->
+        <label>Immunities:</label>
+        <ng-select
+            [items]="allDamageTypes$ | async"
+            [multiple]="true"
+            [(ngModel)]="immunities"
+            name="immunities"
+            bindLabel="name"
+            bindValue="id"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label">
+                <div class="selected-damage-type-label">
+                  <div class="color" *ngIf="!!item.color" [ngStyle]="{backgroundColor: item.color}"></div>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <div class="color" [ngStyle]="{ backgroundColor: item.color ? item.color : transparent }"></div>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      <!-- </div> -->
+
+      <!-- <div class="resistances field"> -->
+        <label>Resistances:</label>
+        <ng-select
+            [items]="allDamageTypes$ | async"
+            [multiple]="true"
+            [(ngModel)]="resistances"
+            name="resistances"
+            bindLabel="name"
+            bindValue="id"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label selected-damage-type-label">
+                <div class="selected-damage-type-label">
+                  <div class="color" *ngIf="!!item.color" [ngStyle]="{backgroundColor: item.color}"></div>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <div class="color" [ngStyle]="{ backgroundColor: item.color ? item.color : transparent }"></div>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      <!-- </div> -->
+
+      <!-- <div class="weaknesses field"> -->
+        <label>Weaknesses:</label>
+        <ng-select
+            [items]="allDamageTypes$ | async"
+            [multiple]="true"
+            [(ngModel)]="weaknesses"
+            name="weaknesses"
+            bindLabel="name"
+            bindValue="id"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label selected-damage-type-label">
+                <div class="selected-damage-type-label">
+                  <div class="color" *ngIf="!!item.color" [ngStyle]="{backgroundColor: item.color}"></div>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <div class="color" [ngStyle]="{ backgroundColor: item.color ? item.color : transparent }"></div>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      <!-- </div> -->
+
+      <!-- <div class="comments field"> -->
+        <label>Comments:</label>
+        <textarea [(ngModel)]="comments" name="comments"></textarea>
+      <!-- </div> -->
+
+      <div class="full-table-cell error-message" *ngIf="!!errorMessage">{{errorMessage}}</div>
+      <div>
+        <button type="submit" class="full-table-cell" [disabled]="!f.valid">Save</button>
+      </div>
+    </form>
+  </div>
+</ng-template>

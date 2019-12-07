@@ -9,7 +9,11 @@
   <div class="encounters-table">
     <!-- table header -->
     <div class="column-header">
-      <div class="column-header__name">Name</div>
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('name')">
+          Name
+        </button>
+      </div>
       <div class="column-header__sort-asc"
            [class.selected]="isSortingByName() && isSortingAsc()"
            (click)="changeSortOrder('name', true)">
@@ -20,11 +24,6 @@
           (click)="changeSortOrder('name', false)">
         <fa-icon [icon]="sortDescIcon"></fa-icon>
       </div>
-      <!-- <div 
-          class="column-header__filter"
-          (click)="onNameFilterClicked()">
-        <fa-icon [icon]="filterIcon"></fa-icon>
-      </div> -->
       <div class="column-header__filter">
         <app-filter-popup 
           [filterType]="'string'" 
@@ -35,7 +34,11 @@
     </div>
 
     <div class="column-header">
-      <div class="column-header__name">Created</div>
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('createdDate')">
+          Created
+        </button>
+      </div>
       <div  class="column-header__sort-asc"
             [class.selected]="isSortingByCreatedDate() && isSortingAsc()"
             (click)="changeSortOrder('createdDate', true)">
@@ -46,11 +49,6 @@
           (click)="changeSortOrder('createdDate', false)">
         <fa-icon [icon]="sortDescIcon"></fa-icon>
       </div>
-      <!-- <div 
-          class="column-header__filter"
-          (click)="onCreateDateFilterClicked()">
-        <fa-icon [icon]="filterIcon"></fa-icon>
-      </div> -->
       <div class="column-header__filter">
         <app-filter-popup 
           [filterType]="'dates'" 
@@ -61,7 +59,11 @@
     </div>
 
     <div class="column-header">
-      <div class="column-header__name">Modified</div>
+      <div class="column-header__name">
+        <button (click)="switchSortOrder('lastModifiedDate')">
+          Modified
+        </button>
+      </div>
       <div class="column-header__sort-asc"
            [class.selected]="isSortingByModifiedDate() && isSortingAsc()"
             (click)="changeSortOrder('lastModifiedDate', true)">
@@ -72,11 +74,6 @@
           (click)="changeSortOrder('lastModifiedDate', false)">
         <fa-icon [icon]="sortDescIcon"></fa-icon>
       </div>
-      <!-- <div 
-          class="column-header__filter"
-          (click)="onModifiedDateFilterClicked()">
-        <fa-icon [icon]="filterIcon"></fa-icon>
-      </div> -->
       <div class="column-header__filter">
         <app-filter-popup 
           [filterType]="'dates'" 
