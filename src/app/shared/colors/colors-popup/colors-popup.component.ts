@@ -1,6 +1,6 @@
 import { Component, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { faBan, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
 
 export const COLOR_VALUE_ACCESSOR: any = {
@@ -8,7 +8,6 @@ export const COLOR_VALUE_ACCESSOR: any = {
   useExisting: forwardRef(() => ColorsPopupComponent),
   multi: true,
 };
-
 
 @Component({
   selector: 'app-colors-popup',
@@ -18,7 +17,6 @@ export const COLOR_VALUE_ACCESSOR: any = {
 })
 export class ColorsPopupComponent implements ControlValueAccessor {
   checkboxIcon = faCheck;
-  noColorIcon = faBan;
 
   selectedColor = null;
 
@@ -53,16 +51,7 @@ export class ColorsPopupComponent implements ControlValueAccessor {
 
   onSelectColor(colorOption) {
     this.selectedColor = colorOption;
-    this.showPopup = false;
     this.onChange(this.selectedColor);
-  }
-
-  onSwitchColorSelector() {
-    this.showPopup = !this.showPopup;
-  }
-
-  onCloseColorSelector() {
-    this.showPopup = false;
   }
 
   writeValue(color: string): void {
@@ -76,5 +65,4 @@ export class ColorsPopupComponent implements ControlValueAccessor {
   registerOnTouched(fn: any): void {
     // do nothing
   }
-
 }

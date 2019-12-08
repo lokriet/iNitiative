@@ -1,36 +1,15 @@
 .filter-container {
-  position: relative;
-
   display: inline-block;
 }
 
-.popup {
-  position: absolute;
-  top: 1rem;
-  right: 0;
-  transform: translateX(100%);
-  background-color: white;
-
-  display: inline-block;
-  padding: 0.5rem;
-  width: 250px;
-
-  &.hidden {
-    display: none;
-  }
-}
 
 .string-filter {
   display: flex;
   flex-direction: column;
-  padding: 0.5rem;
+  padding: 0.1rem;
 
   .string-filter-text {
     width: 12rem;
-  }
-
-  .string-filter-button {
-    width: 4rem;
   }
 }
 
@@ -41,6 +20,7 @@
   .filter-date-input,
   .buttons {
     display: flex;
+    margin: 0.25rem 0;
   }
 
   .date-label {
@@ -57,6 +37,21 @@
 .list-filter {
   display: flex;
   flex-direction: column;
+}
+
+.list-filter-item {
+  display: flex;
+  align-items: center;
+  margin: 0.25rem 0;
+}
+
+.buttons {
+  display: flex;
+  margin-top: 0.5rem;
+
+  &>* {
+    margin-right: 0.5rem;
+  }
 }
 
 .filter-icon {

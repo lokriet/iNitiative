@@ -1,0 +1,57 @@
+<div class="popup-parent" #popupParent>
+
+  <!-- toggle icon/element/... -->
+  <ng-template #defaultToggleTemplate>
+    <div (click)="switchShowingPopup()">Boo</div>
+  </ng-template>
+
+  <ng-container
+    *ngTemplateOutlet="popupToggleTemplate || defaultToggleTemplate; context: { toggle: switchShowingPopup }">
+  </ng-container>
+
+
+  <div 
+      class="popup" 
+      [class.floating]="floating" 
+      [style.right]="popupRightShift"
+      [appPopup]='resizable' 
+      [closable]="showCloseButton" 
+      [movable]="floating"
+      [class.hidden]="hidden"
+      (closed)="hidePopup()"
+      >
+  <!-- <div 
+      class="popup" 
+      [class.floating]="floating" 
+      [style.right]="popupRightShift"
+      [attr.appPopup]="floating ? resizable : null"> -->
+
+
+    <div class="popup-header" *ngIf="!!windowName && windowName.length > 0">
+      {{windowName}}
+    </div>
+    <div class="popup-insides">
+
+      <!-- Modal question -->
+      <div *ngIf="isModalQuestion" class="modal-question">
+        <div class="modal-question__text">
+          {{modalQuestionText}}
+        </div>
+        <div class="modal-question__buttons">
+          <button type="button" class="modal-question__yes-button">{{yesModalOption}}</button>
+          <button type="button" class="modal-question__no-button">{{noModalOption}}</button>
+        </div>
+      </div>
+    
+
+      <!-- other stuff -->
+      <ng-template #defaultInsidesTemplate *ngIf="!isModalQuestion">
+        <span>Meow</span>
+      </ng-template>
+
+      <ng-container
+          *ngTemplateOutlet="popupInsidesTemplate || defaultInsidesTemplate; context: { hide: hidePopup }">
+      </ng-container>
+    </div>
+  </div>
+</div>

@@ -1,16 +1,71 @@
-<form (ngSubmit)="onSubmitForm()" #f="ngForm">
-  <div class="error-message" *ngIf="errorMessage !== null">{{errorMessage}}</div>
-  <input 
-      type="text" 
-      placeholder="Name" 
-      [(ngModel)]="encounterName"
-      name="encounterName"
-      required>
+<div *ngIf="(encountersLoading$ | async) ||
+            (participantTemplatesLoading$ | async) ||
+            (participantsLoading$ | async) ||
+            (damageTypesLoading$ | async) ||
+            (conditionsLoading$ | async)
+            ;else loaded">Loading...</div>
 
-  <button 
-      type="submit"
-      [disabled]="!f.valid"
-  >
-    Save
-  </button>
-</form>
+<ng-template #loaded>
+
+  <form (ngSubmit)="onSubmitForm()" #f="ngForm">
+    <div class="error-message" *ngIf="errorMessage !== null">{{errorMessage}}</div>
+    <input 
+        type="text" 
+        placeholder="Name" 
+        [(ngModel)]="encounterName"
+        name="encounterName"
+        required>
+  
+  
+    <div class="participants-view">
+      <div class="all-participants-view">
+        <div class="all-players-view">
+          <div class="all-players-header">Player templates</div>
+          <input type="text" [ngModel]="playersFilter" name="playersFilter" (ngModelChange)="playersFilterChanged($event)">
+          <div class="player-template-item" *ngFor="let playerTemplate of (playerTemplates$ | async)">
+            <div class="player-template__name">{{playerTemplate.name}}</div>
+            <button type="button" class="player-template__add-button" (click)="addParticipant(playerTemplate)">+</button>
+          </div>
+        </div>
+  
+        <div class="all-monsters-view">
+          <div class="all-monsters-header">Monster templates</div>
+          <ng-select
+              class="monster-template__dropdown"
+              [items]="monsterTemplates$ | async"
+              [(ngModel)]="monstersDropdown"
+              name="monsterTemplates"
+              bindLabel="name"
+              [multiple]="true"
+          >
+          </ng-select>
+          <button type="button" class="monster-template__add-button" (click)="addMonsters()">+</button>
+        </div>
+      </div>
+  
+      <div class="encounter-participants-view">
+        <div class="encounter-players-view">
+          <div class="encounter-players-header">Added players</div>
+          <div class="encounter-player-item" *ngFor="let encounterPlayer of addedPlayers; let i = index">
+            <div class="player-name">{{encounterPlayer.name}}</div>
+            <button type="button" class="delete-button" (click)="deletePlayer(i)">X</button>
+          </div>
+        </div>
+        <div class="encounter-monsters-view">
+          <div class="encounter-monsteres-header">Added monsters</div>
+          <div class="encounter-monster-item" *ngFor="let encounterMonster of addedMonsters; let i = index">
+            <div class="monster-name">{{encounterMonster.name}}</div>
+            <button type="button" class="delete-button" (click)="deleteMonster(i)">X</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <button 
+        type="submit"
+        [disabled]="!f.valid"
+    >
+      Save
+    </button>
+  </form>
+</ng-template>

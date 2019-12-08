@@ -1,0 +1,21 @@
+<div class="colors-popup">
+  <app-popup windowName="Select a color" [showCloseButton]="true">
+    <ng-template #popupToggleTemplate let-toggle=toggle>
+      <div class="selected-value" (click)="toggle()">
+        <app-color-value [color]="selectedColor"></app-color-value>
+      </div>
+    </ng-template>
+    <ng-template #popupInsidesTemplate let-hide="hide" >
+        <div class="colors-palette-grid">
+          <div 
+              class="color" 
+              *ngFor="let colorOption of colors" 
+              [ngStyle]="{'backgroundColor': colorOption}" 
+              (click)="onSelectColor(colorOption); hide();">
+            <fa-icon *ngIf="selectedColor == colorOption" [icon]="checkboxIcon" class="selected-icon"></fa-icon>
+          </div>
+        </div>
+        <button type="button" (click)="onSelectColor(null); hide();">Clear</button>
+    </ng-template>
+  </app-popup>
+</div>

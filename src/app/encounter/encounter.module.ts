@@ -8,20 +8,21 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from './to-date.pipe';
 import { SharedModule } from '../shared/shared.module';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { EncounterParticipantComponent } from './encounter-participant/encounter-participant.component';
 
 @NgModule({
   declarations: [
     EncountersListComponent,
     EncounterEditComponent,
     EncounterViewComponent,
-    ToDatePipe
+    ToDatePipe,
+    EncounterParticipantComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
-    EncounterRoutingModule,
-    FontAwesomeModule,
-    FormsModule
+    EncounterRoutingModule
   ]
 })
 export class EncounterModule { }

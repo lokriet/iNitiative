@@ -31,8 +31,6 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
 
   @ViewChild('filterContainer') filterContainer: ElementRef;
 
-  showPopup = false;
-
   @Input() filterType: FilterType = FilterType.Dates;
   @Input() listItems: any[];
   @Input() listItemLabelField: string;
@@ -43,8 +41,6 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
   maxDateFilterValue: string;
 
   listFilterValue: boolean[];
-
-  popupRightShift: string;
 
   value: any;
   onChange: any = () => { };
@@ -68,27 +64,6 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
     }
   }
 
-  onSwitchShowingPopup(event) {
-    this.showPopup = !this.showPopup;
-    event.stopPropagation();
-
-    if (this.showPopup) {
-      this.popupRightShift = this.getRightShift() + 'px';
-    }
-  }
-
-  getRightShift(): number {
-    const windowWidth = document.documentElement.clientWidth;
-    const filterContainer = (this.filterContainer.nativeElement as HTMLElement);
-    const popupRightSide = filterContainer.getBoundingClientRect().right + 250;
-    let rightShift = 0;
-    if (popupRightSide > windowWidth) {
-      rightShift = popupRightSide - windowWidth;
-    }
-
-    return rightShift;
-  }
-
   onClearStringFilterValue() {
     this.stringFilterValue = null;
     this.onApplyStringFilterValue();
@@ -96,13 +71,11 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
 
   onApplyStringFilterValue() {
     this.value = this.stringFilterValue;
-    this.showPopup = false;
     this.onChange(this.value);
   }
 
   onCancelChangingStringFilterValue() {
     this.stringFilterValue = this.value;
-    this.showPopup = false;
   }
 
   onClearDatesFilterValue() {
@@ -120,7 +93,6 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
     }
 
     this.value = {minDate, maxDate};
-    this.showPopup = false;
     this.onChange(this.value);
   }
 
@@ -132,7 +104,6 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
       this.minDateFilterValue = null;
       this.maxDateFilterValue = null;
     }
-    this.showPopup = false;
   }
 
   onClearListFilterValue() {
@@ -152,7 +123,6 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
         }
       }
     }
-    this.showPopup = false;
     this.onChange(this.value);
   }
 
@@ -162,7 +132,6 @@ export class FilterPopupComponent implements ControlValueAccessor, OnInit {
         this.listFilterValue[i] = this.value.includes(this.listItems[i]);
       }
     }
-    this.showPopup = false;
   }
 
   dateToString(date: Date): string {

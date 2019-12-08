@@ -1,0 +1,44 @@
+.participants-view {
+  display: flex;
+}
+
+.all-players-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-template-item {
+  display: flex;
+}
+
+.encounter-participants-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.encounter-players-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.encounter-player-item {
+  display: flex;
+}
+
+.monster-template__dropdown {
+  display: inline-block;
+}
+
+.monster-template__add-button {
+  display: inline-block;
+}
+
+.encounter-monsters-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.encounter-monster-item {
+  display: flex;
+}
+

@@ -2,6 +2,7 @@ export interface Encounter {
   id: string;
   owner: string;
   name: string;
+  participantIds: string[];
   createdDate: number;
   lastModifiedDate: number;
 }
