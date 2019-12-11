@@ -12,6 +12,7 @@ import { ParticipantTemplatesListComponent } from './participant-templates-list/
 import { ParticipantTemplateComponent } from './participant-templates-list/participant-template/participant-template.component';
 import { EncounterParticipantEditComponent } from './encounter-participant/encounter-participant-edit/encounter-participant-edit.component';
 import { SetupModule } from '../setup/setup.module';
+import { EncounterPlayComponent } from './encounter-play/encounter-play.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SetupModule } from '../setup/setup.module';
     EncounterParticipantsListComponent,
     ParticipantTemplatesListComponent,
     ParticipantTemplateComponent,
-    EncounterParticipantEditComponent
+    EncounterParticipantEditComponent,
+    EncounterPlayComponent
   ],
   imports: [
     CommonModule,

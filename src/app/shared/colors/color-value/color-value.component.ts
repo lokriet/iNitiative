@@ -10,6 +10,7 @@ export class ColorValueComponent implements OnInit {
   noColorIcon = faBan;
 
   @Input() color: string = null;
+  @Input() showEmpty = true;
 
   constructor() { }
 

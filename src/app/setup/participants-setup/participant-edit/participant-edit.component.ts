@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { guid } from '@datorama/akita';
+import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/auth/state/auth.service';
+import { MessageService } from 'src/app/messages/state/message.service';
+
 import { DamageType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
-import { ParticipantService } from '../../state/participants/participant.service';
-import { ParticipantQuery } from '../../state/participants/participant.query';
-import { guid } from '@datorama/akita';
-import { AuthService } from 'src/app/auth/state/auth.service';
 import { ParticipantType } from '../../state/participants/participant.model';
-import { Router } from '@angular/router';
-import { MessageService } from 'src/app/messages/state/message.service';
+import { ParticipantQuery } from '../../state/participants/participant.query';
+import { ParticipantService } from '../../state/participants/participant.service';
 
 @Component({
   selector: 'app-participant-edit',
@@ -16,6 +18,9 @@ import { MessageService } from 'src/app/messages/state/message.service';
   styleUrls: ['./participant-edit.component.scss']
 })
 export class ParticipantEditComponent implements OnInit {
+  selectedIcon = faToggleOn;
+  unselectedIcon = faToggleOff;
+
   damageTypesLoading$: Observable<boolean>;
   participantsLoading$: Observable<boolean>;
 

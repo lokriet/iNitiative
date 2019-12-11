@@ -82,7 +82,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
   initForm(editedEncounterId: string) {
     if (this.editMode) {
       this.editedEncounter = this.encounterQuery.getEntity(editedEncounterId);
-      if (!this.editedEncounter) {
+      if (!this.editedEncounter || this.editedEncounter.owner !== this.authService.user.uid) {
         this.router.navigate(['404']);
       } else {
         this.encounterName = this.editedEncounter.name;
@@ -90,7 +90,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
           this.addedMonsters = this.encounterParticipantsQuery.getAll({
             filterBy: item => this.editedEncounter.participantIds.includes(item.id) && item.type === ParticipantType.Monster
           });
-  
+
           this.addedPlayers = this.encounterParticipantsQuery.getAll({
             filterBy: item => this.editedEncounter.participantIds.includes(item.id) && item.type === ParticipantType.Player
           });
@@ -137,7 +137,8 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       name: this.encounterName,
       participantIds: [...this.addedPlayers.map(player => player.id), ...this.addedMonsters.map(monster => monster.id)],
       createdDate: this.editMode ? this.editedEncounter.createdDate : currentDate.getTime(),
-      lastModifiedDate: currentDate.getTime()
+      lastModifiedDate: currentDate.getTime(),
+      activeParticipantId: this.editMode ? this.editedEncounter.activeParticipantId : null
     };
 
     if (this.editMode) {
@@ -195,7 +196,8 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       immunityIds: [...participantTemplate.immunityIds],
       resistanceIds: [...participantTemplate.resistanceIds],
       conditionIds: [],
-      comments: participantTemplate.comments
+      comments: participantTemplate.comments,
+      advantages: null
     };
 
     if (participantTemplate.type === ParticipantType.Player) {

@@ -1,0 +1,135 @@
+
+@import '../../../assets/scss/partials/colors';
+
+.encounter-name {
+  display: inline-block;
+  border-bottom: 1px solid $blue;
+  font-size: 2rem;
+  font-weight: 600;
+  color: $blue;
+  margin-bottom: 2rem;
+}
+
+.next-move-button {
+  border: 1px solid $blue;
+  background-color: $blue;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+
+  fa-icon {
+    margin-right: 0.5rem;
+  }
+}
+
+.participants-list {
+  display: grid;
+  grid-template-columns: 2rem repeat(10, max-content) 8rem;
+
+  &>* {
+    padding: 0.5rem;
+  }
+}
+
+.column-header {
+  font-weight: 600;
+  border-bottom: 2px solid grey;
+}
+
+.odd {
+  background-color: $lightgrey;
+}
+
+.participant-name {
+  display: flex;
+}
+
+.participant-hp {
+  display: flex;
+  align-items: center;
+}
+
+.hp-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 4rem;
+
+  button {
+    border: 1px solid gray;
+    background-color: transparent;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .heal-button {
+    color: green;
+    border-bottom: none;
+  }
+
+  .dmg-button {
+    color: red;
+    border-top: none;
+  }
+
+  .dmg-input {
+    text-align: center;
+  }
+}
+
+.hp-values {
+  display: grid;
+  grid-template-columns: 4rem 1rem 4rem 4rem;
+  padding: 0 0.5rem;
+
+  &>* {
+    text-align: center;
+  }
+
+  .hp-value-header {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hp-input {
+    width: 4rem;
+    font-size: 1rem;
+    border: 1px solid transparent;
+    background-color: transparent;
+    text-align: center;
+
+    &:focus,
+    &:active,
+    &:hover {
+      border: 1px solid lightgray;
+    }
+  }
+}
+
+.active-participant-marker {
+  grid-column: 1;
+}
+
+.conditions-list,
+.damage-types-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.condition,
+.damage-type {
+  display: flex;
+}
+
+.advantages-input,
+.comments-input {
+  border: 1px solid transparent;
+  background-color: transparent;
+
+  &:hover,
+  &:focus,
+  &:active {
+    border-color: lightgray;
+  }
+}

@@ -83,7 +83,7 @@
       <div class="encounter-name">{{ encounter.lastModifiedDate | toDate }} </div>
 
       <div class="buttons">
-        <button class="play-button icon-button" (click)="onPlayEncounter(encounter.id)">
+        <button class="play-button icon-button" [routerLink]="'/encounters/play/' + encounter.id">
           <fa-icon [icon]="playIcon"></fa-icon>
         </button>
         <button class="edit-button icon-button" [routerLink]="'/encounters/edit/' + encounter.id">

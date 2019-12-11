@@ -8,6 +8,7 @@ import { EncounterGuard } from './state/encounter.guard';
 import { DamageTypeGuard } from '../setup/state/damage-type/damage-type.guard';
 import { ConditionGuard } from '../setup/state/conditions/condition.guard';
 import { EncounterParticipantGuard } from './encounter-participant/state/encounter-participant.guard';
+import { EncounterPlayComponent } from './encounter-play/encounter-play.component';
 
 const encounterRoutes: Routes = [
   { 
@@ -25,6 +26,12 @@ const encounterRoutes: Routes = [
   {
     path: 'encounters/edit/:id',
     component: EncounterEditComponent,
+    canActivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard],
+    canDeactivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard]
+  },
+  {
+    path: 'encounters/play/:id',
+    component: EncounterPlayComponent,
     canActivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard],
     canDeactivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard]
   }

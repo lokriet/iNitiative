@@ -18,6 +18,7 @@ export interface EncounterParticipant {
   resistanceIds: string[];
   conditionIds: string[];
   comments: string;
+  advantages: string;
 }
 
 export function createEncounterParticipant(params: Partial<EncounterParticipant>) {

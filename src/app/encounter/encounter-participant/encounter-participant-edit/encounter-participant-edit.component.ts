@@ -150,7 +150,8 @@ export class EncounterParticipantEditComponent implements OnInit {
       resistanceIds: this.resistances,
       immunityIds: this.immunities,
       conditionIds: this.conditions,
-      comments: this.comments
+      comments: this.comments,
+      advantages: null
     };
 
     this.changesSaved.emit(newParticipant);

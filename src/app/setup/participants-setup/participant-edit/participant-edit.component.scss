@@ -1,8 +1,10 @@
+@import '../../../../assets/scss/partials/colors';
+
 .participant-edit-form {
   z-index: 0;
 
   display: grid;
-  grid-template-columns: max-content 10rem;
+  grid-template-columns: max-content 15rem;
   gap: 1rem;
 }
 
@@ -37,4 +39,17 @@
 .error-message {
   width: 20rem;
   color: red;
+}
+
+.option {
+  display: flex;
+
+  .name {
+    flex-grow: 1;
+    margin: 0 0.5rem;
+  }
+
+  .toggle-icon {
+    color: $blue;
+  }
 }
