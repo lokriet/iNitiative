@@ -1,6 +1,12 @@
 <div class="damage-types-view">
-  <button type="button" class="button" [routerLink]="'/setup-damage-types/new'">Add new item</button>
+  <app-damage-type-edit [popupMode]="true" [type]="damageTypeType"></app-damage-type-edit>
+  
   <div class="section-header">{{ damageTypeType == null ? 'Damage Types and Effects' : damageTypeType === 0 ? 'Damage Types' : 'Effects'}}</div>
+
+  <div class="name-filter" *ngIf="damageTypeType != null">
+    <app-search-input [ngModel]="nameFilter" (ngModelChange)="onNameFilterChanged($event)"></app-search-input>
+  </div>
+
   <div class="damage-types-grid" [class.short-grid]="damageTypeType != null">
     <!-- table header -->
     <div class="column-header">
@@ -11,18 +17,15 @@
         <button (click)="switchSortOrder('name')">
           Name
         </button>
+        <div class="sorter-icon">
+          <app-sort-icon 
+              [isActive]="isSortingByName()" 
+              [isSortUp]="isSortingAsc()"
+              (sortingSwitched)="changeSortOrder('name', $event)"
+          ></app-sort-icon>
+        </div>
       </div>
-      <div class="column-header__sort-asc"
-           [class.selected]="isSortingByName() && isSortingAsc()"
-           (click)="changeSortOrder('name', true)">
-        <fa-icon [icon]="sortAscIcon"></fa-icon>
-      </div>
-      <div class="column-header__sort-desc"
-           [class.selected]="isSortingByName() && !isSortingAsc()"
-          (click)="changeSortOrder('name', false)">
-        <fa-icon [icon]="sortDescIcon"></fa-icon>
-      </div>
-      <div class="column-header__filter">
+      <div class="column-header__filter" *ngIf="damageTypeType == null">
         <app-filter-popup 
           [filterType]="'string'" 
           [ngModel]="nameFilter" 
@@ -36,16 +39,13 @@
         <button (click)="switchSortOrder('type')">
           Type
         </button>
-      </div>
-      <div class="column-header__sort-asc"
-           [class.selected]="isSortingByType() && isSortingAsc()"
-           (click)="changeSortOrder('type', true)">
-        <fa-icon [icon]="sortAscIcon"></fa-icon>
-      </div>
-      <div class="column-header__sort-desc"
-           [class.selected]="isSortingByType() && !isSortingAsc()"
-          (click)="changeSortOrder('type', false)">
-        <fa-icon [icon]="sortDescIcon"></fa-icon>
+        <div class="sorter-icon">
+          <app-sort-icon 
+              [isActive]="isSortingByType()" 
+              [isSortUp]="isSortingAsc()"
+              (sortingSwitched)="changeSortOrder('type', $event)"
+          ></app-sort-icon>
+        </div>
       </div>
       <div class="column-header__filter">
         <app-filter-popup 
@@ -59,24 +59,28 @@
     </div>
 
     <!-- table internals -->
-    <ng-container *ngFor="let damageType of (allDamageTypes$ | async)">
-      <div 
-          class="color-value" 
-          [ngStyle]="{ backgroundColor: damageType.color && damageType.color.length > 0 ? damageType.color : transparent }"></div>
-      <!-- <ng-template #nocolor>
-        <div class="color-value" ></div>
-      </ng-template> -->
-
+    <ng-container *ngFor="let damageType of (allDamageTypes$ | async);let i = index">
+      <div class="grid-color-value">
+        <app-colors-popup [ngModel]="damageType.color" (ngModelChange)="onChangeColor(damageType, $event)" name="color"></app-colors-popup>
+      </div>
       <div class="name">
-        {{damageType.name}}
+        <input 
+            type="text" 
+            class="string-input" 
+            [ngModel]="damageType.name" 
+            [name]="'name'+i"
+            (keydown.enter)="onChangeName(damageType, $event.target.value)">
+        <!-- {{damageType.name}} -->
       </div>
 
       <div class="type" *ngIf="damageTypeType == null">
         {{damageType.type === 0 ? 'Damage type' : 'Effect'}}
       </div>
 
-      <div class="delete-button">
-        <button (click)="onDeleteDamageType(damageType.id)">X</button>
+      <div>
+        <button class="delete-button" (click)="onDeleteDamageType(damageType.id)">
+          <fa-icon [icon]="deleteIcon"></fa-icon>
+        </button>
       </div>
     </ng-container>
   </div>

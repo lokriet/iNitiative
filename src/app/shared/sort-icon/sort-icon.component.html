@@ -1,0 +1,8 @@
+<div class="sort-icon">
+  <div class="icon-up" [class.active]="isActive && isSortUp" (click)="setSorting(true)">
+    <fa-icon [icon]="faUp"></fa-icon>
+  </div>
+  <div class="icon-down" [class.active]="isActive && !isSortUp" (click)="setSorting(false)">
+    <fa-icon [icon]="faDown"></fa-icon>
+  </div>
+</div>

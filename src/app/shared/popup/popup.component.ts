@@ -1,15 +1,13 @@
-import { Component, OnInit, Input, ElementRef, ViewChild, ContentChild, TemplateRef, ViewEncapsulation, Directive } from '@angular/core';
-
-// @Directive({ selector: '[appInsidesTmp]' })
-// export class PopupInsidesTemplateDirective {
-//     constructor(public template: TemplateRef<any>) { }
-// }
-
-// @Directive({ selector: '[appToggleTmp]' })
-// export class PopupToggleTemplateDirective {
-//     constructor(public template: TemplateRef<any>) { }
-// }
-
+import {
+  Component,
+  ContentChild,
+  ElementRef,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 
 @Component({
   selector: 'app-popup',
@@ -30,19 +28,17 @@ export class PopupComponent implements OnInit {
   @Input() noModalOption = 'No';
 
   @ViewChild('popupParent') popupParent: ElementRef;
+  @ViewChild('popupElement') popup: ElementRef;
   @ContentChild('popupInsidesTemplate', { read: TemplateRef }) popupInsidesTemplate: TemplateRef<any>;
   @ContentChild('popupToggleTemplate', { read: TemplateRef }) popupToggleTemplate: TemplateRef<any>;
 
   hidden = true;
 
-  popupRightShift = '0';
+  popupLeftShift = null;
 
   constructor() { }
 
   ngOnInit() {
-    if (this.floating) {
-      this.popupRightShift = '40%';
-    }
   }
 
   hidePopup = () => {
@@ -52,21 +48,25 @@ export class PopupComponent implements OnInit {
   switchShowingPopup = () => {
     this.hidden = !this.hidden;
 
-    if (!this.hidden && !this.floating) {
-      this.popupRightShift = this.getRightShift() + 'px';
-    }
+    setTimeout(() => {
+      if (!this.hidden && !this.isModalQuestion) {
+        this.popupLeftShift = this.getLeftShift();
+      }
+    }, 0);
   }
 
-  getRightShift(): number {
+  getLeftShift() {
     const windowWidth = document.documentElement.clientWidth;
-    const popupParentElement = (this.popupParent.nativeElement as HTMLElement);
-    const popupRightSide = popupParentElement.getBoundingClientRect().right + 250;
-    let rightShift = 0;
+    const popupElementRect = (this.popup.nativeElement as HTMLElement).getBoundingClientRect();
+    const popupRightSide = popupElementRect.right;
+    const currentLeft = parseFloat(getComputedStyle(this.popup.nativeElement).left);
+
+    let leftShift = currentLeft;
     if (popupRightSide > windowWidth) {
-      rightShift = popupRightSide - windowWidth;
+      leftShift = currentLeft - (popupRightSide - windowWidth);
     }
 
-    return rightShift;
+    return leftShift + 'px';
   }
 
 }

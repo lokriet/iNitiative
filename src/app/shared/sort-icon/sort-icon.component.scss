@@ -1,0 +1,21 @@
+@import '../../../assets/scss/partials/colors';
+
+.sort-icon {
+  display: flex;
+  flex-direction: column;
+}
+
+.icon-up,
+.icon-down {
+  font-size: 1rem;
+  color: grey;
+  cursor: pointer;
+
+  &.active {
+    color: $blue;
+  }
+}
+
+.icon-down {
+  margin-top: -1rem;
+}

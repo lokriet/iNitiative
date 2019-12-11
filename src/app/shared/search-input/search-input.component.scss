@@ -1,0 +1,19 @@
+@import '../../../assets/scss/partials/colors';
+
+.search {
+  border: 1px solid grey;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  max-width: 20rem;
+}
+
+.search-icon {
+  color: $blue
+}
+
+.search-input {
+  border: none;
+  width: 100%;
+  max-width: 20rem;
+  margin-left: 1rem;
+}

@@ -1,0 +1,90 @@
+<div class="participant-view">
+  <div class="participant-view__header">
+    <div class="participant-view__expand-button">
+      <button 
+            type="button" 
+            class="expand-button" 
+            [class.expanded]="expanded"
+            (click)="switchExpanded()">
+        <fa-icon [icon]="faRight"></fa-icon>
+      </button>
+    </div>
+    <div class="color">
+      <app-color-value [color]="participantTemplate.color"></app-color-value>
+    </div>
+    <div class="name">
+      {{ participantTemplate.name }}
+    </div>
+
+    <div>
+      <button
+        type="button"
+        class="add-button"
+        (click)="addParticipant()"
+      >
+        Add
+      </button>
+    </div>
+  </div>
+  
+  <div class="participant-view__details" [@collapse]="expanded ? 'expanded' : 'collapsed'">
+    <div class="detail">
+      <div class="detail-label">Ini Mod:</div>
+      <div class="detail-value">{{participantTemplate.initiativeModifier}}</div>
+    </div>
+    <div class="detail">
+      <div class="detail-label">Max HP:</div>
+      <div class="detail-value">{{participantTemplate.maxHp}}</div>
+    </div>
+    <div class="detail">
+      <div class="detail-label">Armor class:</div>
+      <div class="detail-value">{{participantTemplate.armorClass}}</div>
+    </div>
+    <div class="detail">
+      <div class="detail-label">Speed:</div>
+      <div class="detail-value">{{participantTemplate.speed}}</div>
+    </div>
+    
+    <div class="damage-types-list">
+      <div class="detail-label">
+        Immunities:
+      </div>
+      <div class="damage-type" *ngFor="let immunity of participantTemplate.immunityIds">
+        <div class="color">
+          <app-color-value [color]="getDamageType(immunity).color"></app-color-value>
+        </div>
+        <div class="damage-type-name">
+          {{ getDamageType(immunity).name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="damage-types-list">
+      <div class="detail-label">
+        Resistances:
+      </div>
+      <div class="damage-type" *ngFor="let resistance of participantTemplate.resistanceIds">
+        <div class="color">
+          <app-color-value [color]="getDamageType(resistance).color"></app-color-value>
+        </div>
+        <div class="damage-type-name">
+          {{ getDamageType(resistance).name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="damage-types-list">
+      <div class="detail-label">
+        Vulnerabilities:
+      </div>
+      <div class="damage-type" *ngFor="let vulnerability of participantTemplate.immunityIds">
+        <div class="color">
+          <app-color-value [color]="getDamageType(vulnerability).color"></app-color-value>
+        </div>
+        <div class="damage-type-name">
+          {{ getDamageType(vulnerability).name }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

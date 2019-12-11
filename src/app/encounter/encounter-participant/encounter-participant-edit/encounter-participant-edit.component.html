@@ -1,0 +1,200 @@
+<form (ngSubmit)="applyChanges()">
+  <div class="participant-view">
+    <div class="participant-view__header">
+      <div class="participant-view__expand-button">
+        <button 
+              type="button" 
+              class="expand-button" 
+              [class.expanded]="expanded"
+              (click)="switchExpanded()">
+          <fa-icon [icon]="faRight"></fa-icon>
+        </button>
+      </div>
+      <div class="color">
+        <app-colors-popup [(ngModel)]="color" name="color"></app-colors-popup>
+      </div>
+      <div class="name">
+        <input type="text" [(ngModel)]="name" name="name" class="name-input">
+      </div>
+
+      <div class="initiative">
+        <div class="total-ini">
+          {{initiative + initiativeModifier }}
+        </div>  (<div class="rolled-ini">
+          <input type="number" min="1" max="20" [(ngModel)]="initiative" name="initiative" class="number-input">
+          <button type="button" class="roll-ini-button" (click)="rollInitiative()">
+            <fa-icon [icon]="d20Icon"></fa-icon>
+          </button>
+          </div>
+          {{ '&nbsp;+&nbsp;' }}
+          <div class="ini-mod">
+            <input type="number" [(ngModel)]="initiativeModifier" name="initiativeModifier" class="number-input">
+          </div>)
+      </div>
+
+      <button
+        type="submit"
+        class="save-button"
+      >
+        <fa-icon [icon]="saveIcon"></fa-icon>
+      </button>
+      <button
+        type="button"
+        class="cancel-button"
+        (click)="cancelEdit()"
+      >
+        <fa-icon [icon]="cancelIcon"></fa-icon>
+      </button>
+      <button
+        type="button"
+        class="delete-button"
+        (click)="deleteParticipant()"
+      >
+        <fa-icon [icon]="deleteIcon"></fa-icon>
+      </button>
+    </div>
+    
+    <div class="participant-view__details" [@collapse]="expanded ? 'expanded' : 'collapsed'">
+      <div class="detail">
+        <div class="detail-label">HP:</div>
+        <input type="number" min="0" [(ngModel)]="currentHp" name="currentHp" class="number-input">
+        {{ '&nbsp;/&nbsp;' }}
+        <input type="number" min="0" [(ngModel)]="maxHp" name="maxHp" class="number-input max-hp-input">
+        <div class="detail-label">Temp: </div>
+        <input type="number" min="0" [(ngModel)]="temporaryHp" name="temporaryHp" class="number-input">
+      </div>
+      <div class="detail">
+        <div class="detail-label">Armor class:</div>
+        <input type="number" min="0" [(ngModel)]="armorClass" name="armorClass" class="number-input">
+      </div>
+      <div class="detail">
+        <div class="detail-label">Speed:</div>
+        <input type="number" min="0" [(ngModel)]="speed" name="speed" class="number-input">
+      </div>
+      
+      <div class="damage-types-list">
+        <div class="detail-label">
+          Immunities:
+        </div>
+        <ng-select
+            [items]="allDamageTypes$ | async"
+            [multiple]="true"
+            [(ngModel)]="immunities"
+            name="immunities"
+            [closeOnSelect]="false"
+            bindValue="id"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label">
+                <div class="selected-damage-type-label">
+                  <app-color-value [color]="item.color"></app-color-value>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <app-color-value [color]="item.color"></app-color-value>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <app-damage-type-edit [popupMode]="true" newButtonText="Create new"></app-damage-type-edit>
+      </div>
+
+      <div class="damage-types-list">
+        <div class="detail-label">
+          Resistances:
+        </div>
+        <ng-select
+            [items]="allDamageTypes$ | async"
+            [multiple]="true"
+            [(ngModel)]="resistances"
+            name="resistances"
+            [closeOnSelect]="false"
+            bindValue="id"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label">
+                <div class="selected-damage-type-label">
+                  <app-color-value [color]="item.color"></app-color-value>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <app-color-value [color]="item.color"></app-color-value>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <app-damage-type-edit [popupMode]="true" newButtonText="Create new"></app-damage-type-edit>
+      </div>
+
+      <div class="damage-types-list">
+        <div class="detail-label">
+          Vulnerabilities:
+        </div>
+        <ng-select
+            [items]="allDamageTypes$ | async"
+            [multiple]="true"
+            [(ngModel)]="vulnerabilities"
+            name="vulnerabilities"
+            [closeOnSelect]="false"
+            bindValue="id"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label">
+                <div class="selected-damage-type-label">
+                  <app-color-value [color]="item.color"></app-color-value>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <app-color-value [color]="item.color"></app-color-value>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <app-damage-type-edit [popupMode]="true" newButtonText="Create new"></app-damage-type-edit>
+      </div>
+
+      <div class="conditions-list">
+        <div class="detail-label">
+          Conditions:
+        </div>
+
+        <ng-select
+            [items]="allConditions$ | async"
+            [multiple]="true"
+            [(ngModel)]="conditions"
+            name="conditions"
+            [closeOnSelect]="false"
+            bindValue="id"
+            dropdownPosition="top"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label">
+                <div class="selected-damage-type-label">
+                  <app-color-value [color]="item.color"></app-color-value>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <app-color-value [color]="item.color"></app-color-value>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <app-condition-edit newButtonText="Create new"></app-condition-edit>
+      </div>
+
+      <div class="detail comments">
+        <div class="detail-label">Comments:</div>
+        <textarea class="comments-input" [(ngModel)]="comments" name="comments">
+        </textarea>
+      </div>
+    </div>
+  </div>
+</form>

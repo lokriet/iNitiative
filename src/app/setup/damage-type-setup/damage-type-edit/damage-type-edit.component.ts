@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import { DamageTypeType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeService } from '../../state/damage-type/damage-type.service';
@@ -14,13 +14,19 @@ import { Router } from '@angular/router';
 export class DamageTypeEditComponent implements OnInit {
   color: string = null;
   name: string = null;
-  type = DamageTypeType.DamageType;
+
+  @Input() popupMode = false;
+  @Input() type: DamageTypeType = null;
+  @Input() newButtonText = 'Add new';
+
+  selectedType: DamageTypeType;
 
   constructor(private damageTypeService: DamageTypeService,
               private authService: AuthService,
               private router: Router) { }
 
   ngOnInit() {
+    this.selectedType = this.type ? this.type : DamageTypeType.DamageType;
   }
 
   onSubmit() {
@@ -29,10 +35,12 @@ export class DamageTypeEditComponent implements OnInit {
       owner: this.authService.user.uid,
       name: this.name,
       color: this.color,
-      type: this.type
+      type: this.selectedType
     });
 
-    this.router.navigate(['/setup-damage-types']);
+    if (!this.popupMode) {
+      this.router.navigate(['/setup-damage-types']);
+    }
   }
 
 }

@@ -4,12 +4,14 @@ import { EncountersListComponent } from './encounters-list/encounters-list.compo
 import { EncounterEditComponent } from './encounter-edit/encounter-edit.component';
 import { EncounterViewComponent } from './encounter-view/encounter-view.component';
 import { EncounterRoutingModule } from './encounter-routing.module';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { FormsModule } from '@angular/forms';
 import { ToDatePipe } from './to-date.pipe';
 import { SharedModule } from '../shared/shared.module';
-import { NgSelectModule } from '@ng-select/ng-select';
 import { EncounterParticipantComponent } from './encounter-participant/encounter-participant.component';
+import { EncounterParticipantsListComponent } from './encounter-participant/encounter-participants-list/encounter-participants-list.component';
+import { ParticipantTemplatesListComponent } from './participant-templates-list/participant-templates-list.component';
+import { ParticipantTemplateComponent } from './participant-templates-list/participant-template/participant-template.component';
+import { EncounterParticipantEditComponent } from './encounter-participant/encounter-participant-edit/encounter-participant-edit.component';
+import { SetupModule } from '../setup/setup.module';
 
 @NgModule({
   declarations: [
@@ -17,11 +19,16 @@ import { EncounterParticipantComponent } from './encounter-participant/encounter
     EncounterEditComponent,
     EncounterViewComponent,
     ToDatePipe,
-    EncounterParticipantComponent
+    EncounterParticipantComponent,
+    EncounterParticipantsListComponent,
+    ParticipantTemplatesListComponent,
+    ParticipantTemplateComponent,
+    EncounterParticipantEditComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
+    SetupModule,
     EncounterRoutingModule
   ]
 })

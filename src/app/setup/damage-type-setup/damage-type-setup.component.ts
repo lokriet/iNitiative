@@ -12,5 +12,5 @@ export class DamageTypeSetupComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  
+
 }

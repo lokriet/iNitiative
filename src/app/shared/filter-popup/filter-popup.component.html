@@ -1,53 +1,53 @@
 <div class="filter-container">
-    <app-popup [showCloseButton]="true" windowName="Filter">
-      <ng-template #popupToggleTemplate let-toggle=toggle>
-        <div class="filter-icon" (click)="toggle()">
-          <fa-icon [icon]="filterIcon"></fa-icon>
-          <div class="red-dot" *ngIf="!isFilterValueEmpty()"></div>
-        </div>
-      </ng-template>
+  <app-popup [showCloseButton]="true" windowName="Filter">
+    <ng-template #popupToggleTemplate let-toggle=toggle>
+      <div class="filter-icon" (click)="toggle()">
+        <fa-icon [icon]="filterIcon"></fa-icon>
+        <div class="red-dot" *ngIf="!isFilterValueEmpty()"></div>
+      </div>
+    </ng-template>
 
-      <ng-template #popupInsidesTemplate let-hide="hide">
-        <div class="string-filter" *ngIf="filterType === 'string'"> 
-          <input class="string-filter-text" type="text" [(ngModel)]="stringFilterValue" (keydown.enter)="onApplyStringFilterValue(); hide();">
-          <div class="buttons">
-            <button type="button" (click)="onClearStringFilterValue(); hide();">Clear</button>
-            <button type="button" class="string-filter-button" (click)="onApplyStringFilterValue(); hide();">Apply</button>
-            <button type="button" class="string-filter-button" (click)="onCancelChangingStringFilterValue(); hide()">Cancel</button>
-          </div>
+    <ng-template #popupInsidesTemplate let-hide="hide">
+      <div class="string-filter" *ngIf="filterType === 'string'"> 
+        <input class="string-filter-text" type="text" [(ngModel)]="stringFilterValue" (keydown.enter)="onApplyStringFilterValue(); hide();">
+        <div class="buttons">
+          <button type="button" (click)="onClearStringFilterValue(); hide();">Clear</button>
+          <button type="button" class="string-filter-button" (click)="onApplyStringFilterValue(); hide();">Apply</button>
+          <button type="button" class="string-filter-button" (click)="onCancelChangingStringFilterValue(); hide()">Cancel</button>
         </div>
-    
-        <div class="dates-filter" *ngIf="filterType === 'dates'">
-          <div class="filter-date-input">
-            <div class="date-label">Min date:</div> 
-            <input class="date-input" type="date" [(ngModel)]="minDateFilterValue">
-          </div>
-          <div class="filter-date-input">
-            <div class="date-label">Max date:</div> 
-            <input class="date-input" type="date" [(ngModel)]="maxDateFilterValue">
-          </div>
-          <div class="buttons">
-            <button type="button" (click)="onClearDatesFilterValue(); hide();">Clear</button>
-            <button type="button" (click)="onApplyDatesFilterValue(); hide();">Apply</button>
-            <button type="button" (click)="onCancelChangingDatesFilterValue(); hide();">Cancel</button>
-          </div>
+      </div>
+  
+      <div class="dates-filter" *ngIf="filterType === 'dates'">
+        <div class="filter-date-input">
+          <div class="date-label">Min date:</div> 
+          <input class="date-input" type="date" [(ngModel)]="minDateFilterValue">
         </div>
-    
-    
-        <div class="list-filter" *ngIf="filterType === 'list' && !!listItems">
-          <div class="list-filter-item" *ngFor="let listItem of listItems; let i = index">
-            <input type="checkbox" [(ngModel)]="listFilterValue[i]" [id]="i">
-            <label [for]="i">{{ listItemLabelField ? listItem[listItemLabelField] : listItem.toString() }}</label>
-              
-          </div>
-          <div class="buttons">
-            <button type="button" (click)="onClearListFilterValue(); hide();">Clear</button>
-            <button type="button" (click)="onApplyListFilterValue(); hide();">Apply</button>
-            <button type="button" (click)="onCancelChangingListFilterValue(); hide();">Cancel</button>
-          </div>
+        <div class="filter-date-input">
+          <div class="date-label">Max date:</div> 
+          <input class="date-input" type="date" [(ngModel)]="maxDateFilterValue">
         </div>
-      </ng-template>
-    </app-popup>
+        <div class="buttons">
+          <button type="button" (click)="onClearDatesFilterValue(); hide();">Clear</button>
+          <button type="button" (click)="onApplyDatesFilterValue(); hide();">Apply</button>
+          <button type="button" (click)="onCancelChangingDatesFilterValue(); hide();">Cancel</button>
+        </div>
+      </div>
+  
+  
+      <div class="list-filter" *ngIf="filterType === 'list' && !!listItems">
+        <div class="list-filter-item" *ngFor="let listItem of listItems; let i = index">
+          <input type="checkbox" [(ngModel)]="listFilterValue[i]" [id]="i">
+          <label [for]="i">{{ listItemLabelField ? listItem[listItemLabelField] : listItem.toString() }}</label>
+            
+        </div>
+        <div class="buttons">
+          <button type="button" (click)="onClearListFilterValue(); hide();">Clear</button>
+          <button type="button" (click)="onApplyListFilterValue(); hide();">Apply</button>
+          <button type="button" (click)="onCancelChangingListFilterValue(); hide();">Cancel</button>
+        </div>
+      </div>
+    </ng-template>
+  </app-popup>
 </div>
 
 

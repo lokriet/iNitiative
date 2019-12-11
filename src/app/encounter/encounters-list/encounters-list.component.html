@@ -13,16 +13,13 @@
         <button (click)="switchSortOrder('name')">
           Name
         </button>
-      </div>
-      <div class="column-header__sort-asc"
-           [class.selected]="isSortingByName() && isSortingAsc()"
-           (click)="changeSortOrder('name', true)">
-        <fa-icon [icon]="sortAscIcon"></fa-icon>
-      </div>
-      <div class="column-header__sort-desc"
-           [class.selected]="isSortingByName() && !isSortingAsc()"
-          (click)="changeSortOrder('name', false)">
-        <fa-icon [icon]="sortDescIcon"></fa-icon>
+        <div class="sorter-icon">
+          <app-sort-icon 
+              [isActive]="isSortingByName()" 
+              [isSortUp]="isSortingAsc()"
+              (sortingSwitched)="changeSortOrder('name', $event)"
+          ></app-sort-icon>
+        </div>
       </div>
       <div class="column-header__filter">
         <app-filter-popup 
@@ -38,16 +35,13 @@
         <button (click)="switchSortOrder('createdDate')">
           Created
         </button>
-      </div>
-      <div  class="column-header__sort-asc"
-            [class.selected]="isSortingByCreatedDate() && isSortingAsc()"
-            (click)="changeSortOrder('createdDate', true)">
-        <fa-icon [icon]="sortAscIcon"></fa-icon>
-      </div>
-      <div class="column-header__sort-desc"
-          [class.selected]="isSortingByCreatedDate() && !isSortingAsc()"
-          (click)="changeSortOrder('createdDate', false)">
-        <fa-icon [icon]="sortDescIcon"></fa-icon>
+        <div class="sorter-icon">
+          <app-sort-icon 
+              [isActive]="isSortingByCreatedDate()" 
+              [isSortUp]="isSortingAsc()"
+              (sortingSwitched)="changeSortOrder('createdDate', $event)"
+          ></app-sort-icon>
+        </div>
       </div>
       <div class="column-header__filter">
         <app-filter-popup 
@@ -60,19 +54,16 @@
 
     <div class="column-header">
       <div class="column-header__name">
-        <button (click)="switchSortOrder('lastModifiedDate')">
-          Modified
-        </button>
-      </div>
-      <div class="column-header__sort-asc"
-           [class.selected]="isSortingByModifiedDate() && isSortingAsc()"
-            (click)="changeSortOrder('lastModifiedDate', true)">
-        <fa-icon [icon]="sortAscIcon"></fa-icon>
-      </div>
-      <div class="column-header__sort-desc"
-          [class.selected]="isSortingByModifiedDate() && !isSortingAsc()"
-          (click)="changeSortOrder('lastModifiedDate', false)">
-        <fa-icon [icon]="sortDescIcon"></fa-icon>
+          <button (click)="switchSortOrder('lastModifiedDate')">
+            Modified
+          </button>
+          <div class="sorter-icon">
+            <app-sort-icon 
+                [isActive]="isSortingByModifiedDate()" 
+                [isSortUp]="isSortingAsc()"
+                (sortingSwitched)="changeSortOrder('lastModifiedDate', $event)"
+            ></app-sort-icon>
+          </div>
       </div>
       <div class="column-header__filter">
         <app-filter-popup 
@@ -93,10 +84,4 @@
       <button class="delete-button" (click)="onDeleteEncounter(encounter.id)">X</button>
     </ng-container>
   </div>
-
-  
-
-  <!-- <app-colors-popup></app-colors-popup> -->
-<!-- 
-  <app-filter-popup></app-filter-popup> -->
 </ng-template>

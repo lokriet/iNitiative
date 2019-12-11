@@ -9,63 +9,97 @@
 
   <form (ngSubmit)="onSubmitForm()" #f="ngForm">
     <div class="error-message" *ngIf="errorMessage !== null">{{errorMessage}}</div>
+
+
     <input 
+        class="encounter-name"
         type="text" 
-        placeholder="Name" 
+        placeholder="Give it a name!" 
         [(ngModel)]="encounterName"
         name="encounterName"
-        required>
+        required >
   
+    <div class="buttons">
+      <button 
+          type="button"
+          class="play-button"
+          (click)="onSubmitForm(true)"
+          [disabled]="!f.valid"
+      >
+        <fa-icon [icon]="playIcon"></fa-icon>
+        Play!
+      </button>
+      <button 
+          type="button"
+          class="save-button"
+          (click)="onSubmitForm(false)"
+          [disabled]="!f.valid"
+      >
+        Save
+      </button>
+    </div>
   
     <div class="participants-view">
-      <div class="all-participants-view">
-        <div class="all-players-view">
-          <div class="all-players-header">Player templates</div>
-          <input type="text" [ngModel]="playersFilter" name="playersFilter" (ngModelChange)="playersFilterChanged($event)">
-          <div class="player-template-item" *ngFor="let playerTemplate of (playerTemplates$ | async)">
-            <div class="player-template__name">{{playerTemplate.name}}</div>
-            <button type="button" class="player-template__add-button" (click)="addParticipant(playerTemplate)">+</button>
-          </div>
+      <div class="templates-list">
+        <div class="tab-buttons">
+          <button 
+              type="button" 
+              class="tab-button" 
+              [class.active]="isTemplateTabActive('players')"
+              (click)="setTemplateTabActive('players')">
+            Players
+          </button>
+          <button 
+              type="button" 
+              class="tab-button" 
+              [class.active]="isTemplateTabActive('monsters')"
+              (click)="setTemplateTabActive('monsters')">
+            Monsters
+          </button>
+        </div>
+
+        <div class="all-players-view tab-view" [class.hidden]="!isTemplateTabActive('players')">
+          <app-participant-templates-list 
+              [type]="0" 
+              class="players-list"
+              (participantAdded)="addParticipant($event)"></app-participant-templates-list>
         </div>
   
-        <div class="all-monsters-view">
-          <div class="all-monsters-header">Monster templates</div>
-          <ng-select
-              class="monster-template__dropdown"
-              [items]="monsterTemplates$ | async"
-              [(ngModel)]="monstersDropdown"
-              name="monsterTemplates"
-              bindLabel="name"
-              [multiple]="true"
-          >
-          </ng-select>
-          <button type="button" class="monster-template__add-button" (click)="addMonsters()">+</button>
+        <div class="all-monsters-view tab-view" [class.hidden]="!isTemplateTabActive('monsters')">
+          <app-participant-templates-list 
+              [type]="1" 
+              class="monsters-list"
+              (participantAdded)="addParticipant($event)"></app-participant-templates-list>
         </div>
       </div>
   
       <div class="encounter-participants-view">
+        <div>
+          <button 
+              type="button"
+              class="generate-ini-button"
+              (click)="generateInitiatives()">
+              <fa-icon [icon]="rollIcon"></fa-icon>
+            Generate missing initiative values
+          </button>
+        </div>
         <div class="encounter-players-view">
           <div class="encounter-players-header">Added players</div>
-          <div class="encounter-player-item" *ngFor="let encounterPlayer of addedPlayers; let i = index">
-            <div class="player-name">{{encounterPlayer.name}}</div>
-            <button type="button" class="delete-button" (click)="deletePlayer(i)">X</button>
-          </div>
+          <app-encounter-participants-list 
+              [participants]="addedPlayers"
+              (participantChanged)="changePlayer($event)"
+              (participantDeleted)="deletePlayer($event)">
+          </app-encounter-participants-list>
         </div>
         <div class="encounter-monsters-view">
-          <div class="encounter-monsteres-header">Added monsters</div>
-          <div class="encounter-monster-item" *ngFor="let encounterMonster of addedMonsters; let i = index">
-            <div class="monster-name">{{encounterMonster.name}}</div>
-            <button type="button" class="delete-button" (click)="deleteMonster(i)">X</button>
-          </div>
+          <div class="encounter-monsters-header">Added monsters</div>
+          <app-encounter-participants-list 
+              [participants]="addedMonsters"
+              (participantChanged)="changeMonster($event)"
+              (participantDeleted)="deleteMonster($event)">
+          </app-encounter-participants-list>
         </div>
       </div>
     </div>
-  
-    <button 
-        type="submit"
-        [disabled]="!f.valid"
-    >
-      Save
-    </button>
   </form>
 </ng-template>

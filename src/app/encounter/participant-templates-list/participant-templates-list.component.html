@@ -1,0 +1,19 @@
+<div class="participant-templates-list">
+ <app-search-input [ngModel]="filter" (ngModelChange)="filterItems($event)"></app-search-input>
+ <div class="list-header">
+    <div class="sorter-name" (click)="setSorting(!isSortingAsc())">Name</div>
+    <div class="sorter-icon">
+      <app-sort-icon 
+        [isActive]="true" 
+        [isSortUp]="isSortingAsc()"
+        (sortingSwitched)="setSorting($event)"
+      ></app-sort-icon>
+    </div>
+  </div>
+  <app-participant-template
+    *ngFor="let participantTemplate of (participants$ | async)"
+    [participantTemplate]="participantTemplate"
+    (added)="onParticipantAdded(participantTemplate)"
+  >
+  </app-participant-template>
+</div>

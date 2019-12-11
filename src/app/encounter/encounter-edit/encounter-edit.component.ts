@@ -1,26 +1,30 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { guid } from '@datorama/akita';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
+import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
+import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
 import { Participant, ParticipantType } from 'src/app/setup/state/participants/participant.model';
+import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
+import { EncounterParticipant } from '../encounter-participant/state/encounter-participant.model';
+import { EncounterParticipantQuery } from '../encounter-participant/state/encounter-participant.query';
+import { EncounterParticipantService } from '../encounter-participant/state/encounter-participant.service';
 import { EncounterQuery } from '../state/encounter.query';
 import { EncounterService } from '../state/encounter.service';
-import { EncounterParticipant } from '../encounter-participant/state/encounter-participant.model';
-import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
-import { EncounterParticipantQuery } from '../encounter-participant/state/encounter-participant.query';
-import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
-import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
-import { EncounterParticipantService } from '../encounter-participant/state/encounter-participant.service';
+import { faDiceD6, faPlay } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-encounter-edit',
   templateUrl: './encounter-edit.component.html',
   styleUrls: ['./encounter-edit.component.scss']
 })
-export class EncounterEditComponent implements OnInit, OnDestroy {
+export class EncounterEditComponent implements OnInit {
+  rollIcon = faDiceD6;
+  playIcon = faPlay;
+
   encountersLoading$: Observable<boolean>;
   participantTemplatesLoading$: Observable<boolean>;
   participantsLoading$: Observable<boolean>;
@@ -30,17 +34,12 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
   encounterName: string;
   errorMessage: string = null;
 
-  monsterTemplates$: Observable<Participant[]>;
-  playerTemplates$: Observable<Participant[]>;
-
   addedPlayers: EncounterParticipant[] = [];
   addedMonsters: EncounterParticipant[] = [];
 
-  monstersDropdown = [];
-
-  playersFilter: string;
-
   addedParticipantsNoByTypeId: Map<string, number> = new Map();
+
+  activeTemlateTab = 'players';
 
   constructor(private encounterService: EncounterService,
               private encounterQuery: EncounterQuery,
@@ -59,35 +58,9 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
     this.participantsLoading$ = this.encounterParticipantsQuery.selectLoading();
     this.damageTypesLoading$ = this.damageTypesQuery.selectLoading();
     this.conditionsLoading$ = this.conditionsQuery.selectLoading();
-
-    this.monsterTemplates$ = this.selectParticipantTemplates(ParticipantType.Monster, null);
-    this.playerTemplates$ = this.selectParticipantTemplates(ParticipantType.Player, null);
-
-
   }
 
-  selectParticipantTemplates(type: ParticipantType, filter: string) {
-    return this.participantTemplateQuery.selectAll({filterBy: item => {
-      if (item.owner !== this.authService.user.uid) {
-        return false;
-      }
-
-      if (item.type !== type) {
-        return false;
-      }
-
-      if (filter && filter.length > 0 && !item.name.toLowerCase().includes(filter.toLowerCase())) {
-        return false;
-      }
-
-      return true;
-    }});
-  }
-
-  ngOnDestroy() {
-  }
-
-  onSubmitForm() {
+  onSubmitForm(startPlaying: boolean) {
     const existingName = this.encounterQuery.getAll({filterBy: encounter => encounter.name === this.encounterName});
     if (existingName != null && existingName.length > 0) {
       this.errorMessage = 'Encounter with this name already exists. Choose another one';
@@ -102,16 +75,24 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
     for (const monster of this.addedMonsters) {
       this.encounterParticipantsService.add(monster);
     }
-    this.encounterService.add({
+
+    const newEncounter = {
       id: guid(),
       owner: this.authService.user.uid,
       name: this.encounterName,
       participantIds: [...this.addedPlayers.map(player => player.id), ...this.addedMonsters.map(monster => monster.id)],
       createdDate: currentDate.getTime(),
       lastModifiedDate: currentDate.getTime()
-    }).then(value => {
+    };
+
+    this.encounterService.add(newEncounter).then(value => {
       this.messageService.addInfo(`Yay, encounter ${this.encounterName} created!`);
-      this.router.navigate(['encounters']);
+
+      if (startPlaying) {
+        this.router.navigate(['encounters', 'play', newEncounter.id]);
+      } else {
+        this.router.navigate(['encounters']);
+      }
     });
   }
 
@@ -131,9 +112,10 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       owner: this.authService.user.uid,
       type: participantTemplate.type,
       name,
-      initiative: 0,
+      color: participantTemplate.color,
+      initiative: null,
       initiativeModifier: participantTemplate.initiativeModifier,
-      currenthp: participantTemplate.maxHp,
+      currentHp: participantTemplate.maxHp,
       maxHp: participantTemplate.maxHp,
       temporaryHp: 0,
       armorClass: participantTemplate.armorClass,
@@ -153,22 +135,43 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
     this.addedParticipantsNoByTypeId.set(participantTemplate.id, count);
   }
 
-  deletePlayer(i: number) {
-    this.addedPlayers.splice(i, 1);
+  deletePlayer(player: EncounterParticipant) {
+    this.addedPlayers = this.addedPlayers.filter(value => value.id !== player.id);
   }
 
-  deleteMonster(i: number) {
-    this.addedMonsters.splice(i, 1);
+  deleteMonster(monster: EncounterParticipant) {
+    this.addedMonsters = this.addedMonsters.filter(value => value.id !== monster.id);
   }
 
-  playersFilterChanged(filterValue: string) {
-    this.playersFilter = filterValue;
-    this.playerTemplates$ = this.selectParticipantTemplates(ParticipantType.Player, this.playersFilter);
+  changeMonster(monster: EncounterParticipant) {
+    this.addedMonsters.splice(this.addedMonsters.findIndex(item => item.id === monster.id), 1, monster);
   }
 
-  addMonsters() {
-    for (let monster of this.monstersDropdown) {
-      this.addParticipant(monster);
+  changePlayer(player: EncounterParticipant) {
+    this.addedPlayers.splice(this.addedPlayers.findIndex(item => item.id === player.id), 1, player);
+  }
+
+  isTemplateTabActive(tabName: string) {
+    return this.activeTemlateTab === tabName;
+  }
+
+  setTemplateTabActive(tabName: string) {
+    this.activeTemlateTab = tabName;
+  }
+
+  generateInitiatives() {
+    for (const player of this.addedPlayers) {
+      this.generateInitiative(player);
+    }
+
+    for (const monster of this.addedMonsters) {
+      this.generateInitiative(monster);
+    }
+  }
+
+  generateInitiative(participant: EncounterParticipant) {
+    if (participant.initiative === null) {
+      participant.initiative = Math.ceil(Math.random() * 20);
     }
   }
 }

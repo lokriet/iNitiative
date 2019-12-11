@@ -4,10 +4,11 @@ export interface EncounterParticipant {
   id: string;
   owner: string;
   type: ParticipantType;
+  color: string;
   name: string;
   initiative: number;
   initiativeModifier: number;
-  currenthp: number;
+  currentHp: number;
   maxHp: number;
   temporaryHp: number;
   armorClass: number;

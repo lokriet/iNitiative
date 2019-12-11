@@ -1,19 +1,141 @@
+@import '../../../assets/scss/partials/colors';
+
+.encounter-name {
+  margin: 2rem 1rem;
+  width: 80%;
+  max-width: 40rem;
+  font-size: 2rem;
+  font-weight: 700;
+  border: none;
+  border-bottom: 3px dashed $blue;
+  color: $blue;
+
+  &::placeholder {
+    color:rgb(196, 196, 196);
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+
+  height: 4rem;
+
+  button {
+    margin-right: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid $blue;
+
+    &:hover {
+      padding: 1.5rem 2.5rem;
+    }
+
+    &:disabled {
+      border-color: grey;
+      cursor: default;
+      
+      &:hover {
+        padding: 1rem 2rem;
+      }
+    }
+  }
+
+  .play-button {
+    background-color: $blue;
+    color: white;
+
+    fa-icon {
+      margin-right: 0.5rem;
+    }
+
+    &:disabled {
+      background-color: grey;
+      
+    }
+  }
+
+  .save-button {
+    color: $blue;
+    background-color: white;
+
+    &:disabled {
+      color: grey;
+    }
+  }
+}
+
 .participants-view {
   display: flex;
 }
 
-.all-players-view {
+.templates-list {
+  width: 20rem;
   display: flex;
   flex-direction: column;
+  margin-top: 1.5rem;
 }
 
-.player-template-item {
+.tab-buttons {
   display: flex;
+  padding-left: 0.5rem;
+}
+
+.tab-button {
+  background-color: white;
+  color: grey;
+  border: 1px solid $blue;
+  border-bottom: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+
+  &.active {
+    background-color: $blue;
+    color: white;
+  }
+}
+
+.tab-view {
+  padding: 1rem;
+  border: 1px solid $blue;
+
+  &.hidden {
+    display: none;
+  }
 }
 
 .encounter-participants-view {
   display: flex;
   flex-direction: column;
+  margin: 1rem;
+  
+  flex-grow: 1;
+}
+
+.generate-ini-button {
+  margin: 0 0 1rem 1rem;
+  border: 1px solid $blue;
+  padding: 0.5rem 1rem;
+  color: white;
+  background-color: $blue;
+  font-size: 1rem;
+  cursor: pointer;
+
+  fa-icon {
+    margin-right: 0.5rem;
+  }
+}
+
+.encounter-players-header,
+.encounter-monsters-header {
+  margin: 0.5rem 1rem;
+  font-size: 1.2rem;
+  color: $blue;
+  
 }
 
 .encounter-players-view {
@@ -41,4 +163,5 @@
 .encounter-monster-item {
   display: flex;
 }
+
 

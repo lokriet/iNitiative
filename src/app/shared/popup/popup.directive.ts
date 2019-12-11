@@ -39,6 +39,7 @@ export class PopupWindowDirective implements OnInit {
 
       header.addEventListener('mousedown', this.mousedownMove.bind(this));
       header.addEventListener('mouseup', this.mouseupMove.bind(this));
+      this.boundMousemoveMove =  this.mousemoveMove.bind(this);
     }
 
     if (this.closable) {
@@ -50,9 +51,6 @@ export class PopupWindowDirective implements OnInit {
       this.htmlElement.appendChild(closeButton);
     }
 
-    this.boundMousemoveMove =  this.mousemoveMove.bind(this);
-    this.boundMousemoveResize =  this.mousemoveResize.bind(this);
-
     if (this.resizable) {
       const resizeCorner = document.createElement('div');
       resizeCorner.classList.add('resize-corner');
@@ -61,6 +59,7 @@ export class PopupWindowDirective implements OnInit {
 
       resizeCorner.addEventListener('mousedown', this.mousedownResize.bind(this));
       resizeCorner.addEventListener('mouseup', this.mouseupResize.bind(this));
+      this.boundMousemoveResize =  this.mousemoveResize.bind(this);
     }
   }
 

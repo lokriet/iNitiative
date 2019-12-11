@@ -8,6 +8,9 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ColorValueComponent } from './colors/color-value/color-value.component';
 import { PopupComponent } from './popup/popup.component';
 import { PopupWindowDirective } from './popup/popup.directive';
+import { SortIconComponent } from './sort-icon/sort-icon.component';
+import { FilterByNamePipe } from './filter-by-name.pipe';
+import { SearchInputComponent } from './search-input/search-input.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +18,10 @@ import { PopupWindowDirective } from './popup/popup.directive';
     FilterPopupComponent,
     ColorValueComponent,
     PopupComponent,
-    PopupWindowDirective
+    PopupWindowDirective,
+    SortIconComponent,
+    FilterByNamePipe,
+    SearchInputComponent
   ],
   imports: [
     CommonModule,
@@ -28,7 +34,10 @@ import { PopupWindowDirective } from './popup/popup.directive';
     ColorValueComponent,
     FilterPopupComponent,
     PopupWindowDirective,
+    SortIconComponent,
     PopupComponent,
+    SearchInputComponent,
+    FilterByNamePipe,
     FormsModule,
     FontAwesomeModule,
     NgSelectModule

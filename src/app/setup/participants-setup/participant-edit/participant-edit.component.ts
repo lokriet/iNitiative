@@ -19,7 +19,7 @@ export class ParticipantEditComponent implements OnInit {
   damageTypesLoading$: Observable<boolean>;
   participantsLoading$: Observable<boolean>;
 
-  color: string;
+  color: string = null;
   name: string;
   type = ParticipantType.Player;
   initiativeModifier: number;

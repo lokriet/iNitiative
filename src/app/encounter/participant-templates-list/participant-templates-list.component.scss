@@ -1,0 +1,16 @@
+@import '../../../assets/scss/partials/colors';
+
+.participant-templates-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-header {
+  display: flex;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.sorter-name {
+  margin: 0 0.5rem 0 3.75rem;
+  cursor: pointer;
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { faSortAlphaDown, faSortAlphaDownAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { SortBy, Order } from '@datorama/akita';
 import { DamageType, DamageTypeType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeService } from '../../state/damage-type/damage-type.service';
@@ -13,8 +13,7 @@ import { AuthService } from 'src/app/auth/state/auth.service';
   styleUrls: ['./damage-type-list.component.scss']
 })
 export class DamageTypeListComponent implements OnInit {
-  sortAscIcon = faSortAlphaDown;
-  sortDescIcon = faSortAlphaDownAlt;
+  deleteIcon = faTimes;
 
   @Input() damageTypeType: DamageTypeType = null;
 
@@ -123,6 +122,14 @@ export class DamageTypeListComponent implements OnInit {
     if (confirm('Are you sure?')) {
       this.damageTypeService.remove(damageTypeId);
     }
+  }
+
+  onChangeColor(damageType, newColor) {
+    this.damageTypeService.update({...damageType, color: newColor});
+  }
+
+  onChangeName(damageType, newName) {
+    this.damageTypeService.update({...damageType, name: newName});
   }
 
 }

@@ -10,6 +10,7 @@ import { ParticipantEditComponent } from './participants-setup/participant-edit/
 import { SharedModule } from '../shared/shared.module';
 import { DamageTypeListComponent } from './damage-type-setup/damage-type-list/damage-type-list.component';
 import { DamageTypeEditComponent } from './damage-type-setup/damage-type-edit/damage-type-edit.component';
+import { ConditionEditComponent } from './conditions-setup/condition-edit/condition-edit.component';
 
 @NgModule({
   declarations: [
@@ -20,12 +21,17 @@ import { DamageTypeEditComponent } from './damage-type-setup/damage-type-edit/da
     ParticipantViewComponent,
     ParticipantEditComponent,
     DamageTypeListComponent,
-    DamageTypeEditComponent
+    DamageTypeEditComponent,
+    ConditionEditComponent
   ],
   imports: [
     CommonModule,
     SetupRoutingModule,
     SharedModule
+  ],
+  exports: [
+    DamageTypeEditComponent,
+    ConditionEditComponent
   ]
 })
 export class SetupModule { }

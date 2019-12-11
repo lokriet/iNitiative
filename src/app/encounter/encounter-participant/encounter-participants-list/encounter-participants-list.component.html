@@ -1,0 +1,42 @@
+<div class="participants-list">
+  <div *ngIf="!participants || participants.length === 0; else nonEmpty" class="empty-list">
+    Start adding
+  </div>
+
+  <ng-template #nonEmpty>
+    <div class="header">
+      <div class="name">
+        <button type="button" (click)="switchSortOrder('name')">
+          Name
+        </button>
+        <div class="sorter-icon">
+          <app-sort-icon 
+              [isActive]="sortBy === 'name'" 
+              [isSortUp]="isSortingAsc()"
+              (sortingSwitched)="changeSortOrder('name', $event)"
+          ></app-sort-icon>
+        </div>
+      </div>
+      <div class="ini">
+        <button type="button" (click)="switchSortOrder('ini')">
+          Ini
+        </button>
+        <div class="sorter-icon">
+          <app-sort-icon 
+              [isActive]="sortBy === 'ini'" 
+              [isSortUp]="isSortingAsc()"
+              (sortingSwitched)="changeSortOrder('ini', $event)"
+          ></app-sort-icon>
+        </div>
+      </div>
+    </div>
+    <app-encounter-participant
+      *ngFor="let participant of participants; let i = index"
+      [participant]="participant"
+      (participantChanged)="onParticipantChanged($event)"
+      (delete)="onDeleteParticipant(i)"
+    >
+    </app-encounter-participant>
+  </ng-template>
+  
+</div>

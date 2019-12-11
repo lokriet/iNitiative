@@ -1,0 +1,23 @@
+<app-popup 
+    [floating]="true"
+    [showCloseButton]="true" 
+    windowName="New condition">
+  <ng-template #popupToggleTemplate let-toggle=toggle>
+    <button type="button" class="button" (click)="toggle()">{{  newButtonText }}</button>
+  </ng-template>
+
+  <ng-template #popupInsidesTemplate let-hide="hide">
+    <form (ngSubmit)="onSubmitNewCondition();hide();" #f="ngForm" class="new-condition-form">
+      <div class="color-picker">
+        <label>Color: </label><app-colors-popup [(ngModel)]="newConditionColor" name="color"></app-colors-popup>
+      </div>
+      <div class="name">
+        <label>Name:</label>
+        <input type="text" [(ngModel)]="newConditionName" name="name" required>
+      </div>
+      <div>
+        <button type="submit" [disabled]="!f.valid">Add</button>
+      </div>
+    </form>
+  </ng-template>
+</app-popup>

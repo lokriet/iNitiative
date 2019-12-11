@@ -9,22 +9,17 @@
     *ngTemplateOutlet="popupToggleTemplate || defaultToggleTemplate; context: { toggle: switchShowingPopup }">
   </ng-container>
 
-
   <div 
       class="popup" 
-      [class.floating]="floating" 
-      [style.right]="popupRightShift"
-      [appPopup]='resizable' 
+      [class.modal]="isModalQuestion" 
+      [appPopup]="resizable" 
       [closable]="showCloseButton" 
-      [movable]="floating"
+      [movable]="floating || isModalQuestion"
       [class.hidden]="hidden"
       (closed)="hidePopup()"
+      [ngStyle]="popupLeftShift && {left: popupLeftShift}"
+      #popupElement
       >
-  <!-- <div 
-      class="popup" 
-      [class.floating]="floating" 
-      [style.right]="popupRightShift"
-      [attr.appPopup]="floating ? resizable : null"> -->
 
 
     <div class="popup-header" *ngIf="!!windowName && windowName.length > 0">

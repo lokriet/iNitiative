@@ -1,0 +1,44 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
+import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
+import { Participant } from 'src/app/setup/state/participants/participant.model';
+
+@Component({
+  selector: 'app-participant-template',
+  templateUrl: './participant-template.component.html',
+  styleUrls: ['./participant-template.component.scss'],
+  animations: [
+    trigger('collapse', [
+      state('collapsed', style({ height: '0px', borderColor: 'transparent' })),
+      state('expanded', style({ height: '*', borderColor: '*' })),
+      transition('collapsed <=> expanded', [animate('200ms')])
+    ])
+  ]
+})
+export class ParticipantTemplateComponent implements OnInit {
+  faRight = faChevronRight;
+  expanded = false;
+
+  @Input() participantTemplate: Participant;
+  @Output() added = new EventEmitter<null>();
+
+  constructor(private damageTypeQuery: DamageTypeQuery) { }
+
+  ngOnInit() {
+  }
+
+  switchExpanded() {
+    this.expanded = !this.expanded;
+  }
+
+  addParticipant() {
+    this.added.emit();
+  }
+
+  getDamageType(damageTypeId: string): DamageType {
+    return this.damageTypeQuery.getEntity(damageTypeId);
+  }
+
+}
