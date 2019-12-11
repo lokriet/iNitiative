@@ -3,8 +3,16 @@
 
 .encounters-table {
   display: grid;
-  grid-template-columns: max-content max-content max-content 2rem;
+  grid-template-columns: max-content max-content max-content max-content;
   column-gap: 1rem;
   row-gap: 0.5rem;
   margin: 1rem 0;
+}
+
+.buttons {
+  display: flex;
+
+  button {
+    margin-right: 0.5rem;
+  }
 }

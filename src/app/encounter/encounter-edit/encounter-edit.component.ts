@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { guid } from '@datorama/akita';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
 import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
@@ -15,13 +15,14 @@ import { EncounterParticipantService } from '../encounter-participant/state/enco
 import { EncounterQuery } from '../state/encounter.query';
 import { EncounterService } from '../state/encounter.service';
 import { faDiceD6, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { Encounter } from '../state/encounter.model';
 
 @Component({
   selector: 'app-encounter-edit',
   templateUrl: './encounter-edit.component.html',
   styleUrls: ['./encounter-edit.component.scss']
 })
-export class EncounterEditComponent implements OnInit {
+export class EncounterEditComponent implements OnInit, OnDestroy {
   rollIcon = faDiceD6;
   playIcon = faPlay;
 
@@ -37,9 +38,13 @@ export class EncounterEditComponent implements OnInit {
   addedPlayers: EncounterParticipant[] = [];
   addedMonsters: EncounterParticipant[] = [];
 
-  addedParticipantsNoByTypeId: Map<string, number> = new Map();
+  // addedParticipantsNoByTypeId: Map<string, number> = new Map();
 
   activeTemlateTab = 'players';
+
+  editMode = false;
+  editedEncounter: Encounter;
+  sub: Subscription;
 
   constructor(private encounterService: EncounterService,
               private encounterQuery: EncounterQuery,
@@ -50,7 +55,8 @@ export class EncounterEditComponent implements OnInit {
               private conditionsQuery: ConditionsQuery,
               private authService: AuthService,
               private messageService: MessageService,
-              private router: Router) { }
+              private router: Router,
+              private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.encountersLoading$ = this.encounterQuery.selectLoading();
@@ -58,60 +64,125 @@ export class EncounterEditComponent implements OnInit {
     this.participantsLoading$ = this.encounterParticipantsQuery.selectLoading();
     this.damageTypesLoading$ = this.damageTypesQuery.selectLoading();
     this.conditionsLoading$ = this.conditionsQuery.selectLoading();
+
+    this.sub = this.route.params.subscribe(
+      (params: Params) => {
+        const editedEncounterId = params.id;
+        this.editMode = params.id != null;
+        this.initForm(editedEncounterId);
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
+
+
+  initForm(editedEncounterId: string) {
+    if (this.editMode) {
+      this.editedEncounter = this.encounterQuery.getEntity(editedEncounterId);
+      if (!this.editedEncounter) {
+        this.router.navigate(['404']);
+      } else {
+        this.encounterName = this.editedEncounter.name;
+        if (this.editedEncounter.participantIds) {
+          this.addedMonsters = this.encounterParticipantsQuery.getAll({
+            filterBy: item => this.editedEncounter.participantIds.includes(item.id) && item.type === ParticipantType.Monster
+          });
+  
+          this.addedPlayers = this.encounterParticipantsQuery.getAll({
+            filterBy: item => this.editedEncounter.participantIds.includes(item.id) && item.type === ParticipantType.Player
+          });
+        } else {
+          this.addedPlayers = [];
+          this.addedMonsters = [];
+        }
+      }
+    }
   }
 
   onSubmitForm(startPlaying: boolean) {
-    const existingName = this.encounterQuery.getAll({filterBy: encounter => encounter.name === this.encounterName});
-    if (existingName != null && existingName.length > 0) {
-      this.errorMessage = 'Encounter with this name already exists. Choose another one';
-      return;
+
+    if (!this.editMode || this.editedEncounter.name !== this.encounterName) {
+      const existingName = this.encounterQuery.getAll({filterBy: encounter => encounter.name === this.encounterName});
+      if (existingName != null && existingName.length > 0) {
+        this.errorMessage = 'Encounter with this name already exists. Choose another one';
+        return;
+      }
     }
 
     const currentDate = new Date();
 
+
+
     for (const player of this.addedPlayers) {
-      this.encounterParticipantsService.add(player);
+      if (this.encounterParticipantsQuery.getEntity(player.id) == null) {
+        this.encounterParticipantsService.add(player);
+      } else {
+        this.encounterParticipantsService.update(player);
+      }
     }
     for (const monster of this.addedMonsters) {
-      this.encounterParticipantsService.add(monster);
+      if (this.encounterParticipantsQuery.getEntity(monster.id) == null) {
+        this.encounterParticipantsService.add(monster);
+      } else {
+        this.encounterParticipantsService.update(monster);
+      }
     }
 
     const newEncounter = {
-      id: guid(),
+      id: this.editMode ? this.editedEncounter.id : guid(),
       owner: this.authService.user.uid,
       name: this.encounterName,
       participantIds: [...this.addedPlayers.map(player => player.id), ...this.addedMonsters.map(monster => monster.id)],
-      createdDate: currentDate.getTime(),
+      createdDate: this.editMode ? this.editedEncounter.createdDate : currentDate.getTime(),
       lastModifiedDate: currentDate.getTime()
     };
 
-    this.encounterService.add(newEncounter).then(value => {
-      this.messageService.addInfo(`Yay, encounter ${this.encounterName} created!`);
+    if (this.editMode) {
+      this.encounterService.add(newEncounter).then(value => {
+        this.messageService.addInfo(`Yay, encounter ${this.encounterName} created!`);
 
-      if (startPlaying) {
-        this.router.navigate(['encounters', 'play', newEncounter.id]);
+        if (startPlaying) {
+          this.router.navigate(['encounters', 'play', newEncounter.id]);
+        } else {
+          this.router.navigate(['encounters']);
+        }
+      });
+    } else {
+      this.encounterService.update(newEncounter).then(value => {
+        this.messageService.addInfo(`Yay, encounter ${this.encounterName} saved!`);
+
+        if (startPlaying) {
+          this.router.navigate(['encounters', 'play', newEncounter.id]);
+        } else {
+          this.router.navigate(['encounters']);
+        }
+      });
+    }
+  }
+
+  findNameWithNo(name: string): string {
+    let counter = 0;
+    let nextName = name;
+    while (true) {
+      if (this.addedPlayers.findIndex(item => item.name === nextName) === -1 && 
+          this.addedMonsters.findIndex(item => item.name === nextName) === -1) {
+        return nextName;
       } else {
-        this.router.navigate(['encounters']);
+        counter++;
+        nextName = `${name} ${counter}`;
       }
-    });
+    }
   }
 
   addParticipant(participantTemplate: Participant) {
-    let name = participantTemplate.name;
-    let count = this.addedParticipantsNoByTypeId.get(participantTemplate.id);
-
-    if (count != null) {
-      name = `${name} ${count}`;
-      count++;
-    } else {
-      count = 1;
-    }
-
     const encounterParticipant = {
       id: guid(),
       owner: this.authService.user.uid,
       type: participantTemplate.type,
-      name,
+      name: this.findNameWithNo(participantTemplate.name),
       color: participantTemplate.color,
       initiative: null,
       initiativeModifier: participantTemplate.initiativeModifier,
@@ -132,7 +203,6 @@ export class EncounterEditComponent implements OnInit {
     } else {
       this.addedMonsters.push(encounterParticipant);
     }
-    this.addedParticipantsNoByTypeId.set(participantTemplate.id, count);
   }
 
   deletePlayer(player: EncounterParticipant) {

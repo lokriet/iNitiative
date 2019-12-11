@@ -21,6 +21,12 @@ const encounterRoutes: Routes = [
     component: EncounterEditComponent,
     canActivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard],
     canDeactivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard]
+  },
+  {
+    path: 'encounters/edit/:id',
+    component: EncounterEditComponent,
+    canActivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard],
+    canDeactivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, EncounterParticipantGuard]
   }
 ];
 

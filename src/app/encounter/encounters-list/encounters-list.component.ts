@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Order, SortBy } from '@datorama/akita';
-import { faFilter, faSortAlphaDown, faSortAlphaUpAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faPlay, faCog } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 
 import { Encounter } from '../state/encounter.model';
@@ -14,8 +14,10 @@ import { DateFilterValue } from 'src/app/shared/filter-popup/filter-popup.compon
   styleUrls: ['./encounters-list.component.scss']
 })
 export class EncountersListComponent implements OnInit {
-  sortAscIcon = faSortAlphaDown;
-  sortDescIcon = faSortAlphaUpAlt;
+  deleteIcon = faTimes;
+  playIcon = faPlay;
+  editIcon = faCog;
+  
 
   encountersLoading$: Observable<boolean>;
   encounters$: Observable<Encounter[]>;

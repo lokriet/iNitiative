@@ -81,7 +81,18 @@
       <div class="encounter-name">{{ encounter.name }} </div>
       <div class="encounter-created">{{ encounter.createdDate | toDate }} </div>
       <div class="encounter-name">{{ encounter.lastModifiedDate | toDate }} </div>
-      <button class="delete-button" (click)="onDeleteEncounter(encounter.id)">X</button>
+
+      <div class="buttons">
+        <button class="play-button icon-button" (click)="onPlayEncounter(encounter.id)">
+          <fa-icon [icon]="playIcon"></fa-icon>
+        </button>
+        <button class="edit-button icon-button" [routerLink]="'/encounters/edit/' + encounter.id">
+          <fa-icon [icon]="editIcon"></fa-icon>
+        </button>
+        <button class="delete-button" (click)="onDeleteEncounter(encounter.id)">
+          <fa-icon [icon]="deleteIcon"></fa-icon>
+        </button>
+      </div>
     </ng-container>
   </div>
 </ng-template>
