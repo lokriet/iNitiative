@@ -26,6 +26,12 @@ const setupRoutes: Routes = [
     canDeactivate: [DamageTypeGuard, ParticipantGuard]
   },
   {
+    path: 'setup-participants/edit/:id',
+    component: ParticipantEditComponent,
+    canActivate: [DamageTypeGuard, ParticipantGuard, AuthGuard],
+    canDeactivate: [DamageTypeGuard, ParticipantGuard]
+  },
+  {
     path: 'setup-damage-types',
     component: DamageTypeSetupComponent,
     canActivate: [DamageTypeGuard, AuthGuard],
@@ -33,7 +39,8 @@ const setupRoutes: Routes = [
   },
   {
     path: 'setup-damage-types/new',
-    component: DamageTypeEditComponent
+    component: DamageTypeEditComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'setup-conditions',

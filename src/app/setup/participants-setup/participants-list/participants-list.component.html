@@ -201,6 +201,9 @@
       </div>
       
       <div class="buttons" [class.odd]="i % 2 === 0">
+        <button class="delete-button"  [routerLink]="'/setup-participants/edit/' + participant.id">
+          <fa-icon [icon]="editIcon"></fa-icon>
+        </button>
         <button class="delete-button" (click)="onDeleteParticipant(participant.id)">
           <fa-icon [icon]="deleteIcon"></fa-icon>
         </button>

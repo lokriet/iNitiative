@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
 import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
 
 import { DamageType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
-import { ParticipantType } from '../../state/participants/participant.model';
+import { ParticipantType, Participant } from '../../state/participants/participant.model';
 import { ParticipantQuery } from '../../state/participants/participant.query';
 import { ParticipantService } from '../../state/participants/participant.service';
 
@@ -42,11 +42,17 @@ export class ParticipantEditComponent implements OnInit {
 
   allDamageTypes$: Observable<DamageType[]>;
 
+  routeSub: Subscription;
+  editMode = false;
+
+  editedParticipant: Participant;
+
   constructor(private damageTypeQuery: DamageTypeQuery,
               private participantService: ParticipantService,
               private participantQuery: ParticipantQuery,
               private authService: AuthService,
               private router: Router,
+              private route: ActivatedRoute,
               private messageService: MessageService) { }
 
   ngOnInit() {
@@ -57,29 +63,68 @@ export class ParticipantEditComponent implements OnInit {
       filterBy: item => item.owner === this.authService.user.uid,
       sortBy: 'name'
     });
+
+    this.routeSub = this.route.params.subscribe(
+      (params: Params) => {
+        const editedParticipantId = params.id;
+        this.editMode = params.id != null;
+        this.initForm(editedParticipantId);
+      }
+    );
+  }
+
+  initForm(editedParticipantId: string) {
+    this.editedParticipant = this.participantQuery.getEntity(editedParticipantId);
+    this.color = this.editedParticipant.color;
+    this.name = this.editedParticipant.name;
+    this.type = this.editedParticipant.type;
+    this.initiativeModifier = this.editedParticipant.initiativeModifier;
+    this.armorClass = this.editedParticipant.armorClass;
+    this.speed = this.editedParticipant.speed;
+    this.hp = this.editedParticipant.maxHp;
+    this.immunities = [...this.editedParticipant.immunityIds];
+    this.weaknesses = [...this.editedParticipant.vulnerabilityIds];
+    this.resistances = [...this.editedParticipant.resistanceIds];
+    this.comments = this.editedParticipant.comments;
   }
 
   onSubmit() {
-    if (this.participantQuery.getAll({filterBy: participant => participant.name === this.name}).length > 0) {
-      this.errorMessage = 'Participant with this name already exists. Choose another one.';
-      return;
+    if (!this.editMode || this.name !== this.editedParticipant.name) {
+      if (this.participantQuery.getAll({filterBy: participant => participant.name === this.name}).length > 0) {
+        this.errorMessage = 'Participant with this name already exists. Choose another one.';
+        return;
+      }
+    }
+
+    this.errorMessage = null;
+    const newParticipant = {
+      id: this.editMode ? this.editedParticipant.id : guid(),
+      owner: this.editMode ? this.editedParticipant.owner : this.authService.user.uid,
+      name: this.name,
+      type: this.type,
+      color: this.color,
+      initiativeModifier: this.initiativeModifier,
+      maxHp: this.hp,
+      armorClass: this.armorClass,
+      speed: this.speed,
+      vulnerabilityIds: this.weaknesses,
+      resistanceIds: this.resistances,
+      immunityIds: this.immunities,
+      comments: this.comments
+    };
+
+
+    if (this.editMode) {
+      this.participantService.update(newParticipant)
+      .then(value => {
+        this.messageService.addInfo(`${this.name} updated!`);
+        this.router.navigate(['/setup-participants']);
+      }).catch(error => {
+        this.messageService.addError('Could not update participant :(');
+        console.log(error);
+      });
     } else {
-      this.errorMessage = null;
-      this.participantService.add({
-        id: guid(),
-        owner: this.authService.user.uid,
-        name: this.name,
-        type: this.type,
-        color: this.color,
-        initiativeModifier: this.initiativeModifier,
-        maxHp: this.hp,
-        armorClass: this.armorClass,
-        speed: this.speed,
-        vulnerabilityIds: this.weaknesses,
-        resistanceIds: this.resistances,
-        immunityIds: this.immunities,
-        comments: this.comments
-      })
+      this.participantService.add(newParticipant)
       .then(value => {
         this.messageService.addInfo(`${this.name} created!`);
         this.router.navigate(['/setup-participants']);
@@ -88,5 +133,6 @@ export class ParticipantEditComponent implements OnInit {
         console.log(error);
       });
     }
+
   }
 }

@@ -6,7 +6,7 @@ import { ParticipantService } from '../../state/participants/participant.service
 import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
 import { DamageType } from '../../state/damage-type/damage-type.model';
 import { SortBy, Order } from '@datorama/akita';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faCog } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from 'src/app/auth/state/auth.service';
 
 @Component({
@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/auth/state/auth.service';
 })
 export class ParticipantsListComponent implements OnInit {
   deleteIcon = faTimes;
+  editIcon = faCog;
 
   @Input() participantType: ParticipantType = null;
 

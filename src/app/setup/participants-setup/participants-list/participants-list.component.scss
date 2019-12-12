@@ -11,7 +11,7 @@
 
   display: grid;
   //                     color  name          type    ini,hp,armr,spd  immune,resist,weak    commts del
-  grid-template-columns: 1.5rem max-content max-content repeat(7, max-content)                8rem 2rem;
+  grid-template-columns: 1.5rem max-content max-content repeat(7, max-content)                8rem 3.5rem;
   margin: 1rem 0;
 
   &>* {
@@ -24,7 +24,7 @@
 
   &.short-grid {
     //                     color  name      ini,hp,armr,spd  immune,resist,weak    commts del
-    grid-template-columns: 1.5rem max-content repeat(7, max-content) 8rem 2rem;
+    grid-template-columns: 1.5rem max-content repeat(7, max-content) 8rem 3.5rem;
   }
 }
 
@@ -41,4 +41,8 @@
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
+}
+
+.buttons {
+  display: flex;
 }

@@ -240,11 +240,15 @@ export class EncounterPlayComponent implements OnInit {
   }
 
   changeAdvantages(participant: EncounterParticipant, advantages: string) {
-    this.encounterParticipantsService.update({ ...participant, advantages });
+    if (participant.advantages !== advantages) {
+      this.encounterParticipantsService.update({ ...participant, advantages });
+    }
   }
 
   changeComments(participant: EncounterParticipant, comments: string) {
-    this.encounterParticipantsService.update({ ...participant, comments });
+    if (participant.comments !== comments) {
+      this.encounterParticipantsService.update({ ...participant, comments });
+    }
   }
 
   changeConditions(participant: EncounterParticipant, conditionIds: string[]) {
