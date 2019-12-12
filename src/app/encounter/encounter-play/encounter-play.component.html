@@ -19,9 +19,28 @@
       </ng-template>
 
       <ng-template #popupInsidesTemplate let-hide="hide">
-        <app-add-participants-view
-          (onParticipantAdded)="addParticipant($event);hide()"
-        ></app-add-participants-view>
+        <div class="summon-popup">
+
+          <div class="popup-buttons">
+            <button 
+                type="button" 
+                class="summon-button" 
+                (click)="addSummonToTheGame(); hide();"
+                [disabled]="summonedParticipant == null">Summon!</button>
+          </div>
+
+          <app-encounter-participant 
+              *ngIf="summonedParticipant != null;else addSummon"
+              [(participant)]="summonedParticipant"
+          ></app-encounter-participant>
+          <ng-template #addSummon>
+            <div class="add-summon">Choose a summon</div>
+          </ng-template>
+
+          <app-add-participants-view
+            (onParticipantAdded)="addParticipant($event)"
+          ></app-add-participants-view>
+        </div>
       </ng-template>
     </app-popup>
 

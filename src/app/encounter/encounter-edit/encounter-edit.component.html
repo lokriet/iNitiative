@@ -9,8 +9,6 @@
 
   <form (ngSubmit)="onSubmitForm()" #f="ngForm">
     <div class="error-message" *ngIf="errorMessage !== null">{{errorMessage}}</div>
-
-
     <input 
         class="encounter-name"
         type="text" 
@@ -42,33 +40,7 @@
     <div class="participants-view">
       <app-add-participants-view (onParticipantAdded)="addParticipant($event)"></app-add-participants-view>
   
-      <div class="encounter-participants-view">
-        <div>
-          <button 
-              type="button"
-              class="generate-ini-button"
-              (click)="generateInitiatives()">
-              <fa-icon [icon]="rollIcon"></fa-icon>
-            Generate missing initiative values
-          </button>
-        </div>
-        <div class="encounter-players-view">
-          <div class="encounter-players-header">Added players</div>
-          <app-encounter-participants-list 
-              [participants]="addedPlayers"
-              (participantChanged)="changePlayer($event)"
-              (participantDeleted)="deletePlayer($event)">
-          </app-encounter-participants-list>
-        </div>
-        <div class="encounter-monsters-view">
-          <div class="encounter-monsters-header">Added monsters</div>
-          <app-encounter-participants-list 
-              [participants]="addedMonsters"
-              (participantChanged)="changeMonster($event)"
-              (participantDeleted)="deleteMonster($event)">
-          </app-encounter-participants-list>
-        </div>
-      </div>
+      <app-setup-added-participants-view [(ngModel)]="addedParticipants" name="addedParticipants"></app-setup-added-participants-view>
     </div>
   </form>
 </ng-template>

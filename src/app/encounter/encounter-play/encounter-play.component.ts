@@ -64,6 +64,8 @@ export class EncounterPlayComponent implements OnInit {
   editingParticipantId: string = null;
   editingField: EditingField = null;
 
+  summonedParticipant: EncounterParticipant = null;
+
   constructor(private encounterService: EncounterService,
               private encounterQuery: EncounterQuery,
               private participantTemplateQuery: ParticipantQuery,
@@ -301,22 +303,23 @@ export class EncounterPlayComponent implements OnInit {
     this.newDamageTypeType = DamageTypeType.DamageType;
   }
 
-  addParticipant(participantTemplate: Participant) {
-    let initiative;
-    if (this.activeParticipantId) {
-      const activeParticipant = this.encounterParticipantsQuery.getEntity(this.activeParticipantId);
-      initiative = activeParticipant.initiative + 1;
-    } else {
-      initiative = Math.ceil(Math.random() * 20);
-    }
+  addSummonToTheGame() {
+    this.encounterService.update({...this.encounter,
+      participantIds: [...this.encounter.participantIds, this.summonedParticipant.id] });
 
+    this.encounterParticipantsService.add(this.summonedParticipant);
+
+    this.summonedParticipant = null;
+  }
+
+  addParticipant(participantTemplate: Participant) {
     const encounterParticipant = {
       id: guid(),
       owner: this.authService.user.uid,
       type: participantTemplate.type,
       name: this.findNameWithNo(participantTemplate.name),
       color: participantTemplate.color,
-      initiative,
+      initiative: null,
       initiativeModifier: participantTemplate.initiativeModifier,
       currentHp: participantTemplate.maxHp,
       maxHp: participantTemplate.maxHp,
@@ -331,8 +334,7 @@ export class EncounterPlayComponent implements OnInit {
       advantages: null
     };
 
-    this.encounterParticipantsService.add(encounterParticipant);
-    this.encounterService.update({...this.encounter, participantIds: [...this.encounter.participantIds, encounterParticipant.id] });
+    this.summonedParticipant = encounterParticipant;
   }
 
   findNameWithNo(name: string): string {

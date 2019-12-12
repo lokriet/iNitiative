@@ -30,6 +30,10 @@ export class EncounterParticipantsListComponent implements OnInit {
   }
 
   sortParticipants() {
+    if (!this.participants) {
+      return;
+    }
+    
     this.participants.sort((a, b) => {
       if (this.sortBy === 'name') {
         let result = a.name.localeCompare(b.name);

@@ -14,6 +14,7 @@ import { EncounterParticipantEditComponent } from './encounter-participant/encou
 import { SetupModule } from '../setup/setup.module';
 import { EncounterPlayComponent } from './encounter-play/encounter-play.component';
 import { AddParticipantsViewComponent } from './add-participants-view/add-participants-view.component';
+import { SetupAddedParticipantsViewComponent } from './setup-added-participants-view/setup-added-participants-view.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { AddParticipantsViewComponent } from './add-participants-view/add-partic
     ParticipantTemplateComponent,
     EncounterParticipantEditComponent,
     EncounterPlayComponent,
-    AddParticipantsViewComponent
+    AddParticipantsViewComponent,
+    SetupAddedParticipantsViewComponent
   ],
   imports: [
     CommonModule,
