@@ -4,7 +4,7 @@
   </div>
 
   <div class="buttons">
-    <button type="button" class="next-move-button" (click)="nextMove()">
+    <button type="button" class="next-move-button" (click)="nextMove()" [disabled]="hasMissingInitiatives()">
       <fa-icon [icon]="activeParticpantIcon"></fa-icon>
       {{ encounter.activeParticipantId == null ? 'First move' : 'Next move' }}
     </button>
@@ -24,6 +24,14 @@
         ></app-add-participants-view>
       </ng-template>
     </app-popup>
+
+    <button 
+        *ngIf="hasMissingInitiatives()"
+        type="button" 
+        class="generate-ini-button" 
+        (click)="generateMissingInitiatives()">
+      Generate missing initiatives
+    </button>
   </div>
 
   <div class="participants-list">
@@ -145,208 +153,313 @@
       </div>
 
       <div class="participant-conditions conditions-list" [class.odd]="i % 2 === 0">
-          <ng-select
-            [items]="allConditions$ | async"
-            [multiple]="true"
-            [ngModel]="participant.conditionIds"
-            (ngModelChange)="changeConditions(participant, $event)"
-            name="conditions"
-            bindLabel="name"
-            bindValue="id"
-            [closeOnSelect]="false"
-            [clearable]="false"
-          >
-            <ng-template ng-label-tmp let-item="item" let-clear="clear">
-              <div class="dropdown-selected-icon">
-                <span class="ng-value-label">
-                  <div class="selected-condition-label">
-                    <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
-                    <span>{{item.name}}</span>
-                  </div>
-                </span>
-                <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-              </div>
-            </ng-template>
-            <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-              <div class="condition-option">
-                <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
-                <span>{{item.name}}</span>
-              </div>
-            </ng-template>
+        <div 
+            class="view-conditions"
+            *ngIf="participant.id !== editingParticipantId || editingField !== 'conditions'; else editConditions">
+          <div class="view-condition" *ngFor="let condition of (getConditions(participant.conditionIds) | async)">
+            <app-color-value [color]="condition.color" [showEmpty]="false"></app-color-value>
+            {{condition.name}}
+          </div>
 
-            <ng-template ng-footer-tmp>
-              <div class="conditions-dropdown-footer">
-                <div class="fields-row">Create new:</div>
-                <div class="fields-row">
-                  <app-colors-popup [(ngModel)]="newConditionColor"></app-colors-popup>
-                  <input class="new-condition-input" type="text" [(ngModel)]="newConditionName">
-                  <button type="button" class="new-condition-button" (click)="addNewCondition()">
-                    <fa-icon [icon]="faCheck"></fa-icon>
-                  </button>
+          <button 
+              type="button"
+              class="edit-participant-field-button"
+              (click)="onEditField(participant.id, 'conditions')">
+            <fa-icon [icon]="editIcon"></fa-icon>
+          </button>
+        </div>
+
+        <ng-template #editConditions>
+          <div class="edit-conditions">
+            <button 
+                type="button"
+                class="save-participant-field-button"
+                (click)="onSaveField()">
+              <fa-icon [icon]="faCheck"></fa-icon>
+            </button>
+
+            <ng-select
+              [items]="allConditions$ | async"
+              [multiple]="true"
+              [ngModel]="participant.conditionIds"
+              (ngModelChange)="changeConditions(participant, $event)"
+              name="conditions"
+              bindLabel="name"
+              bindValue="id"
+              [closeOnSelect]="false"
+              [clearable]="false"
+            >
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <div class="dropdown-selected-icon">
+                  <span class="ng-value-label">
+                    <div class="selected-condition-label">
+                      <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+                      <span>{{item.name}}</span>
+                    </div>
+                  </span>
+                  <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
                 </div>
-              </div>
-            </ng-template>
-          </ng-select>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <div class="condition-option">
+                  <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+                  <span>{{item.name}}</span>
+                </div>
+              </ng-template>
+  
+              <ng-template ng-footer-tmp>
+                <div class="conditions-dropdown-footer">
+                  <div class="fields-row">Create new:</div>
+                  <div class="fields-row">
+                    <app-colors-popup [(ngModel)]="newConditionColor"></app-colors-popup>
+                    <input class="new-condition-input" type="text" [(ngModel)]="newConditionName">
+                    <button type="button" class="new-condition-button" (click)="addNewCondition()">
+                      <fa-icon [icon]="faCheck"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </ng-template>
       </div>
 
       <div class="participant-vulnerabilities damage-types-list" [class.odd]="i % 2 === 0">
-          <ng-select
-            [items]="allDamageTypes$ | async"
-            [multiple]="true"
-            [ngModel]="participant.vulnerabilityIds"
-            (ngModelChange)="changeVulnerabilities(participant, $event)"
-            name="vulnerabilities"
-            bindLabel="name"
-            bindValue="id"
-            [closeOnSelect]="false"
-            [clearable]="false"
-          >
-            <ng-template ng-label-tmp let-item="item" let-clear="clear">
-              <div class="dropdown-selected-icon">
-                <span class="ng-value-label">
-                  <div class="selected-damage-type-label">
-                    <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
-                    <span>{{item.name}}</span>
-                  </div>
-                </span>
-                <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-              </div>
-            </ng-template>
-            <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-              <div class="damage-type-option">
-                <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
-                <span>{{item.name}}</span>
-              </div>
-            </ng-template>
+        <div 
+            class="view-damage-types"
+            *ngIf="participant.id !== editingParticipantId || editingField !== 'vulnerabilities'; else editVulnerabilities">
+          <div class="view-damage-type" *ngFor="let vulnerability of (getDamageTypes(participant.vulnerabilityIds) | async)">
+            <app-color-value [color]="vulnerability.color" [showEmpty]="false"></app-color-value>
+            {{vulnerability.name}}
+          </div>
 
-            <ng-template ng-footer-tmp>
-              <div class="damage-types-dropdown-footer">
-                <div class="fields-row">Create new:</div>
-                <div class="fields-row">
-                  <app-colors-popup [(ngModel)]="newDamageTypeColor"></app-colors-popup>
-                  <input class="new-damage-type-input" type="text" [(ngModel)]="newDamageTypeName">
+          <button 
+              type="button"
+              class="edit-participant-field-button"
+              (click)="onEditField(participant.id, 'vulnerabilities')">
+            <fa-icon [icon]="editIcon"></fa-icon>
+          </button>
+        </div>
+
+        <ng-template #editVulnerabilities>
+          <div class="edit-damage-types">
+            <button 
+                type="button"
+                class="save-participant-field-button"
+                (click)="onSaveField()">
+              <fa-icon [icon]="faCheck"></fa-icon>
+            </button>
+
+            <ng-select
+              [items]="allDamageTypes$ | async"
+              [multiple]="true"
+              [ngModel]="participant.vulnerabilityIds"
+              (ngModelChange)="changeVulnerabilities(participant, $event)"
+              name="vulnerabilities"
+              bindLabel="name"
+              bindValue="id"
+              [closeOnSelect]="false"
+              [clearable]="false"
+            >
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <div class="dropdown-selected-icon">
+                  <span class="ng-value-label">
+                    <div class="selected-damage-type-label">
+                      <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+                      <span>{{item.name}}</span>
+                    </div>
+                  </span>
+                  <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
                 </div>
-                <div class="fields-row">
-                  <label>
-                    <input type="radio" name="type" [value]="0" [(ngModel)]="newDamageTypeType">DT
-                  </label>
-                  <label>
-                    <input type="radio" name="type" [value]="1" [(ngModel)]="newDamageTypeType">E
-                  </label>
-                  <button type="button" class="new-condition-button" (click)="addNewDamageType()">
-                    <fa-icon [icon]="faCheck"></fa-icon>
-                  </button>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <div class="damage-type-option">
+                  <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+                  <span>{{item.name}}</span>
                 </div>
-              </div>
-            </ng-template>
-          </ng-select>
-        <!-- </div> -->
+              </ng-template>
+
+              <ng-template ng-footer-tmp>
+                <div class="damage-types-dropdown-footer">
+                  <div class="fields-row">Create new:</div>
+                  <div class="fields-row">
+                    <app-colors-popup [(ngModel)]="newDamageTypeColor"></app-colors-popup>
+                    <input class="new-damage-type-input" type="text" [(ngModel)]="newDamageTypeName">
+                  </div>
+                  <div class="fields-row">
+                    <label>
+                      <input type="radio" name="type" [value]="0" [(ngModel)]="newDamageTypeType">DT
+                    </label>
+                    <label>
+                      <input type="radio" name="type" [value]="1" [(ngModel)]="newDamageTypeType">E
+                    </label>
+                    <button type="button" class="new-condition-button" (click)="addNewDamageType()">
+                      <fa-icon [icon]="faCheck"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </ng-template>
       </div>
 
       <div class="participant-immunities damage-types-list" [class.odd]="i % 2 === 0">
-        <ng-select
-          [items]="allDamageTypes$ | async"
-          [multiple]="true"
-          [ngModel]="participant.immunityIds"
-          (ngModelChange)="changeImmunities(participant, $event)"
-          name="immunities"
-          bindLabel="name"
-          bindValue="id"
-          [closeOnSelect]="false"
-          [clearable]="false"
-        >
-          <ng-template ng-label-tmp let-item="item" let-clear="clear">
-            <div class="dropdown-selected-icon">
-              <span class="ng-value-label">
-                <div class="selected-damage-type-label">
+        <div 
+            class="view-damage-types"
+            *ngIf="participant.id !== editingParticipantId || editingField !== 'immunities'; else editImmunities">
+          <div class="view-damage-type" *ngFor="let immunity of (getDamageTypes(participant.immunityIds) | async)">
+            <app-color-value [color]="immunity.color" [showEmpty]="false"></app-color-value>
+            {{immunity.name}}
+          </div>
+
+          <button 
+              type="button"
+              class="edit-participant-field-button"
+              (click)="onEditField(participant.id, 'immunities')">
+            <fa-icon [icon]="editIcon"></fa-icon>
+          </button>
+        </div>
+
+        <ng-template #editImmunities>
+          <div class="edit-damage-types">
+            <button 
+                type="button"
+                class="save-participant-field-button"
+                (click)="onSaveField()">
+              <fa-icon [icon]="faCheck"></fa-icon>
+            </button>
+            <ng-select
+              [items]="allDamageTypes$ | async"
+              [multiple]="true"
+              [ngModel]="participant.immunityIds"
+              (ngModelChange)="changeImmunities(participant, $event)"
+              name="immunities"
+              bindLabel="name"
+              bindValue="id"
+              [closeOnSelect]="false"
+              [clearable]="false"
+            >
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <div class="dropdown-selected-icon">
+                  <span class="ng-value-label">
+                    <div class="selected-damage-type-label">
+                      <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+                      <span>{{item.name}}</span>
+                    </div>
+                  </span>
+                  <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                </div>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <div class="damage-type-option">
                   <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
                   <span>{{item.name}}</span>
                 </div>
-              </span>
-              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-            </div>
-          </ng-template>
-          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-            <div class="damage-type-option">
-              <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
-              <span>{{item.name}}</span>
-            </div>
-          </ng-template>
+              </ng-template>
 
-          <ng-template ng-footer-tmp>
-            <div class="damage-types-dropdown-footer">
-              <div class="fields-row">Create new:</div>
-              <div class="fields-row">
-                <app-colors-popup [(ngModel)]="newDamageTypeColor"></app-colors-popup>
-                <input class="new-damage-type-input" type="text" [(ngModel)]="newDamageTypeName">
-              </div>
-              <div class="fields-row">
-                <label>
-                  <input type="radio" name="type" [value]="0" [(ngModel)]="newDamageTypeType">DT
-                </label>
-                <label>
-                  <input type="radio" name="type" [value]="1" [(ngModel)]="newDamageTypeType">E
-                </label>
-                <button type="button" class="new-condition-button" (click)="addNewDamageType()">
-                  <fa-icon [icon]="faCheck"></fa-icon>
-                </button>
-              </div>
-            </div>
-          </ng-template>
-        </ng-select>
+              <ng-template ng-footer-tmp>
+                <div class="damage-types-dropdown-footer">
+                  <div class="fields-row">Create new:</div>
+                  <div class="fields-row">
+                    <app-colors-popup [(ngModel)]="newDamageTypeColor"></app-colors-popup>
+                    <input class="new-damage-type-input" type="text" [(ngModel)]="newDamageTypeName">
+                  </div>
+                  <div class="fields-row">
+                    <label>
+                      <input type="radio" name="type" [value]="0" [(ngModel)]="newDamageTypeType">DT
+                    </label>
+                    <label>
+                      <input type="radio" name="type" [value]="1" [(ngModel)]="newDamageTypeType">E
+                    </label>
+                    <button type="button" class="new-condition-button" (click)="addNewDamageType()">
+                      <fa-icon [icon]="faCheck"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </ng-template>
       </div>
 
       <div class="participant-resistances damage-types-list" [class.odd]="i % 2 === 0">
-        <ng-select
-          [items]="allDamageTypes$ | async"
-          [multiple]="true"
-          [ngModel]="participant.resistanceIds"
-          (ngModelChange)="changeResistances(participant, $event)"
-          name="resistances"
-          bindLabel="name"
-          bindValue="id"
-          [closeOnSelect]="false"
-          [clearable]="false"
-        >
-          <ng-template ng-label-tmp let-item="item" let-clear="clear">
-            <div class="dropdown-selected-icon">
-              <span class="ng-value-label">
-                <div class="selected-damage-type-label">
+        <div 
+            class="view-damage-types"
+            *ngIf="participant.id !== editingParticipantId || editingField !== 'resistances'; else editResistances">
+          <div class="view-damage-type" *ngFor="let resistance of (getDamageTypes(participant.resistanceIds) | async)">
+            <app-color-value [color]="resistance.color" [showEmpty]="false"></app-color-value>
+            {{resistance.name}}
+          </div>
+
+          <button 
+              type="button"
+              class="edit-participant-field-button"
+              (click)="onEditField(participant.id, 'resistances')">
+            <fa-icon [icon]="editIcon"></fa-icon>
+          </button>
+        </div>
+
+        <ng-template #editResistances>
+          <div class="edit-damage-types">
+            <button 
+                type="button"
+                class="save-participant-field-button"
+                (click)="onSaveField()">
+              <fa-icon [icon]="faCheck"></fa-icon>
+            </button>
+            <ng-select
+              [items]="allDamageTypes$ | async"
+              [multiple]="true"
+              [ngModel]="participant.resistanceIds"
+              (ngModelChange)="changeResistances(participant, $event)"
+              name="resistances"
+              bindLabel="name"
+              bindValue="id"
+              [closeOnSelect]="false"
+              [clearable]="false"
+            >
+              <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                <div class="dropdown-selected-icon">
+                  <span class="ng-value-label">
+                    <div class="selected-damage-type-label">
+                      <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+                      <span>{{item.name}}</span>
+                    </div>
+                  </span>
+                  <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                </div>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <div class="damage-type-option">
                   <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
                   <span>{{item.name}}</span>
                 </div>
-              </span>
-              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-            </div>
-          </ng-template>
-          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-            <div class="damage-type-option">
-              <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
-              <span>{{item.name}}</span>
-            </div>
-          </ng-template>
+              </ng-template>
 
-          <ng-template ng-footer-tmp>
-            <div class="damage-types-dropdown-footer">
-              <div class="fields-row">Create new:</div>
-              <div class="fields-row">
-                <app-colors-popup [(ngModel)]="newDamageTypeColor"></app-colors-popup>
-                <input class="new-damage-type-input" type="text" [(ngModel)]="newDamageTypeName">
-              </div>
-              <div class="fields-row">
-                <label>
-                  <input type="radio" name="type" [value]="0" [(ngModel)]="newDamageTypeType">DT
-                </label>
-                <label>
-                  <input type="radio" name="type" [value]="1" [(ngModel)]="newDamageTypeType">E
-                </label>
-                <button type="button" class="new-condition-button" (click)="addNewDamageType()">
-                  <fa-icon [icon]="faCheck"></fa-icon>
-                </button>
-              </div>
-            </div>
-          </ng-template>
-        </ng-select>
+              <ng-template ng-footer-tmp>
+                <div class="damage-types-dropdown-footer">
+                  <div class="fields-row">Create new:</div>
+                  <div class="fields-row">
+                    <app-colors-popup [(ngModel)]="newDamageTypeColor"></app-colors-popup>
+                    <input class="new-damage-type-input" type="text" [(ngModel)]="newDamageTypeName">
+                  </div>
+                  <div class="fields-row">
+                    <label>
+                      <input type="radio" name="type" [value]="0" [(ngModel)]="newDamageTypeType">DT
+                    </label>
+                    <label>
+                      <input type="radio" name="type" [value]="1" [(ngModel)]="newDamageTypeType">E
+                    </label>
+                    <button type="button" class="new-condition-button" (click)="addNewDamageType()">
+                      <fa-icon [icon]="faCheck"></fa-icon>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </ng-template>
       </div>
 
       <div class="advantages" [class.odd]="i % 2 === 0">

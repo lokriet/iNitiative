@@ -23,7 +23,8 @@
 }
 
 .next-move-button,
-.summon-button {
+.summon-button,
+.generate-ini-button {
   border: 1px solid $blue;
   background-color: $blue;
   color: white;
@@ -34,13 +35,19 @@
   fa-icon {
     margin-right: 0.5rem;
   }
+
+  &:disabled {
+    background-color: white;
+    border-color: grey;
+    color: grey;
+  }
 }
 
 .participants-list {
   font-size: 0.8rem;
 
   display: grid;
-  grid-template-columns: 2rem repeat(5, max-content) repeat(6, 10rem);
+  grid-template-columns: 2rem repeat(9, max-content) repeat(2, 10rem);
 
   &>* {
     padding: 0.5rem;
@@ -215,4 +222,66 @@
   &:active {
     border-color: lightgray;
   }
+}
+
+.view-conditions,
+.view-damage-types {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+
+  &:hover {
+    .edit-participant-field-button {
+      cursor: pointer;
+  
+      fa-icon {
+        color: black;
+    
+        &:hover {
+          color: $blue;
+        }
+      }
+    }
+  }
+}
+
+.view-condition,
+.view-damage-type {
+  display: flex;
+}
+
+.edit-participant-field-button,
+.save-participant-field-button {
+  position: absolute;
+  top: -0.45rem;
+  right: -0.45rem;
+  z-index: 2;
+
+  border: none;
+  background-color: transparent;
+
+  fa-icon {
+    color: transparent;
+  }
+}
+
+.save-participant-field-button {
+  fa-icon {
+    color: black;
+    cursor: pointer;
+  
+    &:hover {
+      color: $blue;
+    }
+  }
+}
+
+
+.edit-conditions,
+.edit-damage-types {
+  position: relative;
+  width: 10rem;
+  padding-right: 0.8rem;
 }

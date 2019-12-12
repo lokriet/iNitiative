@@ -1,6 +1,6 @@
 <div 
     class="color-value" 
-    [ngStyle]="{backgroundColor: color && color.length > 0 ? color : transparent}" 
+    [ngStyle]="{backgroundColor: color && color.length > 0 ? color : 'transparent'}" 
     [class.hidden]="!showEmpty && (!color || color.length === 0)">
   <fa-icon [icon]="noColorIcon" *ngIf="showEmpty && (!color || color.length === 0)"></fa-icon>
 </div>

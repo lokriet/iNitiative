@@ -38,6 +38,10 @@ export class DamageTypeEditComponent implements OnInit {
       type: this.selectedType
     });
 
+    this.name = null;
+    this.color = null;
+    this.selectedType = this.type ? this.type : DamageTypeType.DamageType;
+
     if (!this.popupMode) {
       this.router.navigate(['/setup-damage-types']);
     }

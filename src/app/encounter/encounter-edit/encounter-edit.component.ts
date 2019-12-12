@@ -90,6 +90,17 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
           this.addedPlayers = this.encounterParticipantsQuery.getAll({
             filterBy: item => this.editedEncounter.participantIds.includes(item.id) && item.type === ParticipantType.Player
           });
+
+          this.addedMonsters = this.addedMonsters.map(item => ({ ...item,
+                                            conditionIds: item.conditionIds ? [...item.conditionIds] : [],
+                                            immunityIds: item.immunityIds ? [...item.immunityIds] : [],
+                                            resistanceIds: item.resistanceIds ? [...item.resistanceIds] : [],
+                                            vulnerabilityIds: item.vulnerabilityIds ? [...item.vulnerabilityIds] : []}));
+          this.addedPlayers = this.addedPlayers.map(item => ({ ...item,
+                                            conditionIds: item.conditionIds ? [...item.conditionIds] : [],
+                                            immunityIds: item.immunityIds ? [...item.immunityIds] : [],
+                                            resistanceIds: item.resistanceIds ? [...item.resistanceIds] : [],
+                                            vulnerabilityIds: item.vulnerabilityIds ? [...item.vulnerabilityIds] : []}));
         } else {
           this.addedPlayers = [];
           this.addedMonsters = [];
@@ -127,6 +138,11 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       }
     }
 
+    let activeParticipantId = null;
+    if (this.editMode && this.editedEncounter.activeParticipantId) {
+      activeParticipantId = this.editedEncounter.activeParticipantId;
+    }
+
     const newEncounter = {
       id: this.editMode ? this.editedEncounter.id : guid(),
       owner: this.authService.user.uid,
@@ -134,10 +150,10 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       participantIds: [...this.addedPlayers.map(player => player.id), ...this.addedMonsters.map(monster => monster.id)],
       createdDate: this.editMode ? this.editedEncounter.createdDate : currentDate.getTime(),
       lastModifiedDate: currentDate.getTime(),
-      activeParticipantId: this.editMode ? this.editedEncounter.activeParticipantId : null
+      activeParticipantId
     };
 
-    if (this.editMode) {
+    if (!this.editMode) {
       this.encounterService.add(newEncounter).then(value => {
         this.messageService.addInfo(`Yay, encounter ${this.encounterName} created!`);
 

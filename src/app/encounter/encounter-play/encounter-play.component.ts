@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
-import { faCheck, faPlay, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCog, faPlay, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { Observable, of, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
@@ -21,6 +21,14 @@ import { Encounter } from '../state/encounter.model';
 import { EncounterQuery } from '../state/encounter.query';
 import { EncounterService } from '../state/encounter.service';
 
+
+enum EditingField {
+  Vulnerabilities = 'vulnerabilities',
+  Immunities = 'immunities',
+  Resistances = 'resistances',
+  Conditions = 'conditions'
+}
+
 @Component({
   selector: 'app-encounter-play',
   templateUrl: './encounter-play.component.html',
@@ -30,6 +38,7 @@ export class EncounterPlayComponent implements OnInit {
   activeParticpantIcon = faPlay;
   faCheck = faCheck;
   skullIcon = faSkull;
+  editIcon = faCog;
 
   encountersLoading$: Observable<boolean>;
   participantTemplatesLoading$: Observable<boolean>;
@@ -51,6 +60,9 @@ export class EncounterPlayComponent implements OnInit {
   newDamageTypeColor: string = null;
   newDamageTypeName: string = null;
   newDamageTypeType = DamageTypeType.DamageType;
+
+  editingParticipantId: string = null;
+  editingField: EditingField = null;
 
   constructor(private encounterService: EncounterService,
               private encounterQuery: EncounterQuery,
@@ -337,4 +349,45 @@ export class EncounterPlayComponent implements OnInit {
     }
   }
 
+  onEditField(participantId, fieldName) {
+    this.editingParticipantId = participantId;
+    this.editingField = fieldName;
+  }
+
+  onSaveField() {
+    this.editingParticipantId = null;
+    this.editingField = null;
+  }
+
+
+  hasMissingInitiatives() {
+    let hasMissingInitiatives = false;
+    const participants = this.encounterParticipantsQuery.getAll({
+      filterBy: this.participantsFilter,
+      sortBy: this.partisipantsSort
+    });
+
+    for (const participant of participants) {
+      if (participant.initiative == null) {
+        hasMissingInitiatives = true;
+        break;
+      }
+    }
+
+    return hasMissingInitiatives;
+  }
+
+  generateMissingInitiatives() {
+    const participants = this.encounterParticipantsQuery.getAll({
+      filterBy: this.participantsFilter,
+      sortBy: this.partisipantsSort
+    });
+
+    for (const participant of participants) {
+      if (participant.initiative == null) {
+        const initiative = Math.ceil(Math.random() * 20);
+        this.encounterParticipantsService.update({...participant, initiative});
+      }
+    }
+  }
 }

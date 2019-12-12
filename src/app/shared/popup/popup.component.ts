@@ -30,6 +30,7 @@ export class PopupComponent implements OnInit {
   @ViewChild('popupParent') popupParent: ElementRef;
   @ViewChild('popupElement') popup: ElementRef;
   @ContentChild('popupInsidesTemplate', { read: TemplateRef }) popupInsidesTemplate: TemplateRef<any>;
+  @ContentChild('defaultInsidesTemplate', { read: TemplateRef }) defaultInsidesTemplate: TemplateRef<any>;
   @ContentChild('popupToggleTemplate', { read: TemplateRef }) popupToggleTemplate: TemplateRef<any>;
 
   hidden = true;
