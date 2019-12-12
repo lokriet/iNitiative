@@ -1,8 +1,8 @@
-import { Component, OnInit, forwardRef } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { faDiceD6 } from '@fortawesome/free-solid-svg-icons';
 
-import { EncounterParticipant } from '../encounter-participant/state/encounter-participant.model';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
+import { EncounterParticipant } from '../state/encounter-participant.model';
 
 
 export const ENCOUNTER_PARTICIPANTS_VALUE_ACCESSOR: any = {

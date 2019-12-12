@@ -269,6 +269,14 @@ export class EncounterPlayComponent implements OnInit {
     this.encounterParticipantsService.update({ ...participant, immunityIds });
   }
 
+  setTmpArmorClass(participant: EncounterParticipant, temporaryArmorClass: number) {
+    this.encounterParticipantsService.update({ ...participant, temporaryArmorClass });
+  }
+
+  setTmpSpeed(participant: EncounterParticipant, temporarySpeed: number) {
+    this.encounterParticipantsService.update({ ...participant, temporarySpeed });
+  }
+
   addNewCondition() {
     if (this.newConditionName == null) {
       return;
@@ -325,7 +333,9 @@ export class EncounterPlayComponent implements OnInit {
       maxHp: participantTemplate.maxHp,
       temporaryHp: 0,
       armorClass: participantTemplate.armorClass,
+      temporaryArmorClass: null,
       speed: participantTemplate.speed,
+      temporarySpeed: null,
       vulnerabilityIds: [...participantTemplate.vulnerabilityIds],
       immunityIds: [...participantTemplate.immunityIds],
       resistanceIds: [...participantTemplate.resistanceIds],

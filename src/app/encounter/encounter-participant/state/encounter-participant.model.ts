@@ -12,7 +12,9 @@ export interface EncounterParticipant {
   maxHp: number;
   temporaryHp: number;
   armorClass: number;
+  temporaryArmorClass: number;
   speed: number;
+  temporarySpeed: number;
   vulnerabilityIds: string[];
   immunityIds: string[];
   resistanceIds: string[];

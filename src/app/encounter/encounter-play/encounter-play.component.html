@@ -20,7 +20,6 @@
 
       <ng-template #popupInsidesTemplate let-hide="hide">
         <div class="summon-popup">
-
           <div class="popup-buttons">
             <button 
                 type="button" 
@@ -164,11 +163,64 @@
       </div>
 
       <div class="participant-armor-class" [class.odd]="i % 2 === 0">
-        {{participant.armorClass}}
+        <app-popup
+          [showCloseButton]="true" 
+          windowName="Temp value"
+        >
+          <ng-template #popupToggleTemplate let-toggle=toggle>
+            <div class="armor-class" (click)="toggle()">
+              {{participant.temporaryArmorClass || participant.armorClass}}{{ participant.temporaryArmorClass ? '*' : '' }}
+            </div>
+          </ng-template>
+    
+          <ng-template #popupInsidesTemplate let-hide="hide">
+            <div class="tmp-value-popup">
+              <input type="number" min="0" class="tmp-value-input" [value]="participant.temporaryArmorClass" #tmpArmorClass>
+              <button
+                type="button"
+                class="tmp-popup-button"
+                (click)="setTmpArmorClass(participant, tmpArmorClass.value)"
+              >Set</button>
+              <button
+                type="button"
+                class="tmp-popup-button"
+                (click)="setTmpArmorClass(participant, null)"
+              >Reset</button>
+            </div> 
+          </ng-template>
+        </app-popup>
+
+        <!-- {{participant.armorClass}} -->
       </div>
 
       <div class="participant-speed" [class.odd]="i % 2 === 0">
-        {{participant.speed}}
+        <!-- {{participant.speed}} -->
+        <app-popup
+          [showCloseButton]="true" 
+          windowName="Temp value"
+        >
+          <ng-template #popupToggleTemplate let-toggle=toggle>
+            <div class="speed" (click)="toggle()">
+              {{participant.temporarySpeed || participant.speed}}{{ participant.temporarySpeed ? '*' : '' }}
+            </div>
+          </ng-template>
+    
+          <ng-template #popupInsidesTemplate let-hide="hide">
+            <div class="tmp-value-popup">
+              <input type="number" min="0" class="tmp-value-input" [value]="participant.temporaryArmorClass" #tmpSpeed>
+              <button
+                type="button"
+                class="tmp-popup-button"
+                (click)="setTmpSpeed(participant, tmpSpeed.value)"
+              >Set</button>
+              <button
+                type="button"
+                class="tmp-popup-button"
+                (click)="setTmpSpeed(participant, null)"
+              >Reset</button>
+            </div> 
+          </ng-template>
+        </app-popup>
       </div>
 
       <div class="participant-conditions conditions-list" [class.odd]="i % 2 === 0">
