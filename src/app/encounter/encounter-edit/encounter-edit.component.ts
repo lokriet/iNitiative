@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
+import { faDiceD6, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
@@ -12,10 +13,9 @@ import { ParticipantQuery } from 'src/app/setup/state/participants/participant.q
 import { EncounterParticipant } from '../encounter-participant/state/encounter-participant.model';
 import { EncounterParticipantQuery } from '../encounter-participant/state/encounter-participant.query';
 import { EncounterParticipantService } from '../encounter-participant/state/encounter-participant.service';
+import { Encounter } from '../state/encounter.model';
 import { EncounterQuery } from '../state/encounter.query';
 import { EncounterService } from '../state/encounter.service';
-import { faDiceD6, faPlay } from '@fortawesome/free-solid-svg-icons';
-import { Encounter } from '../state/encounter.model';
 
 @Component({
   selector: 'app-encounter-edit',
@@ -37,10 +37,6 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
 
   addedPlayers: EncounterParticipant[] = [];
   addedMonsters: EncounterParticipant[] = [];
-
-  // addedParticipantsNoByTypeId: Map<string, number> = new Map();
-
-  activeTemlateTab = 'players';
 
   editMode = false;
   editedEncounter: Encounter;
@@ -221,14 +217,6 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
 
   changePlayer(player: EncounterParticipant) {
     this.addedPlayers.splice(this.addedPlayers.findIndex(item => item.id === player.id), 1, player);
-  }
-
-  isTemplateTabActive(tabName: string) {
-    return this.activeTemlateTab === tabName;
-  }
-
-  setTemplateTabActive(tabName: string) {
-    this.activeTemlateTab = tabName;
   }
 
   generateInitiatives() {

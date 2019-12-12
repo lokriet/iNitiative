@@ -1,0 +1,32 @@
+<div class="templates-list">
+  <div class="tab-buttons">
+    <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="isTemplateTabActive('players')"
+        (click)="setTemplateTabActive('players')">
+      Players
+    </button>
+    <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="isTemplateTabActive('monsters')"
+        (click)="setTemplateTabActive('monsters')">
+      Monsters
+    </button>
+  </div>
+
+  <div class="all-players-view tab-view" [class.hidden]="!isTemplateTabActive('players')">
+    <app-participant-templates-list 
+        [type]="0" 
+        class="players-list"
+        (participantAdded)="addParticipant($event)"></app-participant-templates-list>
+  </div>
+
+  <div class="all-monsters-view tab-view" [class.hidden]="!isTemplateTabActive('monsters')">
+    <app-participant-templates-list 
+        [type]="1" 
+        class="monsters-list"
+        (participantAdded)="addParticipant($event)"></app-participant-templates-list>
+  </div>
+</div>

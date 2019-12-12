@@ -1,0 +1,45 @@
+<nav>
+  <a class="navbar-brand" [routerLink]="['/']">
+    <img src="../../assets/img/homeIcon.svg" alt="">
+  </a>
+
+  <div class="align-baseline">
+    <a class="navbar-brand" [routerLink]="['/']"><p>iNitiative</p></a>
+  
+    <div class="navbar-nav" #navigation>
+      <ul class="navbar-nav-group nav-main">
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="'/encounters'">Encounters</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link" type="button" (click)="dropdownOpen = !dropdownOpen">
+            Setup
+            <fa-icon [icon]="arrowDownIcon"></fa-icon>
+          </a>
+          <div class="dropdown-content" [class.hidden]="!dropdownOpen">
+            <a [routerLink]="'/setup-participants'">Participant templates</a>
+            <a [routerLink]="'/setup-damage-types'">Damage types/Effects</a>
+            <a [routerLink]="'/setup-conditions'">Conditions</a>
+          </div>
+        </li>
+      </ul>
+      <ul class="navbar-nav-group nav-signin" *ngIf="!isAuthenticated()">
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="'/login'">Log In</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="'/register'">Register</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav-group nav-signout" *ngIf="isAuthenticated()">
+        <li class="nav-item">
+          <a class="nav-link" (click)="onLogout()" style="cursor: pointer">Log Out</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" [routerLink]="'/profile'">{{username()}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  

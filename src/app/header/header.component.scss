@@ -1,0 +1,134 @@
+@import '../../assets/scss/partials/colors';
+
+nav {
+  width: 100%;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  z-index: 100;
+  background-color: $blue;
+
+  margin-bottom: 1.5rem;
+}
+
+.align-baseline {
+  display: flex;
+  align-items: baseline;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.navbar-brand {
+  height: 2rem;
+  text-decoration: none;
+  margin-right: 0.5rem;
+
+  p {
+    // font-family: $header-font;
+    font-weight: 900;
+    letter-spacing: 0.07rem;
+    font-size: 1.5rem;
+    margin: 0;
+    color: white;
+  }
+
+  img {
+    height: 100%;
+  }
+}
+
+.navbar-nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.navbar-nav-group {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+}
+
+.nav-item {
+  margin: 0 1rem 0 0;
+  height: 100%;
+  padding: 1.5rem 0.5rem 0 0.5rem;
+
+  &:hover,
+  &.active {
+    background-color: white;
+
+    .nav-link {
+      color: $blue;
+    }
+  }
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  // font-family: $header-font;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover,
+  &.active {
+    color: $blue;
+  }
+}
+
+.nav-main {
+  flex-grow: 1;
+}
+
+.dropdown {
+  position: relative;
+
+
+  &:hover {
+    .dropdown-content {
+      display: flex;
+    }
+  }
+
+  .dropdown-content {
+    width: 13rem;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 30;
+  
+    border: 1px solid $blue;
+    border-top: none;
+  
+    display: none;
+    flex-direction: column;
+  
+    a {
+      text-decoration: none;
+      color: $blue;
+      padding: 1rem;
+      background-color: white;
+      font-weight: 700;
+      width: 100%;
+  
+      &:hover {
+        color: white;
+        background-color: $blue;
+      }
+    }
+  
+    // &.hidden {
+    //   display: none;
+    // }
+  }
+}
+

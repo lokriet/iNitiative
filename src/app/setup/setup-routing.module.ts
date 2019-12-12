@@ -1,32 +1,34 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ParticipantsSetupComponent } from './participants-setup/participants-setup.component';
+
+import { AuthGuard } from '../auth/auth.guard';
+import { ConditionsSetupComponent } from './conditions-setup/conditions-setup.component';
 import { DamageTypeEditComponent } from './damage-type-setup/damage-type-edit/damage-type-edit.component';
 import { DamageTypeSetupComponent } from './damage-type-setup/damage-type-setup.component';
-import { DamageTypeGuard } from './state/damage-type/damage-type.guard';
 import { ParticipantEditComponent } from './participants-setup/participant-edit/participant-edit.component';
-import { ParticipantGuard } from './state/participants/participant.guard';
-import { ConditionsSetupComponent } from './conditions-setup/conditions-setup.component';
+import { ParticipantsSetupComponent } from './participants-setup/participants-setup.component';
 import { ConditionGuard } from './state/conditions/condition.guard';
+import { DamageTypeGuard } from './state/damage-type/damage-type.guard';
+import { ParticipantGuard } from './state/participants/participant.guard';
 
 
 const setupRoutes: Routes = [
   {
     path: 'setup-participants',
     component: ParticipantsSetupComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard],
+    canActivate: [DamageTypeGuard, ParticipantGuard, AuthGuard],
     canDeactivate: [DamageTypeGuard, ParticipantGuard]
   },
   {
     path: 'setup-participants/new',
     component: ParticipantEditComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard],
+    canActivate: [DamageTypeGuard, ParticipantGuard, AuthGuard],
     canDeactivate: [DamageTypeGuard, ParticipantGuard]
   },
   {
     path: 'setup-damage-types',
     component: DamageTypeSetupComponent,
-    canActivate: [DamageTypeGuard],
+    canActivate: [DamageTypeGuard, AuthGuard],
     canDeactivate: [DamageTypeGuard]
   },
   {
@@ -36,7 +38,7 @@ const setupRoutes: Routes = [
   {
     path: 'setup-conditions',
     component: ConditionsSetupComponent,
-    canActivate: [ConditionGuard],
+    canActivate: [ConditionGuard, AuthGuard],
     canDeactivate: [ConditionGuard]
   }
 ];

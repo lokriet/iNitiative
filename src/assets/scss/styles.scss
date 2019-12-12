@@ -16,6 +16,13 @@ html {
   height: 100%;
 }
 
+body {
+  height: 100vh;
+  margin: 0;
+  // background-color: $background-color;
+  // font-family: $main-font;
+}
+
 .color-value {
   display: inline-block;
   width: 1rem;

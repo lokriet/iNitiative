@@ -17,13 +17,16 @@ import { HomeComponent } from './home/home.component';
 import { MessagesComponent } from './messages/messages.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { SetupModule } from './setup/setup.module';
+import { HeaderComponent } from './header/header.component';
+import { AuthGuard } from './auth/auth.guard';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     PageNotFoundComponent,
-    MessagesComponent
+    MessagesComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +51,7 @@ import { SetupModule } from './setup/setup.module';
     FontAwesomeModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
