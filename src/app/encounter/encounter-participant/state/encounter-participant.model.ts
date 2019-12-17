@@ -18,6 +18,7 @@ export interface EncounterParticipant {
   vulnerabilityIds: string[];
   immunityIds: string[];
   resistanceIds: string[];
+  featureIds: string[];
   conditionIds: string[];
   comments: string;
   advantages: string;

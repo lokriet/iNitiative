@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
 import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
+import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
 import { Participant } from 'src/app/setup/state/participants/participant.model';
 import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
@@ -30,6 +31,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
   participantsLoading$: Observable<boolean>;
   damageTypesLoading$: Observable<boolean>;
   conditionsLoading$: Observable<boolean>;
+  featuresLoading$: Observable<boolean>;
 
   encounterName: string;
   errorMessage: string = null;
@@ -47,6 +49,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
               private encounterParticipantsService: EncounterParticipantService,
               private damageTypesQuery: DamageTypeQuery,
               private conditionsQuery: ConditionsQuery,
+              private featuresQuery: FeatureQuery,
               private authService: AuthService,
               private messageService: MessageService,
               private router: Router,
@@ -58,6 +61,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
     this.participantsLoading$ = this.encounterParticipantsQuery.selectLoading();
     this.damageTypesLoading$ = this.damageTypesQuery.selectLoading();
     this.conditionsLoading$ = this.conditionsQuery.selectLoading();
+    this.featuresLoading$ = this.featuresQuery.selectLoading();
 
     this.sub = this.route.params.subscribe(
       (params: Params) => {
@@ -87,6 +91,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
 
           this.addedParticipants = this.addedParticipants.map(item => ({ ...item,
                                             conditionIds: item.conditionIds ? [...item.conditionIds] : [],
+                                            featureIds: item.featureIds ? [...item.featureIds] : [],
                                             immunityIds: item.immunityIds ? [...item.immunityIds] : [],
                                             resistanceIds: item.resistanceIds ? [...item.resistanceIds] : [],
                                             vulnerabilityIds: item.vulnerabilityIds ? [...item.vulnerabilityIds] : []}));
@@ -187,6 +192,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       immunityIds: [...participantTemplate.immunityIds],
       resistanceIds: [...participantTemplate.resistanceIds],
       conditionIds: [],
+      featureIds: [...participantTemplate.featureIds],
       comments: participantTemplate.comments,
       advantages: null
     };

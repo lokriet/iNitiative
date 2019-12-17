@@ -1,87 +1,108 @@
 <div class="damage-types-view">
-  <app-damage-type-edit [popupMode]="true" [type]="damageTypeType"></app-damage-type-edit>
+  <div class="section-header">
+    Add new
+  </div>
+  <app-damage-type-edit [popupMode]="false"></app-damage-type-edit>
   
-  <div class="section-header">{{ damageTypeType == null ? 'Damage Types and Effects' : damageTypeType === 0 ? 'Damage Types' : 'Effects'}}</div>
-
-  <div class="name-filter" *ngIf="damageTypeType != null">
-    <app-search-input [ngModel]="nameFilter" (ngModelChange)="onNameFilterChanged($event)"></app-search-input>
+  <!-- <div class="section-header">{{ damageTypeType == null ? 'Damage Types and Effects' : damageTypeType === 0 ? 'Damage Types' : 'Effects'}}</div> -->
+  <div class="tab-buttons">
+    <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="damageTypeType === 0"
+        (click)="setDamageType(0)">
+      Damage Types
+    </button>
+    <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="damageTypeType === 1"
+        (click)="setDamageType(1)">
+      Effects
+    </button>
   </div>
 
-  <div class="damage-types-grid" [class.short-grid]="damageTypeType != null">
-    <!-- table header -->
-    <div class="column-header">
-      <!-- Color -->
+  <div class="tab-view">
+    <div class="name-filter" *ngIf="damageTypeType != null">
+      <app-search-input [ngModel]="nameFilter" (ngModelChange)="onNameFilterChanged($event)"></app-search-input>
     </div>
-    <div class="column-header">
-      <div class="column-header__name">
-        <button (click)="switchSortOrder('name')">
-          Name
-        </button>
-        <div class="sorter-icon">
-          <app-sort-icon 
-              [isActive]="isSortingByName()" 
-              [isSortUp]="isSortingAsc()"
-              (sortingSwitched)="changeSortOrder('name', $event)"
-          ></app-sort-icon>
+  
+    <div class="damage-types-grid" [class.short-grid]="damageTypeType != null">
+      <!-- table header -->
+      <div class="column-header">
+        <!-- Color -->
+      </div>
+      <div class="column-header">
+        <div class="column-header__name">
+          <button (click)="switchSortOrder('name')">
+            Name
+          </button>
+          <div class="sorter-icon">
+            <app-sort-icon 
+                [isActive]="isSortingByName()" 
+                [isSortUp]="isSortingAsc()"
+                (sortingSwitched)="changeSortOrder('name', $event)"
+            ></app-sort-icon>
+          </div>
+        </div>
+        <div class="column-header__filter" *ngIf="damageTypeType == null">
+          <app-filter-popup 
+            [filterType]="'string'" 
+            [ngModel]="nameFilter" 
+            name="nameFilter"
+            (ngModelChange)="onNameFilterChanged($event)"></app-filter-popup>
         </div>
       </div>
-      <div class="column-header__filter" *ngIf="damageTypeType == null">
-        <app-filter-popup 
-          [filterType]="'string'" 
-          [ngModel]="nameFilter" 
-          name="nameFilter"
-          (ngModelChange)="onNameFilterChanged($event)"></app-filter-popup>
-      </div>
-    </div>
-
-    <div class="column-header" *ngIf="damageTypeType == null">
-      <div class="column-header__name">
-        <button (click)="switchSortOrder('type')">
-          Type
-        </button>
-        <div class="sorter-icon">
-          <app-sort-icon 
-              [isActive]="isSortingByType()" 
-              [isSortUp]="isSortingAsc()"
-              (sortingSwitched)="changeSortOrder('type', $event)"
-          ></app-sort-icon>
+  
+      <div class="column-header" *ngIf="damageTypeType == null">
+        <div class="column-header__name">
+          <button (click)="switchSortOrder('type')">
+            Type
+          </button>
+          <div class="sorter-icon">
+            <app-sort-icon 
+                [isActive]="isSortingByType()" 
+                [isSortUp]="isSortingAsc()"
+                (sortingSwitched)="changeSortOrder('type', $event)"
+            ></app-sort-icon>
+          </div>
+        </div>
+        <div class="column-header__filter">
+          <app-filter-popup 
+            [filterType]="'list'"
+            [listItems]="[{name: 'DamageType', value: 0}, {name: 'Effect', value: 1}]"
+            listItemLabelField="name"
+            [ngModel]="typeFilter" 
+            name="typeFilter"
+            (ngModelChange)="onTypeFilterChanged($event)"></app-filter-popup>
         </div>
       </div>
-      <div class="column-header__filter">
-        <app-filter-popup 
-          [filterType]="'list'"
-          [listItems]="[{name: 'DamageType', value: 0}, {name: 'Effect', value: 1}]"
-          listItemLabelField="name"
-          [ngModel]="typeFilter" 
-          name="typeFilter"
-          (ngModelChange)="onTypeFilterChanged($event)"></app-filter-popup>
-      </div>
+  
+      <!-- table internals -->
+      <ng-container *ngFor="let damageType of (allDamageTypes$ | async);let i = index">
+        <div class="grid-color-value">
+          <app-colors-popup [ngModel]="damageType.color" (ngModelChange)="onChangeColor(damageType, $event)" name="color"></app-colors-popup>
+        </div>
+        <div class="name">
+          <input 
+              type="text" 
+              class="string-input" 
+              [ngModel]="damageType.name" 
+              [name]="'name'+i"
+              (keydown.enter)="onChangeName(damageType, $event.target.value)">
+          <!-- {{damageType.name}} -->
+        </div>
+  
+        <div class="type" *ngIf="damageTypeType == null">
+          {{damageType.type === 0 ? 'Damage type' : 'Effect'}}
+        </div>
+  
+        <div>
+          <button class="delete-button" (click)="onDeleteDamageType(damageType.id)">
+            <fa-icon [icon]="deleteIcon"></fa-icon>
+          </button>
+        </div>
+      </ng-container>
     </div>
-
-    <!-- table internals -->
-    <ng-container *ngFor="let damageType of (allDamageTypes$ | async);let i = index">
-      <div class="grid-color-value">
-        <app-colors-popup [ngModel]="damageType.color" (ngModelChange)="onChangeColor(damageType, $event)" name="color"></app-colors-popup>
-      </div>
-      <div class="name">
-        <input 
-            type="text" 
-            class="string-input" 
-            [ngModel]="damageType.name" 
-            [name]="'name'+i"
-            (keydown.enter)="onChangeName(damageType, $event.target.value)">
-        <!-- {{damageType.name}} -->
-      </div>
-
-      <div class="type" *ngIf="damageTypeType == null">
-        {{damageType.type === 0 ? 'Damage type' : 'Effect'}}
-      </div>
-
-      <div>
-        <button class="delete-button" (click)="onDeleteDamageType(damageType.id)">
-          <fa-icon [icon]="deleteIcon"></fa-icon>
-        </button>
-      </div>
-    </ng-container>
   </div>
 </div>

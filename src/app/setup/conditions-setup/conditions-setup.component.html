@@ -1,57 +1,73 @@
-<div class="loading" *ngIf="(conditionsLoading$ | async); else loaded">
-  Loading...
-</div>
-
-<ng-template #loaded>
-
-  <app-condition-edit></app-condition-edit>
-
-  <div class="name-filter">
-    <app-search-input [(ngModel)]="nameFilter"></app-search-input>
+<div class="setup-conditions-view">
+  <div class="loading" *ngIf="(conditionsLoading$ | async); else loaded">
+    Loading...
   </div>
-
-  <div class="conditions-table">
-    <div class="column-header">
-      <!-- Color -->
+  
+  <ng-template #loaded>
+    <div class="section-header">
+      Add new
     </div>
-    <div class="column-header">
-      <div class="column-header__name">
-        <button (click)="switchSortOrder()">
-          Name
-        </button>
-        <div class="sorter-icon">
-          <app-sort-icon 
-              [isActive]="true" 
-              [isSortUp]="isSortingAsc()"
-              (sortingSwitched)="changeSortOrder($event)"
-          ></app-sort-icon>
+  
+    <app-condition-edit></app-condition-edit>
+  
+    <div class="name-filter">
+      <app-search-input [(ngModel)]="nameFilter"></app-search-input>
+    </div>
+  
+    <div class="conditions-table">
+      <div class="column-header">
+        <!-- Color -->
+      </div>
+      <div class="column-header">
+        <div class="column-header__name">
+          <button (click)="switchSortOrder()">
+            Name
+          </button>
+          <div class="sorter-icon">
+            <app-sort-icon 
+                [isActive]="true" 
+                [isSortUp]="isSortingAsc()"
+                (sortingSwitched)="changeSortOrder($event)"
+            ></app-sort-icon>
+          </div>
         </div>
       </div>
+      <div class="column-header">
+        Description
+      </div>
+  
+  
+      <!-- table internals -->
+      <ng-container *ngFor="let condition of (allConditions$ | async | filterByname : nameFilter); let i = index">
+        <div class="grid-color-value">
+          <app-colors-popup [ngModel]="condition.color" (ngModelChange)="onChangeColor(condition, $event)" name="color"></app-colors-popup>
+        </div>
+  
+        <div class="name-value">
+          <input 
+              type="text" 
+              class="string-input" 
+              [ngModel]="condition.name" 
+              [name]="'name'+i"
+              (keydown.enter)="onChangeName(condition, $event.target.value)">
+              <!-- {{condition.name}} -->
+        </div>
+  
+        <div class="description">
+          <textarea 
+              class="textarea-input description-input" 
+              autosize 
+              [ngModel]="condition.description" 
+              (blur)="onChangeDescription(condition, $event.target.value)"></textarea>
+        </div>
+  
+        <div>
+          <button class="delete-button" (click)="onDeleteCondition(condition.id)">
+            <fa-icon [icon]="deleteIcon"></fa-icon>
+          </button>
+        </div>
+      </ng-container>
     </div>
-
-
-    <!-- table internals -->
-    <ng-container *ngFor="let condition of (allConditions$ | async | filterByname : nameFilter); let i = index">
-      <div class="grid-color-value">
-        <app-colors-popup [ngModel]="condition.color" (ngModelChange)="onChangeColor(condition, $event)" name="color"></app-colors-popup>
-      </div>
-
-      <div class="name-value">
-        <input 
-            type="text" 
-            class="string-input" 
-            [ngModel]="condition.name" 
-            [name]="'name'+i"
-            (keydown.enter)="onChangeName(condition, $event.target.value)">
-            <!-- {{condition.name}} -->
-      </div>
-
-      <div>
-        <button class="delete-button" (click)="onDeleteCondition(condition.id)">
-          <fa-icon [icon]="deleteIcon"></fa-icon>
-        </button>
-      </div>
-    </ng-container>
-  </div>
-
-</ng-template>
+  
+  </ng-template>
+</div>

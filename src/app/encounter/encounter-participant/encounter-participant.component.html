@@ -125,6 +125,23 @@
           </div>
         </ng-template>
       </div>
+
+      <div class="features-list">
+        <div class="detail-label">
+          Features:
+        </div>
+        <div *ngIf="!participant.featureIds || participant.featureIds.length === 0;else featuresList">None</div>
+        <ng-template #featuresList>
+          <div class="feature" *ngFor="let featureId of participant.featureIds">
+            <div class="color">
+              <app-color-value [color]="getFeature(featureId).color"></app-color-value>
+            </div>
+            <div class="feature-name">
+              {{ getFeature(featureId).name }}
+            </div>
+          </div>
+        </ng-template>
+      </div>
   
       <div class="conditions-list">
         <div class="detail-label">

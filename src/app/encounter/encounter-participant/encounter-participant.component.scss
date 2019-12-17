@@ -99,7 +99,8 @@
 }
 
 .damage-types-list,
-.conditions-list {
+.conditions-list,
+.features-list {
   margin: 0.5rem 1rem 0 1rem;
   display: flex;
   flex-direction: column;
@@ -107,7 +108,8 @@
 }
 
 .damage-type,
-.condition {
+.condition,
+.feature {
   display: flex;
   margin-top: 0.5rem;
 }

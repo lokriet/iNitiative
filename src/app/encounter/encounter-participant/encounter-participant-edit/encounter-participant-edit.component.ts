@@ -1,13 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { EncounterParticipant } from '../state/encounter-participant.model';
-import { faChevronRight, faTimes, faDiceD6, faCheck, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
-import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
-import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
-import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
-import { Condition } from 'src/app/setup/state/conditions/condition.model';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { faCheck, faChevronRight, faDiceD6, faTimes, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Condition } from 'src/app/setup/state/conditions/condition.model';
+import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
+import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
+import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
+import { Feature } from 'src/app/setup/state/features/feature.model';
+import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
+
+import { EncounterParticipant } from '../state/encounter-participant.model';
 
 @Component({
   selector: 'app-encounter-participant-edit',
@@ -50,14 +53,17 @@ export class EncounterParticipantEditComponent implements OnInit {
   immunities: string[] = [];
   resistances: string[] = [];
   conditions: string[] = [];
+  features: string[] = [];
   comments: string;
 
 
   allDamageTypes$: Observable<DamageType[]>;
   allConditions$: Observable<Condition[]>;
+  allFeatures$: Observable<Feature[]>;
 
   constructor(private damageTypeQuery: DamageTypeQuery,
               private conditionsQuery: ConditionsQuery,
+              private featureQuery: FeatureQuery,
               private authService: AuthService) { }
 
   ngOnInit() {
@@ -84,6 +90,9 @@ export class EncounterParticipantEditComponent implements OnInit {
     if (this.participant.resistanceIds) {
       this.resistances = [...this.participant.resistanceIds];
     }
+    if (this.participant.featureIds) {
+      this.features = [...this.participant.featureIds];
+    }
 
 
     this.allDamageTypes$ = this.damageTypeQuery.selectAll({
@@ -105,6 +114,16 @@ export class EncounterParticipantEditComponent implements OnInit {
       },
       sortBy: 'name'
     });
+
+    this.allFeatures$ = this.featureQuery.selectAll({
+      filterBy: item => {
+        if (item.owner !== this.authService.user.uid) {
+          return false;
+        }
+        return true;
+      },
+      sortBy: 'name'
+    });
   }
 
   switchExpanded() {
@@ -118,6 +137,10 @@ export class EncounterParticipantEditComponent implements OnInit {
 
   getCondition(conditionId: string): Condition {
     return this.conditionsQuery.getEntity(conditionId);
+  }
+
+  getFeature(featureId: string): Feature {
+    return this.featureQuery.getEntity(featureId);
   }
 
   deleteParticipant() {
@@ -152,6 +175,7 @@ export class EncounterParticipantEditComponent implements OnInit {
       resistanceIds: this.resistances,
       immunityIds: this.immunities,
       conditionIds: this.conditions,
+      featureIds: this.features,
       comments: this.comments,
       advantages: null
     };

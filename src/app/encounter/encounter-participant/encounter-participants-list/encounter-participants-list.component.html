@@ -30,13 +30,15 @@
         </div>
       </div>
     </div>
-    <app-encounter-participant
-      *ngFor="let participant of participants; let i = index"
-      [participant]="participant"
-      (participantChanged)="onParticipantChanged($event)"
-      (delete)="onDeleteParticipant(i)"
-    >
-    </app-encounter-participant>
+    <div class="participant-items">
+      <app-encounter-participant
+        *ngFor="let participant of participants; let i = index"
+        [participant]="participant"
+        (participantChanged)="onParticipantChanged($event)"
+        (delete)="onDeleteParticipant(i)"
+      >
+      </app-encounter-participant>
+    </div>
   </ng-template>
   
 </div>

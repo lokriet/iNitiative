@@ -7,6 +7,7 @@ import { Encounter } from '../state/encounter.model';
 import { EncounterQuery } from '../state/encounter.query';
 import { EncounterService } from '../state/encounter.service';
 import { DateFilterValue } from 'src/app/shared/filter-popup/filter-popup.component';
+import { AuthService } from 'src/app/auth/state/auth.service';
 
 @Component({
   selector: 'app-encounters-list',
@@ -30,7 +31,8 @@ export class EncountersListComponent implements OnInit {
   modifiedDatesFilter: DateFilterValue;
 
   constructor(private encounterQuery: EncounterQuery,
-              private encounterService: EncounterService) { }
+              private encounterService: EncounterService,
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.encountersLoading$ = this.encounterQuery.selectLoading();
@@ -107,6 +109,10 @@ export class EncountersListComponent implements OnInit {
   }
 
   checkFilter(encounter: Encounter): boolean {
+    if (this.authService.user.uid !== encounter.owner) {
+      return false;
+    }
+
     if (!!this.nameFilter && this.nameFilter.length > 0 && !encounter.name.toLowerCase().includes(this.nameFilter.toLowerCase())) {
       return false;
     }

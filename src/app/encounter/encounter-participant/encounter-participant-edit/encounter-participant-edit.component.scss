@@ -107,18 +107,20 @@
 }
 
 .damage-types-list,
-.conditions-list {
+.conditions-list,
+.features-list {
   margin: 0.5rem 1rem 0 1rem;
   display: flex;
   flex-direction: column;
   padding: 0.5rem 0;
 }
 
-.damage-type,
-.condition {
-  display: flex;
-  margin-top: 0.5rem;
-}
+// .damage-type,
+// .condition,
+// .feature {
+//   display: flex;
+//   margin-top: 0.5rem;
+// }
 
 .comments {
   margin-bottom: 1rem;

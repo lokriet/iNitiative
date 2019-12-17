@@ -1,12 +1,14 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { faChevronRight, faCog, faTimes, faDiceD6 } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faCog, faDiceD6, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { Condition } from 'src/app/setup/state/conditions/condition.model';
+import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
 import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
+import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
 
 import { EncounterParticipant } from './state/encounter-participant.model';
-import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
-import { Condition } from 'src/app/setup/state/conditions/condition.model';
+import { Feature } from 'src/app/setup/state/features/feature.model';
 
 @Component({
   selector: 'app-encounter-participant',
@@ -34,7 +36,8 @@ export class EncounterParticipantComponent implements OnInit {
   editMode = false;
 
   constructor(private damageTypeQuery: DamageTypeQuery,
-              private conditionsQuery: ConditionsQuery) { }
+              private conditionsQuery: ConditionsQuery,
+              private featureQuery: FeatureQuery) { }
 
   ngOnInit() {
   }
@@ -45,6 +48,10 @@ export class EncounterParticipantComponent implements OnInit {
 
   getDamageType(damageTypeId: string): DamageType {
     return this.damageTypeQuery.getEntity(damageTypeId);
+  }
+
+  getFeature(featureId: string): Feature {
+    return this.featureQuery.getEntity(featureId);
   }
 
   getCondition(conditionId: string): Condition {

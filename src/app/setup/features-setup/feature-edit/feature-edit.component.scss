@@ -1,7 +1,7 @@
 @import '../../../../assets/scss/partials/colors';
 @import '../../../../assets/scss/partials/shared';
 
-.new-condition-form {
+.new-feature-form {
   display: flex;
   flex-direction: column;
   &>* {
@@ -15,10 +15,10 @@
   }
 }
 
-.edit-conditions-standalone {
+.edit-features-standalone {
   margin: 0;
 
-  .new-condition-form {
+  .new-feature-form {
     flex-direction: row;
     align-items: flex-start;
     &>* {

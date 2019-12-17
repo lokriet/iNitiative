@@ -8,9 +8,11 @@ import { MessageService } from 'src/app/messages/state/message.service';
 
 import { DamageType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
-import { ParticipantType, Participant } from '../../state/participants/participant.model';
+import { Participant, ParticipantType } from '../../state/participants/participant.model';
 import { ParticipantQuery } from '../../state/participants/participant.query';
 import { ParticipantService } from '../../state/participants/participant.service';
+import { Feature } from '../../state/features/feature.model';
+import { FeatureQuery } from '../../state/features/feature.query';
 
 @Component({
   selector: 'app-participant-edit',
@@ -22,6 +24,7 @@ export class ParticipantEditComponent implements OnInit {
   unselectedIcon = faToggleOff;
 
   damageTypesLoading$: Observable<boolean>;
+  featuresLoading$: Observable<boolean>;
   participantsLoading$: Observable<boolean>;
 
   color: string = null;
@@ -36,11 +39,14 @@ export class ParticipantEditComponent implements OnInit {
   resistances: string[] = [];
   weaknesses: string[] = [];
 
+  features: string[] = [];
+
   comments: string;
 
   errorMessage: string = null;
 
   allDamageTypes$: Observable<DamageType[]>;
+  allFeatures$: Observable<Feature[]>;
 
   routeSub: Subscription;
   editMode = false;
@@ -48,6 +54,7 @@ export class ParticipantEditComponent implements OnInit {
   editedParticipant: Participant;
 
   constructor(private damageTypeQuery: DamageTypeQuery,
+              private featureQuery: FeatureQuery,
               private participantService: ParticipantService,
               private participantQuery: ParticipantQuery,
               private authService: AuthService,
@@ -57,9 +64,15 @@ export class ParticipantEditComponent implements OnInit {
 
   ngOnInit() {
     this.damageTypesLoading$ = this.damageTypeQuery.selectLoading();
+    this.featuresLoading$ = this.featureQuery.selectLoading();
     this.participantsLoading$ = this.participantQuery.selectLoading();
 
     this.allDamageTypes$ = this.damageTypeQuery.selectAll({
+      filterBy: item => item.owner === this.authService.user.uid,
+      sortBy: 'name'
+    });
+
+    this.allFeatures$ = this.featureQuery.selectAll({
       filterBy: item => item.owner === this.authService.user.uid,
       sortBy: 'name'
     });
@@ -74,7 +87,16 @@ export class ParticipantEditComponent implements OnInit {
   }
 
   initForm(editedParticipantId: string) {
+    if (!this.editMode) {
+      return;
+    }
+
     this.editedParticipant = this.participantQuery.getEntity(editedParticipantId);
+
+    if (!this.editedParticipant) {
+      this.router.navigate(['/404']);
+    }
+
     this.color = this.editedParticipant.color;
     this.name = this.editedParticipant.name;
     this.type = this.editedParticipant.type;
@@ -82,9 +104,10 @@ export class ParticipantEditComponent implements OnInit {
     this.armorClass = this.editedParticipant.armorClass;
     this.speed = this.editedParticipant.speed;
     this.hp = this.editedParticipant.maxHp;
-    this.immunities = [...this.editedParticipant.immunityIds];
-    this.weaknesses = [...this.editedParticipant.vulnerabilityIds];
-    this.resistances = [...this.editedParticipant.resistanceIds];
+    this.immunities = this.editedParticipant.immunityIds ? [...this.editedParticipant.immunityIds] : [];
+    this.weaknesses = this.editedParticipant.vulnerabilityIds ? [...this.editedParticipant.vulnerabilityIds] : [];
+    this.resistances = this.editedParticipant.resistanceIds ? [...this.editedParticipant.resistanceIds] : [];
+    this.features = this.editedParticipant.featureIds ? [...this.editedParticipant.featureIds] : [];
     this.comments = this.editedParticipant.comments;
   }
 
@@ -110,6 +133,7 @@ export class ParticipantEditComponent implements OnInit {
       vulnerabilityIds: this.weaknesses,
       resistanceIds: this.resistances,
       immunityIds: this.immunities,
+      featureIds: this.features,
       comments: this.comments
     };
 

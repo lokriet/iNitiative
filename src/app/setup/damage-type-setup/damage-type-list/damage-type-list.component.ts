@@ -1,11 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Order, SortBy } from '@datorama/akita';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { SortBy, Order } from '@datorama/akita';
-import { DamageType, DamageTypeType } from '../../state/damage-type/damage-type.model';
-import { DamageTypeService } from '../../state/damage-type/damage-type.service';
-import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
+
+import { DamageType, DamageTypeType } from '../../state/damage-type/damage-type.model';
+import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
+import { DamageTypeService } from '../../state/damage-type/damage-type.service';
 
 @Component({
   selector: 'app-damage-type-list',
@@ -130,6 +131,11 @@ export class DamageTypeListComponent implements OnInit {
 
   onChangeName(damageType, newName) {
     this.damageTypeService.update({...damageType, name: newName});
+  }
+
+  setDamageType(damageType: DamageTypeType) {
+    this.damageTypeType = damageType;
+    this.selectDamageTypes();
   }
 
 }

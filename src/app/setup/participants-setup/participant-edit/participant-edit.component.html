@@ -1,6 +1,7 @@
 
 <div *ngIf="(damageTypesLoading$ | async) ||
-            (participantsLoading$ | async)
+            (participantsLoading$ | async) ||
+            (featuresLoading$ | async)
             ; else loaded">Loading...</div>
 
 <ng-template #loaded>
@@ -89,13 +90,13 @@
             [closeOnSelect]="false"
         >
           <ng-template ng-label-tmp let-item="item" let-clear="clear">
-              <span class="ng-value-label selected-damage-type-label">
-                <div class="selected-damage-type-label">
-                  <div class="color" *ngIf="!!item.color" [ngStyle]="{backgroundColor: item.color}"></div>
-                  <span>{{item.name}}</span>
-                </div>
-              </span>
-              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+            <span class="ng-value-label selected-damage-type-label">
+              <div class="selected-damage-type-label">
+                <div class="color" *ngIf="!!item.color" [ngStyle]="{backgroundColor: item.color}"></div>
+                <span>{{item.name}}</span>
+              </div>
+            </span>
+            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
           </ng-template>
           <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
             <div class="color" [ngStyle]="{ backgroundColor: item.color ? item.color : transparent }"></div>
@@ -105,7 +106,7 @@
       <!-- </div> -->
 
       <!-- <div class="weaknesses field"> -->
-        <label>Weaknesses:</label>
+        <label>Vulnerabilities:</label>
         <ng-select
             [items]="allDamageTypes$ | async"
             [multiple]="true"
@@ -116,20 +117,45 @@
             [closeOnSelect]="false"
         >
           <ng-template ng-label-tmp let-item="item" let-clear="clear">
-              <span class="ng-value-label selected-damage-type-label">
-                <div class="selected-damage-type-label">
-                  <div class="color" *ngIf="!!item.color" [ngStyle]="{backgroundColor: item.color}"></div>
+            <span class="ng-value-label selected-damage-type-label">
+              <div class="selected-damage-type-label">
+                <div class="color" *ngIf="!!item.color" [ngStyle]="{backgroundColor: item.color}"></div>
+                <span>{{item.name}}</span>
+              </div>
+            </span>
+            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <app-color-value [color]="item.color"></app-color-value>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      <!-- </div> -->
+
+      <label>Features:</label>
+        <ng-select
+            [items]="allFeatures$ | async"
+            [multiple]="true"
+            [(ngModel)]="features"
+            name="features"
+            bindLabel="name"
+            bindValue="id"
+            [closeOnSelect]="false"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label selected-feature-label">
+                <div class="selected-feature-label">
+                  <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
                   <span>{{item.name}}</span>
                 </div>
               </span>
               <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
           </ng-template>
           <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-            <div class="color" [ngStyle]="{ backgroundColor: item.color ? item.color : transparent }"></div>
+            <app-color-value [color]="item.color"></app-color-value>
             {{item.name}}
           </ng-template>
         </ng-select>
-      <!-- </div> -->
 
       <!-- <div class="comments field"> -->
         <label>Comments:</label>

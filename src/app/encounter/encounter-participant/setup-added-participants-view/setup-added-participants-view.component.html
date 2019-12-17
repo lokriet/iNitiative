@@ -8,12 +8,10 @@
       Roll empty initiatives
     </button>
   </div>
-  <div class="encounter-participants-view">
-    <div class="encounter-participants-header">Added participants</div>
-    <app-encounter-participants-list 
-        [participants]="addedParticipants"
-        (participantChanged)="changeParticipant($event)"
-        (participantDeleted)="deleteParticipant($event)">
-    </app-encounter-participants-list>
-  </div>
+  <div class="encounter-participants-header">Added participants</div>
+  <app-encounter-participants-list 
+      [participants]="addedParticipants"
+      (participantChanged)="changeParticipant($event)"
+      (participantDeleted)="deleteParticipant($event)">
+  </app-encounter-participants-list>
 </div>

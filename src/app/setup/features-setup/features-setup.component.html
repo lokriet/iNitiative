@@ -1,0 +1,73 @@
+<div class="setup-features-view">
+    <div class="loading" *ngIf="(featuresLoading$ | async); else loaded">
+      Loading...
+    </div>
+    
+    <ng-template #loaded>
+      <div class="section-header">
+        Add new
+      </div>
+    
+      <app-feature-edit></app-feature-edit>
+    
+      <div class="name-filter">
+        <app-search-input [(ngModel)]="nameFilter"></app-search-input>
+      </div>
+    
+      <div class="features-table">
+        <div class="column-header">
+          <!-- Color -->
+        </div>
+        <div class="column-header">
+          <div class="column-header__name">
+            <button (click)="switchSortOrder()">
+              Name
+            </button>
+            <div class="sorter-icon">
+              <app-sort-icon 
+                  [isActive]="true" 
+                  [isSortUp]="isSortingAsc()"
+                  (sortingSwitched)="changeSortOrder($event)"
+              ></app-sort-icon>
+            </div>
+          </div>
+        </div>
+        <div class="column-header">
+          Description
+        </div>
+    
+    
+        <!-- table internals -->
+        <ng-container *ngFor="let feature of (allFeatures$ | async | filterByname : nameFilter); let i = index">
+          <div class="grid-color-value">
+            <app-colors-popup [ngModel]="feature.color" (ngModelChange)="onChangeColor(feature, $event)" name="color"></app-colors-popup>
+          </div>
+    
+          <div class="name-value">
+            <input 
+                type="text" 
+                class="string-input" 
+                [ngModel]="feature.name" 
+                [name]="'name'+i"
+                (keydown.enter)="onChangeName(feature, $event.target.value)">
+          </div>
+    
+          <div class="description">
+            <textarea 
+                class="textarea-input description-input" 
+                autosize 
+                [ngModel]="feature.description" 
+                (blur)="onChangeDescription(feature, $event.target.value)"></textarea>
+          </div>
+    
+          <div>
+            <button class="delete-button" (click)="onDeleteFeature(feature.id)">
+              <fa-icon [icon]="deleteIcon"></fa-icon>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    
+    </ng-template>
+  </div>
+  

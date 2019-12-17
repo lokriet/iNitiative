@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Order, SortBy } from '@datorama/akita';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 
 import { Condition } from '../state/conditions/condition.model';
 import { ConditionsQuery } from '../state/conditions/conditions.query';
 import { ConditionsService } from '../state/conditions/conditions.service';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-conditions-setup',
@@ -60,16 +60,16 @@ export class ConditionsSetupComponent implements OnInit {
     this.selectConditions();
   }
 
-  onNameFilterChanged(nameFilter) {
+  onNameFilterChanged(nameFilter: string) {
     this.nameFilter = nameFilter;
     this.selectConditions();
   }
 
-  onChangeColor(condition, newColor) {
+  onChangeColor(condition: Condition, newColor: string) {
     this.conditionService.update({...condition, color: newColor});
   }
 
-  onChangeName(condition, newName) {
+  onChangeName(condition: Condition, newName: string) {
     if (newName != null && newName.length > 0) {
       this.conditionService.update({...condition, name: newName});
     }
@@ -79,6 +79,12 @@ export class ConditionsSetupComponent implements OnInit {
   onDeleteCondition(conditionId: string) {
     if (confirm('Are you sure?')) {
       this.conditionService.remove(conditionId);
+    }
+  }
+
+  onChangeDescription(condition: Condition, description: string) {
+    if (condition.description !== description) {
+      this.conditionService.update({...condition, description});
     }
   }
 }

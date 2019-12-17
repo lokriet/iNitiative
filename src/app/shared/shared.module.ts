@@ -11,6 +11,7 @@ import { PopupWindowDirective } from './popup/popup.directive';
 import { SortIconComponent } from './sort-icon/sort-icon.component';
 import { FilterByNamePipe } from './filter-by-name.pipe';
 import { SearchInputComponent } from './search-input/search-input.component';
+import { AutosizeModule } from 'ngx-autosize';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { SearchInputComponent } from './search-input/search-input.component';
     CommonModule,
     FontAwesomeModule,
     FormsModule,
-    NgSelectModule
+    NgSelectModule,
+    AutosizeModule
   ],
   exports: [
     ColorsPopupComponent,
@@ -40,7 +42,8 @@ import { SearchInputComponent } from './search-input/search-input.component';
     FilterByNamePipe,
     FormsModule,
     FontAwesomeModule,
-    NgSelectModule
+    NgSelectModule,
+    AutosizeModule
   ]
 })
 export class SharedModule { }

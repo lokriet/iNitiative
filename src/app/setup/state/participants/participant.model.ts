@@ -16,6 +16,7 @@ export interface Participant {
   vulnerabilityIds: string[];
   resistanceIds: string[];
   immunityIds: string[];
+  featureIds: string[];
   comments: string;
 }
 

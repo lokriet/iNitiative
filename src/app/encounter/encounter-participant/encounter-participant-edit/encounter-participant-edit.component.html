@@ -160,6 +160,36 @@
         <app-damage-type-edit [popupMode]="true" newButtonText="Create new"></app-damage-type-edit>
       </div>
 
+      <div class="features-list">
+        <div class="detail-label">
+          Features:
+        </div>
+        <ng-select
+            [items]="allFeatures$ | async"
+            [multiple]="true"
+            [(ngModel)]="features"
+            name="features"
+            [closeOnSelect]="false"
+            bindValue="id"
+            dropdownPosition="top"
+        >
+          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label">
+                <div class="selected-feature-label">
+                  <app-color-value [color]="item.color"></app-color-value>
+                  <span>{{item.name}}</span>
+                </div>
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+            <app-color-value [color]="item.color"></app-color-value>
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <app-feature-edit [popupMode]="true" newButtonText="Create new"></app-feature-edit>
+      </div>
+
       <div class="conditions-list">
         <div class="detail-label">
           Conditions:
@@ -188,7 +218,7 @@
             {{item.name}}
           </ng-template>
         </ng-select>
-        <app-condition-edit newButtonText="Create new"></app-condition-edit>
+        <app-condition-edit newButtonText="Create new" [popupMode]="true"></app-condition-edit>
       </div>
 
       <div class="detail comments">

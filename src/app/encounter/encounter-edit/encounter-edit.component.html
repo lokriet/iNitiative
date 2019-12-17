@@ -2,12 +2,13 @@
             (participantTemplatesLoading$ | async) ||
             (participantsLoading$ | async) ||
             (damageTypesLoading$ | async) ||
-            (conditionsLoading$ | async)
+            (conditionsLoading$ | async) ||
+            (featuresLoading$ | async)
             ;else loaded">Loading...</div>
 
 <ng-template #loaded>
 
-  <form (ngSubmit)="onSubmitForm()" #f="ngForm">
+  <form (ngSubmit)="onSubmitForm()" #f="ngForm" class="edit-encounter-view">
     <div class="error-message" *ngIf="errorMessage !== null">{{errorMessage}}</div>
     <input 
         class="encounter-name"

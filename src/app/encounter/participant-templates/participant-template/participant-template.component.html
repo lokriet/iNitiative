@@ -86,5 +86,19 @@
         </div>
       </div>
     </div>
+
+    <div class="features-list">
+      <div class="detail-label">
+        Features:
+      </div>
+      <div class="feature" *ngFor="let featureId of participantTemplate.featureIds">
+        <div class="color">
+          <app-color-value [color]="getFeature(featureId).color"></app-color-value>
+        </div>
+        <div class="damage-type-name">
+          {{ getFeature(featureId).name }}
+        </div>
+      </div>
+    </div>
   </div>
 </div>

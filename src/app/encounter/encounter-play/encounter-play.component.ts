@@ -11,6 +11,8 @@ import { ConditionsService } from 'src/app/setup/state/conditions/conditions.ser
 import { DamageType, DamageTypeType } from 'src/app/setup/state/damage-type/damage-type.model';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
 import { DamageTypeService } from 'src/app/setup/state/damage-type/damage-type.service';
+import { Feature } from 'src/app/setup/state/features/feature.model';
+import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
 import { Participant } from 'src/app/setup/state/participants/participant.model';
 import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
@@ -45,10 +47,12 @@ export class EncounterPlayComponent implements OnInit {
   participantsLoading$: Observable<boolean>;
   damageTypesLoading$: Observable<boolean>;
   conditionsLoading$: Observable<boolean>;
+  featuresLoading$: Observable<boolean>;
 
   allParticipants$: Observable<EncounterParticipant[]>;
   allConditions$: Observable<Condition[]>;
   allDamageTypes$: Observable<DamageType[]>;
+  allFeatures$: Observable<Feature[]>;
 
   sub: Subscription;
   encounter: Encounter;
@@ -56,6 +60,7 @@ export class EncounterPlayComponent implements OnInit {
 
   newConditionColor: string = null;
   newConditionName: string = null;
+  newConditionDescription: string = null;
 
   newDamageTypeColor: string = null;
   newDamageTypeName: string = null;
@@ -72,6 +77,7 @@ export class EncounterPlayComponent implements OnInit {
               private encounterParticipantsQuery: EncounterParticipantQuery,
               private encounterParticipantsService: EncounterParticipantService,
               private damageTypesQuery: DamageTypeQuery,
+              private featuresQuery: FeatureQuery,
               private damageTypesService: DamageTypeService,
               private conditionsQuery: ConditionsQuery,
               private conditionsService: ConditionsService,
@@ -103,6 +109,7 @@ export class EncounterPlayComponent implements OnInit {
     this.participantsLoading$ = this.encounterParticipantsQuery.selectLoading();
     this.damageTypesLoading$ = this.damageTypesQuery.selectLoading();
     this.conditionsLoading$ = this.conditionsQuery.selectLoading();
+    this.featuresLoading$ = this.featuresQuery.selectLoading();
 
     this.sub = this.route.params.subscribe(
       (params: Params) => {
@@ -129,6 +136,11 @@ export class EncounterPlayComponent implements OnInit {
     );
 
     this.allConditions$ = this.conditionsQuery.selectAll({
+      filterBy: item => item.owner === this.authService.user.uid,
+      sortBy: 'name'
+    });
+
+    this.allFeatures$ = this.featuresQuery.selectAll({
       filterBy: item => item.owner === this.authService.user.uid,
       sortBy: 'name'
     });
@@ -175,6 +187,16 @@ export class EncounterPlayComponent implements OnInit {
     }
     return this.damageTypesQuery.selectAll({
       filterBy: item => damageTypeIds.includes(item.id),
+      sortBy: 'name'
+    });
+  }
+
+  getFeatures(featureIds: string[]) {
+    if (!featureIds || featureIds.length === 0) {
+      return of([]);
+    }
+    return this.featuresQuery.selectAll({
+      filterBy: item => featureIds.includes(item.id),
       sortBy: 'name'
     });
   }
@@ -257,6 +279,10 @@ export class EncounterPlayComponent implements OnInit {
     this.encounterParticipantsService.update({ ...participant, conditionIds });
   }
 
+  changeFeatures(participant: EncounterParticipant, featureIds: string[]) {
+    this.encounterParticipantsService.update({ ...participant, featureIds });
+  }
+
   changeVulnerabilities(participant: EncounterParticipant, vulnerabilityIds: string[]) {
     this.encounterParticipantsService.update({ ...participant, vulnerabilityIds });
   }
@@ -286,7 +312,8 @@ export class EncounterPlayComponent implements OnInit {
       id: guid(),
       owner: this.authService.user.uid,
       color: this.newConditionColor,
-      name: this.newConditionName
+      name: this.newConditionName,
+      description: this.newConditionDescription
     });
 
     this.newConditionColor = null;
@@ -339,6 +366,7 @@ export class EncounterPlayComponent implements OnInit {
       vulnerabilityIds: [...participantTemplate.vulnerabilityIds],
       immunityIds: [...participantTemplate.immunityIds],
       resistanceIds: [...participantTemplate.resistanceIds],
+      featureIds: [...participantTemplate.featureIds],
       conditionIds: [],
       comments: participantTemplate.comments,
       advantages: null

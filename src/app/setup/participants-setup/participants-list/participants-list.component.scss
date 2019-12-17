@@ -1,6 +1,14 @@
 @import '../../../../assets/scss/partials/colors';
 @import '../../../../assets/scss/partials/shared';
 
+.participants-setup-view {
+  margin: 0 1.5rem;
+}
+
+.create-button {
+  margin: 0 0 1.5rem 0.5rem;
+}
+
 .name-filter {
   margin-top: 1rem;
 }
@@ -10,8 +18,8 @@
   padding: 0;
 
   display: grid;
-  //                     color  name          type    ini,hp,armr,spd  immune,resist,weak    commts del
-  grid-template-columns: 1.5rem max-content max-content repeat(7, max-content)                8rem 3.5rem;
+  //                     color  name          type    ini,hp,armr,spd  immune,resist,weak,feature    commts del
+  grid-template-columns: 1.5rem max-content max-content repeat(8, max-content)                       8rem 3.5rem;
   margin: 1rem 0;
 
   &>* {
@@ -23,8 +31,8 @@
   }
 
   &.short-grid {
-    //                     color  name      ini,hp,armr,spd  immune,resist,weak    commts del
-    grid-template-columns: 1.5rem max-content repeat(7, max-content) 8rem 3.5rem;
+    //                     color  name      ini,hp,armr,spd  immune,resist,weak,feature    commts del
+    grid-template-columns: 1.5rem max-content repeat(8, max-content)                        8rem 3.5rem;
   }
 }
 
@@ -32,12 +40,14 @@
   text-align: left;
 }
 
-.damage-types-list {
+.damage-types-list,
+.feature-list {
   display: flex;
   flex-direction: column;
 }
 
-.damage-type-item {
+.damage-type-item,
+.feature-item {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;

@@ -3,13 +3,28 @@
   flex-direction: column;
 }
 
+.fields-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .color-picker,
 .name {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   margin: 0.5rem 0;
 
   label {
+    margin-right: 0.5rem;
+  }
+}
+
+.standalone {
+  .color-picker,
+  .name,
+  .type {
+    margin: 0;
     margin-right: 0.5rem;
   }
 }

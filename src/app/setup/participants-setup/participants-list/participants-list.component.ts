@@ -1,13 +1,16 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Participant, ParticipantType } from '../../state/participants/participant.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { Order, SortBy } from '@datorama/akita';
+import { faCog, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/auth/state/auth.service';
+
+import { DamageType } from '../../state/damage-type/damage-type.model';
+import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
+import { Participant, ParticipantType } from '../../state/participants/participant.model';
 import { ParticipantQuery } from '../../state/participants/participant.query';
 import { ParticipantService } from '../../state/participants/participant.service';
-import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
-import { DamageType } from '../../state/damage-type/damage-type.model';
-import { SortBy, Order } from '@datorama/akita';
-import { faTimes, faCog } from '@fortawesome/free-solid-svg-icons';
-import { AuthService } from 'src/app/auth/state/auth.service';
+import { Feature } from '../../state/features/feature.model';
+import { FeatureQuery } from '../../state/features/feature.query';
 
 @Component({
   selector: 'app-participants-list',
@@ -22,9 +25,11 @@ export class ParticipantsListComponent implements OnInit {
 
   participantsLoading$: Observable<boolean>;
   damageTypesLoading$: Observable<boolean>;
+  featuresLoading$: Observable<boolean>;
 
   allParticipants$: Observable<Participant[]>;
   allDamageTypes$: Observable<DamageType[]>;
+  allFeatures$: Observable<Feature[]>;
 
   sortBy: SortBy<Participant, any> = 'name';
   sortByOrder = Order.ASC;
@@ -35,13 +40,16 @@ export class ParticipantsListComponent implements OnInit {
   constructor(private participantsQuery: ParticipantQuery,
               private partiicpantService: ParticipantService,
               private damageTypesQuery: DamageTypeQuery,
+              private featureQuery: FeatureQuery,
               private authService: AuthService) { }
 
   ngOnInit() {
     this.participantsLoading$ = this.participantsQuery.selectLoading();
     this.damageTypesLoading$ = this.damageTypesQuery.selectLoading();
+    this.featuresLoading$ = this.featureQuery.selectLoading();
 
     this.allDamageTypes$ = this.damageTypesQuery.selectAll({filterBy: item => item.owner === this.authService.user.uid});
+    this.allFeatures$ = this.featureQuery.selectAll({filterBy: item => item.owner === this.authService.user.uid});
     this.selectParticipants();
   }
 
@@ -81,6 +89,13 @@ export class ParticipantsListComponent implements OnInit {
       return [];
     }
     return damageTypes.filter(item => damageTypeIds.includes(item.id));
+  }
+
+  getFeaturesByIds(features: Feature[], featureIds: string[]): Feature[] {
+    if (featureIds == null) {
+      return [];
+    }
+    return features.filter(item => featureIds.includes(item.id));
   }
 
   changeSortOrder(sortBy: SortBy<Participant, any>, isAsc: boolean, event) {
@@ -157,5 +172,10 @@ export class ParticipantsListComponent implements OnInit {
     if (confirm('Delete participant?')) {
       this.partiicpantService.remove(id);
     }
+  }
+
+  setParticipantType(participantType: ParticipantType) {
+    this.participantType = participantType;
+    this.selectParticipants();
   }
 }

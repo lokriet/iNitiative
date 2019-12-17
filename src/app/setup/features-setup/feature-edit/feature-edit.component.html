@@ -1,0 +1,50 @@
+<ng-container *ngIf="popupMode;else standaloneView">
+    <app-popup 
+        [floating]="true"
+        [showCloseButton]="true" 
+        windowName="New feature">
+      <ng-template #popupToggleTemplate let-toggle=toggle>
+        <button type="button" class="button" (click)="toggle()">{{  newButtonText }}</button>
+      </ng-template>
+    
+      <ng-template #popupInsidesTemplate let-hide="hide">
+        <form (ngSubmit)="onSubmitNewFeature();hide();" #f="ngForm" class="new-feature-form">
+          <div class="color-picker">
+            <label>Color: </label><app-colors-popup [(ngModel)]="newFeatureColor" name="color"></app-colors-popup>
+          </div>
+          <div class="name">
+            <label>Name:</label>
+            <input type="text" [(ngModel)]="newFeatureName" name="name" required>
+          </div>
+          <div class="description">
+            <label>Description:</label>
+            <textarea [(ngModel)]="newFeatureDescription" name="description"></textarea>
+          </div>
+          <div>
+            <button type="submit" class="blue-button" [disabled]="!f.valid">Add</button>
+          </div>
+        </form>
+      </ng-template>
+    </app-popup>
+  </ng-container>
+  
+  <ng-template #standaloneView>
+    <div class="edit-features-standalone">
+      <form (ngSubmit)="onSubmitNewFeature()" #f="ngForm" class="new-feature-form">
+        <div class="color-picker">
+          <label>Color: </label><app-colors-popup [(ngModel)]="newFeatureColor" name="color"></app-colors-popup>
+        </div>
+        <div class="name">
+          <label>Name:</label>
+          <input type="text" [(ngModel)]="newFeatureName" name="name" required>
+        </div>
+        <div class="description">
+          <label>Description:</label>
+          <textarea [(ngModel)]="newFeatureDescription" name="description"></textarea>
+        </div>
+        <div>
+          <button type="submit" class="blue-button" [disabled]="!f.valid">Add</button>
+        </div>
+      </form>
+    </div>
+  </ng-template>

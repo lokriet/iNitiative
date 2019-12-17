@@ -11,7 +11,9 @@ import { guid } from '@datorama/akita';
 export class ConditionEditComponent implements OnInit {
   newConditionColor: string = null;
   newConditionName: string = null;
+  newConditionDescription: string = null;
 
+  @Input() popupMode = false;
   @Input() newButtonText = 'Add new';
 
   constructor(private conditionService: ConditionsService,
@@ -25,11 +27,13 @@ export class ConditionEditComponent implements OnInit {
       id: guid(),
       owner: this.authService.user.uid,
       name: this.newConditionName,
-      color: this.newConditionColor
+      color: this.newConditionColor,
+      description: this.newConditionDescription
     });
 
     this.newConditionColor = null;
     this.newConditionName = null;
+    this.newConditionDescription = null;
   }
 
 

@@ -1,13 +1,36 @@
-<app-popup 
-    [floating]="true"
-    [showCloseButton]="true" 
-    windowName="New condition">
-  <ng-template #popupToggleTemplate let-toggle=toggle>
-    <button type="button" class="button" (click)="toggle()">{{  newButtonText }}</button>
-  </ng-template>
+<ng-container *ngIf="popupMode;else standaloneView">
+  <app-popup 
+      [floating]="true"
+      [showCloseButton]="true" 
+      windowName="New condition">
+    <ng-template #popupToggleTemplate let-toggle=toggle>
+      <button type="button" class="button" (click)="toggle()">{{  newButtonText }}</button>
+    </ng-template>
+  
+    <ng-template #popupInsidesTemplate let-hide="hide">
+      <form (ngSubmit)="onSubmitNewCondition();hide();" #f="ngForm" class="new-condition-form">
+        <div class="color-picker">
+          <label>Color: </label><app-colors-popup [(ngModel)]="newConditionColor" name="color"></app-colors-popup>
+        </div>
+        <div class="name">
+          <label>Name:</label>
+          <input type="text" [(ngModel)]="newConditionName" name="name" required>
+        </div>
+        <div class="description">
+          <label>Description:</label>
+          <textarea [(ngModel)]="newConditionDescription" name="description"></textarea>
+        </div>
+        <div>
+          <button type="submit" class="blue-button" [disabled]="!f.valid">Add</button>
+        </div>
+      </form>
+    </ng-template>
+  </app-popup>
+</ng-container>
 
-  <ng-template #popupInsidesTemplate let-hide="hide">
-    <form (ngSubmit)="onSubmitNewCondition();hide();" #f="ngForm" class="new-condition-form">
+<ng-template #standaloneView>
+  <div class="edit-conditions-standalone">
+    <form (ngSubmit)="onSubmitNewCondition()" #f="ngForm" class="new-condition-form">
       <div class="color-picker">
         <label>Color: </label><app-colors-popup [(ngModel)]="newConditionColor" name="color"></app-colors-popup>
       </div>
@@ -15,9 +38,13 @@
         <label>Name:</label>
         <input type="text" [(ngModel)]="newConditionName" name="name" required>
       </div>
+      <div class="description">
+        <label>Description:</label>
+        <textarea [(ngModel)]="newConditionDescription" name="description"></textarea>
+      </div>
       <div>
-        <button type="submit" [disabled]="!f.valid">Add</button>
+        <button type="submit" class="blue-button" [disabled]="!f.valid">Add</button>
       </div>
     </form>
-  </ng-template>
-</app-popup>
+  </div>
+</ng-template>

@@ -10,26 +10,28 @@ import { ParticipantsSetupComponent } from './participants-setup/participants-se
 import { ConditionGuard } from './state/conditions/condition.guard';
 import { DamageTypeGuard } from './state/damage-type/damage-type.guard';
 import { ParticipantGuard } from './state/participants/participant.guard';
+import { FeaturesSetupComponent } from './features-setup/features-setup.component';
+import { FeatureGuard } from './state/features/feature.guard';
 
 
 const setupRoutes: Routes = [
   {
     path: 'setup-participants',
     component: ParticipantsSetupComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard, AuthGuard],
-    canDeactivate: [DamageTypeGuard, ParticipantGuard]
+    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, AuthGuard],
+    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard]
   },
   {
     path: 'setup-participants/new',
     component: ParticipantEditComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard, AuthGuard],
-    canDeactivate: [DamageTypeGuard, ParticipantGuard]
+    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, AuthGuard],
+    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard]
   },
   {
     path: 'setup-participants/edit/:id',
     component: ParticipantEditComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard, AuthGuard],
-    canDeactivate: [DamageTypeGuard, ParticipantGuard]
+    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, AuthGuard],
+    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard]
   },
   {
     path: 'setup-damage-types',
@@ -47,6 +49,12 @@ const setupRoutes: Routes = [
     component: ConditionsSetupComponent,
     canActivate: [ConditionGuard, AuthGuard],
     canDeactivate: [ConditionGuard]
+  },
+  {
+    path: 'setup-features',
+    component: FeaturesSetupComponent,
+    canActivate: [FeatureGuard, AuthGuard],
+    canDeactivate: [FeatureGuard]
   }
 ];
 

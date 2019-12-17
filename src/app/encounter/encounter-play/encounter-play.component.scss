@@ -1,5 +1,6 @@
 
 @import '../../../assets/scss/partials/colors';
+@import '../../../assets/scss/partials/shared';
 
 .encounter-name {
   display: inline-block;
@@ -66,7 +67,7 @@
   font-size: 0.8rem;
 
   display: grid;
-  grid-template-columns: 2rem repeat(9, max-content) repeat(2, 10rem);
+  grid-template-columns: 2rem repeat(10, max-content) repeat(2, 10rem);
 
   &>* {
     padding: 0.5rem;
@@ -131,7 +132,7 @@
 }
 
 .hp-values {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
 
   .hp-input {
@@ -192,10 +193,24 @@
   }
 }
 
+.condition-description{
+  width: 15rem;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+}
+
+.feature-description {
+  width: 35rem;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+}
+
 .selected-condition-label,
 .condition-option,
 .selected-damage-type-label,
-.damage-type-option {
+.damage-type-option,
+.selected-feature-label,
+.feature-option {
   display: flex;
   font-size: 0.8rem;
 }
@@ -231,19 +246,7 @@
   }
 }
 
-.advantages-input,
-.comments-input {
-  border: 1px solid transparent;
-  background-color: transparent;
-  width: 9rem;
-
-  &:hover,
-  &:focus,
-  &:active {
-    border-color: lightgray;
-  }
-}
-
+.view-features,
 .view-conditions,
 .view-damage-types {
   position: relative;
@@ -267,6 +270,7 @@
   }
 }
 
+.view-feature,
 .view-condition,
 .view-damage-type {
   display: flex;
@@ -299,7 +303,8 @@
 }
 
 .edit-conditions,
-.edit-damage-types {
+.edit-damage-types,
+.edit-features {
   position: relative;
   width: 10rem;
   padding-right: 0.8rem;

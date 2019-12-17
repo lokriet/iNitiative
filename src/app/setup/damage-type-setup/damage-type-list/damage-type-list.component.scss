@@ -1,8 +1,15 @@
 @import '../../../../assets/scss/partials/colors';
 @import '../../../../assets/scss/partials/shared';
 
+.damage-types-view {
+  margin: 0 1.5rem;
+}
+
 .section-header {
-  margin-top: 1rem;
+  margin: 1rem 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $blue;
 }
 
 .name-filter {
@@ -20,4 +27,8 @@
   &.short-grid {
     grid-template-columns: 1rem max-content 2rem;
   }
+}
+
+.tab-view {
+  display: inline-block;
 }

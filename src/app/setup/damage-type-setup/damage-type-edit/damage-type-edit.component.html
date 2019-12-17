@@ -36,24 +36,26 @@
 
 <ng-template #standaloneView>
   <div class="damage-type-edit-view">
-    <form (ngSubmit)="onSubmit()" #f="ngForm" class="damage-type-edit-form">
-      <div class="color-picker">
-          <label>Color: </label><app-colors-popup [(ngModel)]="color" name="color"></app-colors-popup>
-      </div>
-      <div class="name">
-        <label>Name:</label>
-        <input type="text" [(ngModel)]="name" name="name" required>
-      </div>
-      <div class="type" *ngIf="type == null">
-        <label>
-          <input type="radio" name="type" [value]="0" [(ngModel)]="selectedType" required>Damage type
-        </label>
-        <label>
-          <input type="radio" name="type" [value]="1" [(ngModel)]="selectedType" required>Effect
-        </label>
-      </div>
-      <div class="buttons">
-        <button type="submit" [disabled]="!f.valid">Save</button>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" class="damage-type-edit-form standalone">
+      <div class="fields-row">
+        <div class="type" *ngIf="type == null">
+          <label>
+            <input type="radio" name="type" [value]="0" [(ngModel)]="selectedType" required>Damage type
+          </label>
+          <label>
+            <input type="radio" name="type" [value]="1" [(ngModel)]="selectedType" required>Effect
+          </label>
+        </div>
+        <div class="color-picker">
+            <label>Color: </label><app-colors-popup [(ngModel)]="color" name="color"></app-colors-popup>
+        </div>
+        <div class="name">
+          <label>Name:</label>
+          <input type="text" [(ngModel)]="name" name="name" required>
+        </div>
+        <div class="buttons">
+          <button type="submit" [disabled]="!f.valid">Save</button>
+        </div>
       </div>
     </form>
   </div>

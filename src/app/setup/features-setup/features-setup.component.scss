@@ -2,7 +2,7 @@
 @import '../../../assets/scss/partials/colors';
 @import '../../../assets/scss/partials/shared';
 
-.setup-conditions-view {
+.setup-features-view {
   margin: 0 1.5rem;
 }
 
@@ -18,7 +18,7 @@
   max-width: 16.5rem;
 }
 
-.conditions-table {
+.features-table {
   display: grid;
   grid-template-columns: 1rem max-content 30rem 2rem;
   column-gap: 1rem;
@@ -29,4 +29,5 @@
 .description-input {
   width: 100%;
   max-width: 100%;
+  overflow: auto !important;
 }

@@ -1,4 +1,10 @@
 
+.participants-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .empty-list {
   padding: 1rem;
   color: grey;
@@ -33,4 +39,9 @@
     margin-right: 3.5rem;
     width: 6rem;
   }
+}
+
+.participant-items {
+  flex-grow: 1;
+  overflow-y: auto;
 }
