@@ -17,10 +17,10 @@
             <fa-icon [icon]="arrowDownIcon"></fa-icon>
           </a>
           <div class="dropdown-content" [class.hidden]="!dropdownOpen">
-            <a [routerLink]="'/setup-participants'">Participant templates</a>
-            <a [routerLink]="'/setup-damage-types'">Damage types/Effects</a>
-            <a [routerLink]="'/setup-conditions'">Conditions</a>
-            <a [routerLink]="'/setup-features'">Features</a>
+            <a routerLinkActive="active" [routerLink]="'/setup-participants'">Participant templates</a>
+            <a routerLinkActive="active" [routerLink]="'/setup-damage-types'">Damage types/Effects</a>
+            <a routerLinkActive="active" [routerLink]="'/setup-conditions'">Conditions</a>
+            <a routerLinkActive="active" [routerLink]="'/setup-features'">Features</a>
           </div>
         </li>
       </ul>

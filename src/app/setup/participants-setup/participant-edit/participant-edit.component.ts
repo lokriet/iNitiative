@@ -41,7 +41,7 @@ export class ParticipantEditComponent implements OnInit {
 
   features: string[] = [];
 
-  comments: string;
+  comments: string = null;
 
   errorMessage: string = null;
 

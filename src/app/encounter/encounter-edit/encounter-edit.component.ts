@@ -188,11 +188,11 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       temporaryArmorClass: null,
       speed: participantTemplate.speed,
       temporarySpeed: null,
-      vulnerabilityIds: [...participantTemplate.vulnerabilityIds],
-      immunityIds: [...participantTemplate.immunityIds],
-      resistanceIds: [...participantTemplate.resistanceIds],
+      vulnerabilityIds: participantTemplate.vulnerabilityIds ? [...participantTemplate.vulnerabilityIds] : [],
+      immunityIds: participantTemplate.immunityIds ? [...participantTemplate.immunityIds] : [],
+      resistanceIds: participantTemplate.resistanceIds ? [...participantTemplate.resistanceIds] : [],
       conditionIds: [],
-      featureIds: [...participantTemplate.featureIds],
+      featureIds: participantTemplate.featureIds ? [...participantTemplate.featureIds] : [],
       comments: participantTemplate.comments,
       advantages: null
     };

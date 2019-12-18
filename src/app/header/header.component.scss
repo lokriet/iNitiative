@@ -120,7 +120,8 @@ nav {
       font-weight: 700;
       width: 100%;
   
-      &:hover {
+      &:hover,
+      &.active {
         color: white;
         background-color: $blue;
       }
