@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
 import { faCheck, faCog, faPlay, faSkull } from '@fortawesome/free-solid-svg-icons';
@@ -36,7 +36,7 @@ enum EditingField {
   templateUrl: './encounter-play.component.html',
   styleUrls: ['./encounter-play.component.scss']
 })
-export class EncounterPlayComponent implements OnInit {
+export class EncounterPlayComponent implements OnInit, OnDestroy {
   activeParticpantIcon = faPlay;
   faCheck = faCheck;
   skullIcon = faSkull;
@@ -149,6 +149,10 @@ export class EncounterPlayComponent implements OnInit {
       filterBy: item => item.owner === this.authService.user.uid,
       sortBy: 'name'
     });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   isActive(participant) {

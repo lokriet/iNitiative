@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
 import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +19,7 @@ import { FeatureQuery } from '../../state/features/feature.query';
   templateUrl: './participant-edit.component.html',
   styleUrls: ['./participant-edit.component.scss']
 })
-export class ParticipantEditComponent implements OnInit {
+export class ParticipantEditComponent implements OnInit, OnDestroy {
   selectedIcon = faToggleOn;
   unselectedIcon = faToggleOff;
 
@@ -84,6 +84,10 @@ export class ParticipantEditComponent implements OnInit {
         this.initForm(editedParticipantId);
       }
     );
+  }
+
+  ngOnDestroy() {
+    this.routeSub.unsubscribe();
   }
 
   initForm(editedParticipantId: string) {
