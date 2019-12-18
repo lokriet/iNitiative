@@ -19,6 +19,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { SetupModule } from './setup/setup.module';
 import { HeaderComponent } from './header/header.component';
 import { AuthGuard } from './auth/auth.guard';
+import { SelectListComponent } from './entounter/encounter-play/select-list/select-list.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { AuthGuard } from './auth/auth.guard';
     HomeComponent,
     PageNotFoundComponent,
     MessagesComponent,
-    HeaderComponent
+    HeaderComponent,
+    SelectListComponent
   ],
   imports: [
     BrowserModule,

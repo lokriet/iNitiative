@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
-import { faCheck, faCog, faPlay, faSkull } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCog, faPlay, faPlus, faSkull, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Observable, of, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
@@ -41,6 +41,8 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
   faCheck = faCheck;
   skullIcon = faSkull;
   editIcon = faCog;
+  deleteIcon = faTimes;
+  addIcon = faPlus;
 
   encountersLoading$: Observable<boolean>;
   participantTemplatesLoading$: Observable<boolean>;
@@ -183,6 +185,25 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
       filterBy: item => conditionIds.includes(item.id),
       sortBy: 'name'
     });
+  }
+
+  getUnselectedConditions(allConditions, participantConditionIds) {
+    if (participantConditionIds && participantConditionIds.length > 0) {
+      return allConditions.filter(item => !participantConditionIds.includes(item.id));
+    } else {
+      return allConditions;
+    }
+  }
+
+  onDeleteCondition(participant: EncounterParticipant, conditionId: string) {
+    const conditionIds = [...participant.conditionIds].filter(item => item !== conditionId);
+    this.encounterParticipantsService.update({...participant, conditionIds});
+  }
+
+  onAddConditions(participant: EncounterParticipant, conditionIds: string[]) {
+    if (conditionIds && conditionIds.length > 0) {
+      this.encounterParticipantsService.update({...participant, conditionIds: [...participant.conditionIds, ...conditionIds]});
+    }
   }
 
   getDamageTypes(damageTypeIds: string[]) {

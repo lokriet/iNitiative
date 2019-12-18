@@ -236,8 +236,38 @@
           </app-popup>
         </div>
   
-        <div class="participant-conditions conditions-list" [class.odd]="i % 2 === 0">
-          <div 
+        <div class="view-items" [class.odd]="i % 2 === 0">
+          <div class="view-item" *ngFor="let condition of (getConditions(participant.conditionIds) | async)">
+            <app-popup
+              [showCloseButton]="true" 
+              [windowName]="condition.name"
+              [floating]="true"
+            >
+              <ng-template #popupToggleTemplate let-toggle=toggle>
+                <div class="view-condition">
+                  <app-color-value [color]="condition.color" [showEmpty]="false"></app-color-value>
+                  <span (click)="toggle()">{{condition.name}}</span>
+                </div>
+              </ng-template>
+              <ng-template #popupInsidesTemplate>
+                <div class="condition-description">
+                  {{condition.description}}
+                </div>
+              </ng-template>
+            </app-popup>
+            <button class="delete-item-button" (click)="onDeleteCondition(participant, condition.id)">
+              <fa-icon [icon]="deleteIcon"></fa-icon>
+            </button>
+          </div>
+          <app-select-list
+              windowName="Add Conditions"
+              [toggleIcon]="addIcon"
+              [hidingIcon]="false"
+              [items]="getUnselectedConditions((allConditions$ | async), participant.conditionIds)"
+              (itemsSelected)="onAddConditions(participant, $event)"
+          ></app-select-list
+            >
+          <!-- <div 
               class="view-conditions"
               *ngIf="participant.id !== editingParticipantId || editingField !== 'conditions'; else editConditions">
   
@@ -320,7 +350,7 @@
                 </ng-template>
               </ng-select>
             </div>
-          </ng-template>
+          </ng-template> -->
         </div>
   
         <div class="participant-vulnerabilities damage-types-list" [class.odd]="i % 2 === 0">
@@ -471,7 +501,7 @@
                       <label>
                         <input type="radio" name="type" [value]="1" [(ngModel)]="newDamageTypeType">E
                       </label>
-                      <button type="button" class="new-condition-button" (click)="addNewDamageType()">
+                      <button type="button" class="new-damage-type-button" (click)="addNewDamageType()">
                         <fa-icon [icon]="faCheck"></fa-icon>
                       </button>
                     </div>

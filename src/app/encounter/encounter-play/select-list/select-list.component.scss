@@ -1,0 +1,32 @@
+@import '../../../../assets/scss/partials/colors';
+@import '../../../../assets/scss/partials/shared';
+
+.hidden-button {
+  color: transparent;
+
+  &:hover {
+    color: black;
+  }
+}
+
+.light-button {
+  color: grey;
+
+  &:hover {
+    color: $blue;
+  }
+}
+
+.items-list {
+  min-width: 10rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 10rem;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  margin: 0.25rem 0;
+}

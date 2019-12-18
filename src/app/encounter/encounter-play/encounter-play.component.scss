@@ -177,6 +177,38 @@
   }
 }
 
+.view-items {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
+}
+
+.view-item {
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    .delete-item-button {
+      color: black;
+      border-color: black;
+
+      &:hover {
+        color: $blue;
+      }
+    }
+  }
+}
+
+.delete-item-button {
+  border: none;
+  background-color: transparent;
+  border-left: 1px solid transparent;
+  margin-left: 0.5rem;
+  color: transparent;
+  cursor: pointer;
+}
+
 .dropdown-selected-icon {
   background-color: white;
 
@@ -193,7 +225,7 @@
   }
 }
 
-.condition-description{
+.condition-description {
   width: 15rem;
   font-size: 0.8rem;
   white-space: pre-wrap;

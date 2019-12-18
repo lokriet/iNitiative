@@ -24,6 +24,7 @@ import {
   ParticipantTemplatesListComponent,
 } from './participant-templates/participant-templates-list/participant-templates-list.component';
 import { ToDatePipe } from './to-date.pipe';
+import { SelectListComponent } from './encounter-play/select-list/select-list.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { ToDatePipe } from './to-date.pipe';
     EncounterParticipantEditComponent,
     EncounterPlayComponent,
     AddParticipantsViewComponent,
-    SetupAddedParticipantsViewComponent
+    SetupAddedParticipantsViewComponent,
+    SelectListComponent
   ],
   imports: [
     CommonModule,
