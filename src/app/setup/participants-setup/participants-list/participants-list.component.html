@@ -202,6 +202,12 @@
                 {{ immunity.name }}
               </div>
             </div>
+            <div class="damage-type-item" *ngFor="let immunity of getConditionsByIds((allConditions$ | async), participant.immunityIds)">
+              <app-color-value [color]="immunity.color"></app-color-value>
+              <div>
+                {{ immunity.name }}
+              </div>
+            </div>
           </div>
     
           <div class="damage-types-list" [class.odd]="i % 2 === 0">

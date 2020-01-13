@@ -6,6 +6,8 @@ import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.que
 import { Participant } from 'src/app/setup/state/participants/participant.model';
 import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
 import { Feature } from 'src/app/setup/state/features/feature.model';
+import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
+import { Condition } from 'src/app/setup/state/conditions/condition.model';
 
 @Component({
   selector: 'app-participant-template',
@@ -27,6 +29,7 @@ export class ParticipantTemplateComponent implements OnInit {
   @Output() added = new EventEmitter<null>();
 
   constructor(private damageTypeQuery: DamageTypeQuery,
+              private conditionQuery: ConditionsQuery,
               private featureQuery: FeatureQuery) { }
 
   ngOnInit() {
@@ -48,4 +51,16 @@ export class ParticipantTemplateComponent implements OnInit {
     return this.featureQuery.getEntity(featureId);
   }
 
+  getCondition(conditionId: string): Feature {
+    return this.conditionQuery.getEntity(conditionId);
+  }
+
+  getImmunity(immunityId: string): any {
+    const result = this.damageTypeQuery.getEntity(immunityId);
+    if (result) {
+      return result;
+    } else {
+      return this.conditionQuery.getEntity(immunityId);
+    }
+  }
 }

@@ -206,6 +206,17 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     }
   }
 
+  onDeleteImmunity(participant: EncounterParticipant, immunityId: string) {
+    const immunityIds = [...participant.immunityIds].filter(item => item !== immunityId);
+    this.encounterParticipantsService.update({...participant, immunityIds});
+  }
+
+  onAddImmunities(participant: EncounterParticipant, immunityIds: string[]) {
+    if (immunityIds && immunityIds.length > 0) {
+      this.encounterParticipantsService.update({...participant, immunityIds: [...participant.immunityIds, ...immunityIds]});
+    }
+  }
+
   getDamageTypes(damageTypeIds: string[]) {
     if (!damageTypeIds || damageTypeIds.length === 0) {
       return of([]);
@@ -214,6 +225,14 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
       filterBy: item => damageTypeIds.includes(item.id),
       sortBy: 'name'
     });
+  }
+
+  getUnselectedDamageTypes(allDamageTypes, selectedDamageTypeIds) {
+    if (selectedDamageTypeIds && selectedDamageTypeIds.length > 0) {
+      return allDamageTypes.filter(item => !selectedDamageTypeIds.includes(item.id));
+    } else {
+      return allDamageTypes;
+    }
   }
 
   getFeatures(featureIds: string[]) {

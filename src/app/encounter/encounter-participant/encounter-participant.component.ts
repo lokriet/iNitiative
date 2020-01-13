@@ -5,10 +5,10 @@ import { Condition } from 'src/app/setup/state/conditions/condition.model';
 import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
 import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
+import { Feature } from 'src/app/setup/state/features/feature.model';
 import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
 
 import { EncounterParticipant } from './state/encounter-participant.model';
-import { Feature } from 'src/app/setup/state/features/feature.model';
 
 @Component({
   selector: 'app-encounter-participant',
@@ -56,6 +56,15 @@ export class EncounterParticipantComponent implements OnInit {
 
   getCondition(conditionId: string): Condition {
     return this.conditionsQuery.getEntity(conditionId);
+  }
+
+  getImmunity(immunityId: string): any {
+    const result = this.damageTypeQuery.getEntity(immunityId);
+    if (result) {
+      return result;
+    } else {
+      return this.conditionsQuery.getEntity(immunityId);
+    }
   }
 
   deleteParticipant() {

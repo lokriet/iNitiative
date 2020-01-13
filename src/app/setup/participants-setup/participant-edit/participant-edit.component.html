@@ -1,7 +1,8 @@
 
 <div *ngIf="(damageTypesLoading$ | async) ||
             (participantsLoading$ | async) ||
-            (featuresLoading$ | async)
+            (featuresLoading$ | async) ||
+            (conditionsLoading$ | async)
             ; else loaded">Loading...</div>
 
 <ng-template #loaded>
@@ -49,8 +50,9 @@
       <!-- <div class="immunities field"> -->
         <label>Immunities:</label>
         <ng-select
-            [items]="allDamageTypes$ | async"
+            [items]="getImmunities(allDamageTypes$ | async, allConditions$ | async)"
             [multiple]="true"
+            groupBy="type"
             [(ngModel)]="immunities"
             name="immunities"
             bindLabel="name"
@@ -70,9 +72,6 @@
             <div class="option">
               <div class="color" [ngStyle]="{ backgroundColor: item.color ? item.color : transparent }"></div>
               <div class="name">{{item.name}}</div>
-              <div class="toggle-icon">
-                <fa-icon [icon]="item$.selected ? selectedIcon : unselectedIcon"></fa-icon>
-              </div>
             </div>
           </ng-template>
         </ng-select>

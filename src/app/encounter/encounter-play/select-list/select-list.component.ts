@@ -11,7 +11,7 @@ export class SelectListComponent implements OnInit {
   @Input() toggleIcon: IconDefinition;
   @Input() hidingIcon = false;
 
-  @Input() items: any[]; // Condition[] | Feature[] | DamageType[];
+  @Input() items: any[]; // Condition[] | Feature[] | DamageType[]
   @Output() itemsSelected = new EventEmitter<string[]>();
 
   selectedItems: boolean[];

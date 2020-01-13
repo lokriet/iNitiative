@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
 import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
@@ -6,13 +6,15 @@ import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
 import { MessageService } from 'src/app/messages/state/message.service';
 
+import { Condition } from '../../state/conditions/condition.model';
+import { ConditionsQuery } from '../../state/conditions/conditions.query';
 import { DamageType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
+import { Feature } from '../../state/features/feature.model';
+import { FeatureQuery } from '../../state/features/feature.query';
 import { Participant, ParticipantType } from '../../state/participants/participant.model';
 import { ParticipantQuery } from '../../state/participants/participant.query';
 import { ParticipantService } from '../../state/participants/participant.service';
-import { Feature } from '../../state/features/feature.model';
-import { FeatureQuery } from '../../state/features/feature.query';
 
 @Component({
   selector: 'app-participant-edit',
@@ -24,6 +26,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
   unselectedIcon = faToggleOff;
 
   damageTypesLoading$: Observable<boolean>;
+  conditionsLoading$: Observable<boolean>;
   featuresLoading$: Observable<boolean>;
   participantsLoading$: Observable<boolean>;
 
@@ -47,6 +50,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
 
   allDamageTypes$: Observable<DamageType[]>;
   allFeatures$: Observable<Feature[]>;
+  allConditions$: Observable<Condition[]>;
 
   routeSub: Subscription;
   editMode = false;
@@ -55,6 +59,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
 
   constructor(private damageTypeQuery: DamageTypeQuery,
               private featureQuery: FeatureQuery,
+              private conditionQuery: ConditionsQuery,
               private participantService: ParticipantService,
               private participantQuery: ParticipantQuery,
               private authService: AuthService,
@@ -65,6 +70,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.damageTypesLoading$ = this.damageTypeQuery.selectLoading();
     this.featuresLoading$ = this.featureQuery.selectLoading();
+    this.conditionsLoading$ = this.conditionQuery.selectLoading();
     this.participantsLoading$ = this.participantQuery.selectLoading();
 
     this.allDamageTypes$ = this.damageTypeQuery.selectAll({
@@ -73,6 +79,11 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
     });
 
     this.allFeatures$ = this.featureQuery.selectAll({
+      filterBy: item => item.owner === this.authService.user.uid,
+      sortBy: 'name'
+    });
+
+    this.allConditions$ = this.conditionQuery.selectAll({
       filterBy: item => item.owner === this.authService.user.uid,
       sortBy: 'name'
     });
@@ -113,6 +124,13 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
     this.resistances = this.editedParticipant.resistanceIds ? [...this.editedParticipant.resistanceIds] : [];
     this.features = this.editedParticipant.featureIds ? [...this.editedParticipant.featureIds] : [];
     this.comments = this.editedParticipant.comments;
+  }
+
+  getImmunities(damageTypes, conditions) {
+    const result = [];
+    result.push(...damageTypes.map(damageType => ({...damageType, type: 'Damage Types'})));
+    result.push(...conditions.map(condition => ({...condition, type: 'Conditions'})));
+    return result;
   }
 
   onSubmit() {

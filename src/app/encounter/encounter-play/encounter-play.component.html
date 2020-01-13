@@ -125,7 +125,9 @@
         </div>
   
         <div class="participant-ini" [class.odd]="i % 2 === 0">
-          {{(participant.initiative + participant.initiativeModifier) }} 
+          {{participant.initiative == null ? 
+              ('??? + ' + participant.initiativeModifier) : 
+              (participant.initiative + participant.initiativeModifier) }} 
           <!-- &nbsp;&#x28; {{ participant.initiative }} &nbsp;+&nbsp; {{ participant.initiativeModifier }} &#x29; -->
         </div>
   
@@ -265,8 +267,7 @@
               [hidingIcon]="false"
               [items]="getUnselectedConditions((allConditions$ | async), participant.conditionIds)"
               (itemsSelected)="onAddConditions(participant, $event)"
-          ></app-select-list
-            >
+          ></app-select-list>
           <!-- <div 
               class="view-conditions"
               *ngIf="participant.id !== editingParticipantId || editingField !== 'conditions'; else editConditions">
@@ -434,7 +435,47 @@
         </div>
   
         <div class="participant-immunities damage-types-list" [class.odd]="i % 2 === 0">
-          <div 
+          <div class="view-item" *ngFor="let damageType of (getDamageTypes(participant.immunityIds) | async)">
+            <app-color-value [color]="damageType.color" [showEmpty]="false"></app-color-value>
+            <span>{{damageType.name}}</span>
+            <button class="delete-item-button" (click)="onDeleteImmunity(participant, damageType.id)">
+              <fa-icon [icon]="deleteIcon"></fa-icon>
+            </button>
+          </div>
+          <hr *ngIf="(getConditions(participant.immunityIds) | async).length > 0 && (getDamageTypes(participant.immunityIds) | async).length > 0">
+          <div class="view-item" *ngFor="let condition of (getConditions(participant.immunityIds) | async)">
+            <app-popup
+              [showCloseButton]="true" 
+              [windowName]="condition.name"
+              [floating]="true"
+            >
+              <ng-template #popupToggleTemplate let-toggle=toggle>
+                <div class="view-condition">
+                  <app-color-value [color]="condition.color" [showEmpty]="false"></app-color-value>
+                  <span (click)="toggle()">{{condition.name}}</span>
+                </div>
+              </ng-template>
+              <ng-template #popupInsidesTemplate>
+                <div class="condition-description">
+                  {{condition.description}}
+                </div>
+              </ng-template>
+            </app-popup>
+            <button class="delete-item-button" (click)="onDeleteImmunity(participant, condition.id)">
+              <fa-icon [icon]="deleteIcon"></fa-icon>
+            </button>
+          </div>
+          
+          <app-select-immunities-list
+              windowName="Add Immunities"
+              [toggleIcon]="addIcon"
+              [hidingIcon]="false"
+              [conditions]="getUnselectedConditions((allConditions$ | async), participant.immunityIds)"
+              [damageTypes]="getUnselectedDamageTypes((allDamageTypes$ | async), participant.immunityIds)"
+              (itemsSelected)="onAddImmunities(participant, $event)"
+          ></app-select-immunities-list>
+
+          <!-- <div 
               class="view-damage-types"
               *ngIf="participant.id !== editingParticipantId || editingField !== 'immunities'; else editImmunities">
             <div class="view-damage-type" *ngFor="let immunity of (getDamageTypes(participant.immunityIds) | async)">
@@ -509,7 +550,7 @@
                 </ng-template>
               </ng-select>
             </div>
-          </ng-template>
+          </ng-template> -->
         </div>
   
         <div class="participant-resistances damage-types-list" [class.odd]="i % 2 === 0">

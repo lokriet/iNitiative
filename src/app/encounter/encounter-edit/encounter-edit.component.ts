@@ -103,6 +103,11 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
   }
 
   onSubmitForm(startPlaying: boolean) {
+    if (!this.encounterName) {
+      this.errorMessage = 'You forgot to name your encounter!';
+      return;
+    }
+
     if (!this.editMode || this.editedEncounter.name !== this.encounterName) {
       const existingName = this.encounterQuery.getAll({filterBy: encounter => encounter.name === this.encounterName});
       if (existingName != null && existingName.length > 0) {

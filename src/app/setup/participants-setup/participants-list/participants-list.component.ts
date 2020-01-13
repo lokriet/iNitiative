@@ -11,6 +11,8 @@ import { ParticipantQuery } from '../../state/participants/participant.query';
 import { ParticipantService } from '../../state/participants/participant.service';
 import { Feature } from '../../state/features/feature.model';
 import { FeatureQuery } from '../../state/features/feature.query';
+import { Condition } from '../../state/conditions/condition.model';
+import { ConditionsQuery } from '../../state/conditions/conditions.query';
 
 @Component({
   selector: 'app-participants-list',
@@ -26,10 +28,12 @@ export class ParticipantsListComponent implements OnInit {
   participantsLoading$: Observable<boolean>;
   damageTypesLoading$: Observable<boolean>;
   featuresLoading$: Observable<boolean>;
+  conditionsLoading$: Observable<boolean>;
 
   allParticipants$: Observable<Participant[]>;
   allDamageTypes$: Observable<DamageType[]>;
   allFeatures$: Observable<Feature[]>;
+  allConditions$: Observable<Condition[]>;
 
   sortBy: SortBy<Participant, any> = 'name';
   sortByOrder = Order.ASC;
@@ -41,15 +45,18 @@ export class ParticipantsListComponent implements OnInit {
               private partiicpantService: ParticipantService,
               private damageTypesQuery: DamageTypeQuery,
               private featureQuery: FeatureQuery,
+              private conditionQuery: ConditionsQuery,
               private authService: AuthService) { }
 
   ngOnInit() {
     this.participantsLoading$ = this.participantsQuery.selectLoading();
     this.damageTypesLoading$ = this.damageTypesQuery.selectLoading();
     this.featuresLoading$ = this.featureQuery.selectLoading();
+    this.conditionsLoading$ = this.conditionQuery.selectLoading();
 
     this.allDamageTypes$ = this.damageTypesQuery.selectAll({filterBy: item => item.owner === this.authService.user.uid});
     this.allFeatures$ = this.featureQuery.selectAll({filterBy: item => item.owner === this.authService.user.uid});
+    this.allConditions$ = this.conditionQuery.selectAll({filterBy: item => item.owner === this.authService.user.uid});
     this.selectParticipants();
   }
 
@@ -96,6 +103,13 @@ export class ParticipantsListComponent implements OnInit {
       return [];
     }
     return features.filter(item => featureIds.includes(item.id));
+  }
+
+  getConditionsByIds(conditions: Condition[], conditionIds: string[]): Condition[] {
+    if (conditionIds == null) {
+      return [];
+    }
+    return conditions.filter(item => conditionIds.includes(item.id));
   }
 
   changeSortOrder(sortBy: SortBy<Participant, any>, isAsc: boolean, event) {

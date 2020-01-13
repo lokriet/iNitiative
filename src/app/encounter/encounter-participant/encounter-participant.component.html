@@ -83,10 +83,10 @@
         <ng-template #immunitiesList>
           <div class="damage-type" *ngFor="let immunity of participant.immunityIds">
             <div class="color">
-              <app-color-value [color]="getDamageType(immunity).color"></app-color-value>
+              <app-color-value [color]="getImmunity(immunity).color"></app-color-value>
             </div>
             <div class="damage-type-name">
-              {{ getDamageType(immunity).name }}
+              {{ getImmunity(immunity).name }}
             </div>
           </div>
         </ng-template>

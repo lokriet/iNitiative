@@ -19,7 +19,7 @@
 
       <div class="initiative">
         <div class="total-ini">
-          {{initiative + initiativeModifier }}
+          {{ initiative + initiativeModifier }}
         </div>  (<div class="rolled-ini">
           <input type="number" min="1" max="20" [(ngModel)]="initiative" name="initiative" class="number-input">
           <button type="button" class="roll-ini-button" (click)="rollInitiative()">
@@ -77,9 +77,10 @@
           Immunities:
         </div>
         <ng-select
-            [items]="allDamageTypes$ | async"
+            [items]="getImmunities(allDamageTypes$ | async, allConditions$ | async)"
             [multiple]="true"
             [(ngModel)]="immunities"
+            groupBy="type"
             name="immunities"
             [closeOnSelect]="false"
             bindValue="id"

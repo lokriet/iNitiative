@@ -23,8 +23,8 @@
           type="button"
           class="play-button"
           (click)="onSubmitForm(true)"
-          [disabled]="!f.valid"
       >
+      <!--           [disabled]="!f.valid" -->
         <fa-icon [icon]="playIcon"></fa-icon>
         Play!
       </button>
@@ -32,7 +32,6 @@
           type="button"
           class="save-button"
           (click)="onSubmitForm(false)"
-          [disabled]="!f.valid"
       >
         Save
       </button>

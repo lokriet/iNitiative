@@ -51,10 +51,10 @@
       </div>
       <div class="damage-type" *ngFor="let immunity of participantTemplate.immunityIds">
         <div class="color">
-          <app-color-value [color]="getDamageType(immunity).color"></app-color-value>
+          <app-color-value [color]="getImmunity(immunity).color"></app-color-value>
         </div>
         <div class="damage-type-name">
-          {{ getDamageType(immunity).name }}
+          {{ getImmunity(immunity).name }}
         </div>
       </div>
     </div>
@@ -77,7 +77,7 @@
       <div class="detail-label">
         Vulnerabilities:
       </div>
-      <div class="damage-type" *ngFor="let vulnerability of participantTemplate.immunityIds">
+      <div class="damage-type" *ngFor="let vulnerability of participantTemplate.vulnerabilityIds">
         <div class="color">
           <app-color-value [color]="getDamageType(vulnerability).color"></app-color-value>
         </div>

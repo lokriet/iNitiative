@@ -131,16 +131,11 @@ export class EncounterParticipantEditComponent implements OnInit {
     this.expandedChanged.emit(this.expanded);
   }
 
-  getDamageType(damageTypeId: string): DamageType {
-    return this.damageTypeQuery.getEntity(damageTypeId);
-  }
-
-  getCondition(conditionId: string): Condition {
-    return this.conditionsQuery.getEntity(conditionId);
-  }
-
-  getFeature(featureId: string): Feature {
-    return this.featureQuery.getEntity(featureId);
+  getImmunities(damageTypes, conditions) {
+    const result = [];
+    result.push(...damageTypes.map(item => ({...item, type: 'Damage Types'})));
+    result.push(...conditions.map(item => ({...item, type: 'Conditions'})));
+    return result;
   }
 
   deleteParticipant() {

@@ -1,0 +1,41 @@
+<app-popup [windowName]="windowName" [showCloseButton]="true" [floating]="true">
+  <ng-template #popupToggleTemplate let-toggle=toggle>
+    <button type="button" class="icon-button" [class.hidden-button]="hidingIcon" [class.light-button]="!hidingIcon" (click)="toggle()">
+      <fa-icon [icon]="toggleIcon"></fa-icon>
+    </button>
+  </ng-template>
+  <ng-template #popupInsidesTemplate let-hide="hide">
+    <div class="all-items">
+      <details>
+        <summary>Damage Types</summary>
+
+        <div class="items-list">
+          <div *ngFor="let item of damageTypes; let i = index">
+            <label class="item">
+              <input type="checkbox" [(ngModel)]="selectedDamageTypes[i]" [id]="i">
+              <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+              {{item.name}}
+            </label>
+          </div>
+        </div>
+      </details>
+      <details>
+        <summary>Conditions</summary>
+
+        <div class="items-list">
+          <div *ngFor="let item of conditions; let i = index">
+            <label class="item">
+              <input type="checkbox" [(ngModel)]="selectedConditions[i]" [id]="i">
+              <app-color-value [color]="item.color" [showEmpty]="false"></app-color-value>
+              {{item.name}}
+            </label>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="buttons">
+      <button type="button" (click)="onSelectItems();hide();">Ok</button>
+      <button type="button" (click)="clearSelected();hide();">Cancel</button>
+    </div>
+  </ng-template>
+</app-popup>

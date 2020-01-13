@@ -18,20 +18,20 @@ const setupRoutes: Routes = [
   {
     path: 'setup-participants',
     component: ParticipantsSetupComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, AuthGuard],
-    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard]
+    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, ConditionGuard, AuthGuard],
+    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, ConditionGuard]
   },
   {
     path: 'setup-participants/new',
     component: ParticipantEditComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, AuthGuard],
-    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard]
+    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, ConditionGuard, AuthGuard],
+    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, ConditionGuard]
   },
   {
     path: 'setup-participants/edit/:id',
     component: ParticipantEditComponent,
-    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, AuthGuard],
-    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard]
+    canActivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, ConditionGuard, AuthGuard],
+    canDeactivate: [DamageTypeGuard, ParticipantGuard, FeatureGuard, ConditionGuard]
   },
   {
     path: 'setup-damage-types',
