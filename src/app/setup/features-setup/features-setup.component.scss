@@ -20,7 +20,7 @@
 
 .features-table {
   display: grid;
-  grid-template-columns: 1rem max-content 30rem 2rem;
+  grid-template-columns: 1rem minmax(10rem, max-content) max-content 30rem 2rem;
   column-gap: 1rem;
   row-gap: 0.5rem;
   margin: 1rem 0;

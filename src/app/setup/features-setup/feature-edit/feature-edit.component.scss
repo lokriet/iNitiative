@@ -10,9 +10,14 @@
 
   .color-picker,
   .name,
+  .type,
   .description {
     display: flex;
   }
+}
+
+.feature-types-dropdown {
+  min-width: 10rem;
 }
 
 .edit-features-standalone {

@@ -20,14 +20,28 @@
         </div>
         <div class="column-header">
           <div class="column-header__name">
-            <button (click)="switchSortOrder()">
+            <button (click)="switchSortOrder('type')">
+              Type
+            </button>
+            <div class="sorter-icon">
+              <app-sort-icon 
+                  [isActive]="isSortingByType()" 
+                  [isSortUp]="isSortingAsc()"
+                  (sortingSwitched)="changeSortOrder('type', $event)"
+              ></app-sort-icon>
+            </div>
+          </div>
+        </div>
+        <div class="column-header">
+          <div class="column-header__name">
+            <button (click)="switchSortOrder('name')">
               Name
             </button>
             <div class="sorter-icon">
               <app-sort-icon 
-                  [isActive]="true" 
+                  [isActive]="isSortingByName()" 
                   [isSortUp]="isSortingAsc()"
-                  (sortingSwitched)="changeSortOrder($event)"
+                  (sortingSwitched)="changeSortOrder('name', $event)"
               ></app-sort-icon>
             </div>
           </div>
@@ -41,6 +55,17 @@
         <ng-container *ngFor="let feature of (allFeatures$ | async | filterByname : nameFilter); let i = index">
           <div class="grid-color-value">
             <app-colors-popup [ngModel]="feature.color" (ngModelChange)="onChangeColor(feature, $event)" name="color"></app-colors-popup>
+          </div>
+
+          <div class="type">
+            <ng-select [items]="allFeatureTypes"
+                      [addTag]="addTagFn"
+                      bindLabel="type"
+                      bindValue="type"
+                      [clearable]="false"
+                      (ngModelChange)="onChangeType(feature, $event)"
+                      [ngModel]="feature.type">
+            </ng-select>
           </div>
     
           <div class="name-value">
@@ -67,7 +92,6 @@
           </div>
         </ng-container>
       </div>
-    
     </ng-template>
   </div>
   

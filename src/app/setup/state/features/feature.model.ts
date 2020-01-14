@@ -4,6 +4,7 @@ export interface Feature {
   name: string;
   color: string;
   description: string;
+  type: string;
 }
 
 export function createFeature(params: Partial<Feature>) {

@@ -16,6 +16,19 @@
             <label>Name:</label>
             <input type="text" [(ngModel)]="newFeatureName" name="name" required>
           </div>
+          <div class="type">
+            <label>Type:</label>
+            <ng-select class="feature-types-dropdown"
+                        [items]="allFeatureTypes"
+                        [addTag]="addTagFn"
+                        bindLabel="type"
+                        bindValue="type"
+                        [clearable]="false"
+                        name="type"
+                        [ngModel]="newFeatureType"
+                        (ngModelChange)="changeFeatureType($event)">
+            </ng-select>
+          </div>
           <div class="description">
             <label>Description:</label>
             <textarea [(ngModel)]="newFeatureDescription" name="description"></textarea>
@@ -37,6 +50,19 @@
         <div class="name">
           <label>Name:</label>
           <input type="text" [(ngModel)]="newFeatureName" name="name" required>
+        </div>
+        <div class="type">
+          <label>Type:</label>
+          <ng-select class="feature-types-dropdown"
+                      [items]="allFeatureTypes"
+                      [addTag]="addTagFn"
+                      bindLabel="type"
+                      bindValue="type"
+                      [clearable]="false"
+                      name="type"
+                      [ngModel]="newFeatureType"
+                      (ngModelChange)="changeFeatureType($event)">
+          </ng-select>
         </div>
         <div class="description">
           <label>Description:</label>

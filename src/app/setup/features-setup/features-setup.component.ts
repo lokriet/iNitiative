@@ -24,6 +24,8 @@ export class FeaturesSetupComponent implements OnInit {
   sortByOrder = Order.ASC;
   nameFilter: string = null;
 
+  allFeatureTypes: any[] = [];
+
   constructor(private featureQuery: FeatureQuery,
               private featureService: FeatureService,
               private authService: AuthService) { }
@@ -42,8 +44,13 @@ export class FeaturesSetupComponent implements OnInit {
 
         return true;
       },
-      sortBy: this.sortBy,
+      sortBy: this.sortBy === 'type' ? this.sortByType.bind(this) : this.sortBy,
       sortByOrder: this.sortByOrder
+    });
+
+    this.allFeatures$.subscribe(features => {
+      this.allFeatureTypes = Array.from(new Set(features.map(item => item.type)));
+      this.allFeatureTypes.sort().map(item => ({type: item}));
     });
   }
 
@@ -51,14 +58,54 @@ export class FeaturesSetupComponent implements OnInit {
     return this.sortByOrder === Order.ASC;
   }
 
-  switchSortOrder() {
-    this.sortByOrder = this.sortByOrder === Order.ASC ? Order.DESC : Order.ASC;
+  // switchSortOrder() {
+  //   this.sortByOrder = this.sortByOrder === Order.ASC ? Order.DESC : Order.ASC;
+  //   this.selectFeatures();
+  // }
+
+  switchSortOrder(sortBy: SortBy<Feature, any>) {
+    if (this.sortBy === sortBy) {
+      this.sortByOrder = this.sortByOrder === Order.ASC ? Order.DESC : Order.ASC;
+    } else {
+      this.sortBy = sortBy;
+      this.sortByOrder = Order.ASC;
+    }
     this.selectFeatures();
   }
 
-  changeSortOrder(toAsc: boolean) {
-    this.sortByOrder = toAsc ? Order.ASC : Order.DESC;
+  // changeSortOrder(toAsc: boolean) {
+  //   this.sortByOrder = toAsc ? Order.ASC : Order.DESC;
+  //   this.selectFeatures();
+  // }
+
+  changeSortOrder(sortBy: SortBy<Feature, any>, isAsc: boolean) {
+    if (this.sortBy === sortBy &&
+         ((isAsc && this.sortByOrder === Order.ASC) ||
+          (!isAsc && this.sortByOrder === Order.DESC))
+       ) {
+      return;
+    }
+
+    this.sortBy = sortBy;
+    this.sortByOrder = isAsc ? Order.ASC : Order.DESC;
     this.selectFeatures();
+  }
+
+  sortByType(a: Feature, b: Feature): number {
+    if (a.type !== b.type) {
+      const result = a.type.localeCompare(b.type);
+      return this.sortByOrder === Order.ASC ? result : -result;
+    }
+
+    return a.name.localeCompare(b.name);
+  }
+
+  isSortingByName() {
+    return this.sortBy === 'name';
+  }
+
+  isSortingByType() {
+    return this.sortBy === 'type';
   }
 
   onNameFilterChanged(nameFilter: string) {
@@ -74,7 +121,10 @@ export class FeaturesSetupComponent implements OnInit {
     if (newName != null && newName.length > 0) {
       this.featureService.update({...feature, name: newName});
     }
+  }
 
+  onChangeType(feature: Feature, newType: string) {
+    this.featureService.update({...feature, type: newType});
   }
 
   onDeleteFeature(featureId: string) {
@@ -87,5 +137,9 @@ export class FeaturesSetupComponent implements OnInit {
     if (feature.description !== description) {
       this.featureService.update({...feature, description});
     }
+  }
+
+  addTagFn(name) {
+    return {type: name};
   }
 }

@@ -51,7 +51,7 @@ export class ParticipantTemplateComponent implements OnInit {
     return this.featureQuery.getEntity(featureId);
   }
 
-  getCondition(conditionId: string): Feature {
+  getCondition(conditionId: string): Condition {
     return this.conditionQuery.getEntity(conditionId);
   }
 
