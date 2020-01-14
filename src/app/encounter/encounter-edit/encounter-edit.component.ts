@@ -138,7 +138,8 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       participantIds: [...this.addedParticipants.map(participant => participant.id)],
       createdDate: this.editMode ? this.editedEncounter.createdDate : currentDate.getTime(),
       lastModifiedDate: currentDate.getTime(),
-      activeParticipantId
+      activeParticipantId,
+      mapId: this.editMode ? this.editedEncounter.mapId : null
     };
 
     if (!this.editMode) {

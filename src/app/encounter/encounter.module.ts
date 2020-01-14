@@ -26,6 +26,7 @@ import {
 import { ToDatePipe } from './to-date.pipe';
 import { SelectListComponent } from './encounter-play/select-list/select-list.component';
 import { SelectImmunitiesListComponent } from './encounter-play/select-immunities-list/select-immunities-list.component';
+import { MapComponent } from './encounter-play/map/map.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { SelectImmunitiesListComponent } from './encounter-play/select-immunitie
     AddParticipantsViewComponent,
     SetupAddedParticipantsViewComponent,
     SelectListComponent,
-    SelectImmunitiesListComponent
+    SelectImmunitiesListComponent,
+    MapComponent
   ],
   imports: [
     CommonModule,

@@ -11,6 +11,7 @@ import { EncounterParticipantGuard } from './encounter-participant/state/encount
 import { EncounterPlayComponent } from './encounter-play/encounter-play.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { FeatureGuard } from '../setup/state/features/feature.guard';
+import { MapGuard } from './encounter-play/map/state/map.guard';
 
 const encounterRoutes: Routes = [
   { 
@@ -34,8 +35,8 @@ const encounterRoutes: Routes = [
   {
     path: 'encounters/play/:id',
     component: EncounterPlayComponent,
-    canActivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, FeatureGuard, EncounterParticipantGuard, AuthGuard],
-    canDeactivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, FeatureGuard, EncounterParticipantGuard]
+    canActivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, FeatureGuard, EncounterParticipantGuard, MapGuard, AuthGuard],
+    canDeactivate: [EncounterGuard, ParticipantGuard, DamageTypeGuard, ConditionGuard, FeatureGuard, EncounterParticipantGuard, MapGuard]
   }
 ];
 

@@ -5,8 +5,8 @@ export interface Encounter {
   participantIds: string[];
   createdDate: number;
   lastModifiedDate: number;
-
   activeParticipantId: string;
+  mapId: string;
 }
 
 export function createEncounter(params: Partial<Encounter>) {

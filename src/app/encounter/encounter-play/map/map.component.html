@@ -1,0 +1,103 @@
+<div class="map-container">
+  <form class="new-map-form form">
+    <div class="form-row">
+      <input type="file" name="mapImage" (change)="fileChanged($event)"  access=".png,.jpg">
+    </div>
+    <div class="form-row">
+      <label>Grid width: </label>
+      <input type="number" name="gridWidth" [(ngModel)]="newMapGridWidth">
+    </div>
+    <div class="form-row">
+      <label>Grid height: </label>
+      <input type="number" name="gridHeight" [(ngModel)]="newMapGridHeight">
+    </div>
+    <div class="form-row">
+      <button type="button" (click)="loadNewMap()">Load new map</button>
+    </div>
+  </form>
+
+  <div class="form">
+    <div class="form-row">
+      <input type="color" id="gridColor" name="gridColor" [(ngModel)]="mapGridColor">
+      <label for="gridColor">Grid color</label>
+    </div>
+    <div class="form-row">
+      <input type="checkbox" name="snapToGrid" id="snapToGrid" [(ngModel)]="snapToGrid">
+      <label for="snapToGrid">Snap coordinates to grid</label>
+    </div>
+    <div class="form-row">
+      <input type="checkbox" name="showGrid" id="showGrid" [(ngModel)]="showGrid">
+      <label for="showGrid">Show grid</label>
+    </div>
+    <div class="form-row">
+      <label>W: </label>
+      <input type="number" [(ngModel)]="updatedMapGridWidth">
+      <label>H: </label>
+      <input type="number" [(ngModel)]="updatedMapGridHeight">
+      <button type="button" (click)="updateGridSize()">Save</button>
+      <button type="button" (click)="revertGridSizeFieldValues()">Revert</button>
+    </div>
+  </div>
+
+  <div *ngIf="map" class="map">
+    <img 
+        [style.margin-top.px]="gridCellHeight"
+        [style.margin-left.px]="gridCellWidth"
+        [src]="map.mapUrl" 
+        class="map-img" 
+        #mapImageElement>
+
+    <div class="loading-map">
+      <!-- TODO -->
+    </div>
+
+    <div class="grid"
+        [ngStyle]="{'grid-template-columns': 'repeat(' + (updatedMapGridWidth + 1) + ',' + gridCellWidth + 'px)',
+                    'grid-template-rows': 'repeat(' + (updatedMapGridHeight + 1) + ',' + gridCellHeight + 'px)'}"
+        *ngIf="map.gridHeight != null && map.gridWidth != null">
+      <div class="grid-cell top-left-cell">
+        <!-- top left empty square -->
+      </div>
+      <div 
+          class="grid-cell vertical-cell-index" 
+          *ngFor="let horizontalCell of horizontalMapIndices">
+        {{ horizontalCell }}
+        <!-- top indices row -->
+      </div>
+      <ng-container *ngFor="let verticalCell of verticalMapIndices; let j = index">
+        <div 
+            class="grid-cell horizontal-cell-index">
+          {{ verticalCell }}
+          <!-- left indices column -->
+        </div>
+
+        <div 
+            [ngStyle]="{'border-right-color': (showGrid && i !== (updatedMapGridWidth - 1) ) ? mapGridColor : 'transparent',
+                        'border-bottom-color': (showGrid && j !== (updatedMapGridHeight - 1)) ? mapGridColor : 'transparent'}"
+            class="grid-cell" 
+            *ngFor="let cell of horizontalMapIndices; let i = index">
+          <!-- cell[i][j] -->
+        </div>
+      </ng-container>
+      <!-- TODO -->
+    </div>
+
+    <div class="participants-on-map">
+      <!-- TODO -->
+    </div>
+  </div>
+
+  <div class="participants-list">
+    <div class="participant" *ngFor="let participant of (encounterParticipants$ | async)">
+      <div 
+          class="participant-icon"
+          [style.border-color]="participant.color"
+      >
+        {{ iconText(participant.name) }}
+      </div>
+      <div class="participant-name">
+        {{ participant.name }}
+      </div>
+    </div>
+  </div>
+</div>
