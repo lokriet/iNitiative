@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+@import './partials/shared';
+
 @import "~@ng-select/ng-select/themes/default.theme.css";
+
+@import url('https://fonts.googleapis.com/css?family=Baloo+Bhai|Source+Sans+Pro:400,700&display=swap');
 
 * {
   box-sizing: border-box;
@@ -20,8 +24,16 @@ body {
   height: 100vh;
   margin: 0;
   // background-color: $background-color;
-  // font-family: $main-font;
+  font-family: $main-font;
 }
+
+input,
+textarea,
+button {
+  font-family: $main-font;
+  font-size: 1rem;
+}
+
 
 .color-value {
   display: inline-block;

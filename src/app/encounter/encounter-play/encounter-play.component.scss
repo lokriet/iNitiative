@@ -64,7 +64,7 @@
 }
 
 .participants-list {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 
   display: grid;
   grid-template-columns: 2rem repeat(10, max-content) repeat(2, 10rem);
@@ -340,4 +340,9 @@
   position: relative;
   width: 10rem;
   padding-right: 0.8rem;
+}
+
+input,
+textarea {
+  font-size: 0.9rem !important;
 }
