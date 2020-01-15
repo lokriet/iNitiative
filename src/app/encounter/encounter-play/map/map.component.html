@@ -1,22 +1,38 @@
 <div class="map-container">
-  <form class="new-map-form form">
-    <div class="form-row">
-      <input type="file" name="mapImage" (change)="fileChanged($event)"  access=".png,.jpg">
-    </div>
-    <div class="form-row">
-      <label>Grid width: </label>
-      <input type="number" name="gridWidth" [(ngModel)]="newMapGridWidth">
-    </div>
-    <div class="form-row">
-      <label>Grid height: </label>
-      <input type="number" name="gridHeight" [(ngModel)]="newMapGridHeight">
-    </div>
-    <div class="form-row">
-      <button type="button" (click)="loadNewMap()">Load new map</button>
-    </div>
-  </form>
+  <app-popup 
+      [floating]="true"
+      [resizable]="true"
+      [showCloseButton]="true" 
+      windowName="Load new map">
+    <ng-template #popupToggleTemplate let-toggle=toggle>
+      <div class="form-row">
+        <button type="button" class="blue-button" (click)="toggle()">Load new map</button>
+        <button type="button" class="blue-button spaced-button" (click)="deleteMap()">Delete map</button>
+      </div>
+    </ng-template>
 
-  <div class="form">
+    <ng-template #popupInsidesTemplate let-hide="hide">
+      <div class="new-map-form form">
+        <div class="form-row">
+          <input type="file" name="mapImage" (change)="fileChanged($event)"  access=".png,.jpg">
+        </div>
+        <div class="form-row">
+          <label>Grid width:</label>
+          <input type="number" name="gridWidth" class="number-input" [(ngModel)]="newMapGridWidth">
+        </div>
+        <div class="form-row">
+          <label>Grid height:</label>
+          <input type="number" name="gridHeight" class="number-input" [(ngModel)]="newMapGridHeight">
+        </div>
+        <div class="form-row">
+          <button type="button" (click)="loadNewMap(); hide();">Load</button>
+          <button type="button" (click)="hide()">Cancel</button>
+        </div>
+      </div>
+    </ng-template>
+  </app-popup>
+  
+  <div class="form" *ngIf="map">
     <div class="form-row">
       <input type="color" id="gridColor" name="gridColor" [(ngModel)]="mapGridColor">
       <label for="gridColor">Grid color</label>
@@ -30,74 +46,117 @@
       <label for="showGrid">Show grid</label>
     </div>
     <div class="form-row">
-      <label>W: </label>
-      <input type="number" [(ngModel)]="updatedMapGridWidth">
-      <label>H: </label>
-      <input type="number" [(ngModel)]="updatedMapGridHeight">
+      <label>W:</label>
+      <input type="number" class="number-input" [(ngModel)]="updatedMapGridWidth">
+      <label>H:</label>
+      <input type="number" class="number-input" [(ngModel)]="updatedMapGridHeight">
       <button type="button" (click)="updateGridSize()">Save</button>
       <button type="button" (click)="revertGridSizeFieldValues()">Revert</button>
     </div>
   </div>
 
-  <div *ngIf="map" class="map">
-    <img 
-        [style.margin-top.px]="gridCellHeight"
-        [style.margin-left.px]="gridCellWidth"
-        [src]="map.mapUrl" 
-        class="map-img" 
-        #mapImageElement>
-
-    <div class="loading-map">
-      <!-- TODO -->
-    </div>
-
-    <div class="grid"
-        [ngStyle]="{'grid-template-columns': 'repeat(' + (updatedMapGridWidth + 1) + ',' + gridCellWidth + 'px)',
-                    'grid-template-rows': 'repeat(' + (updatedMapGridHeight + 1) + ',' + gridCellHeight + 'px)'}"
-        *ngIf="map.gridHeight != null && map.gridWidth != null">
-      <div class="grid-cell top-left-cell">
-        <!-- top left empty square -->
+  <div class="map-and-list" *ngIf="map">
+    <div class="map">
+      <img
+          [src]="map.mapUrl" 
+          class="map-img" 
+          #mapImageElement>
+      <div class="loading-map">
+        <!-- TODO -->
       </div>
-      <div 
-          class="grid-cell vertical-cell-index" 
-          *ngFor="let horizontalCell of horizontalMapIndices">
-        {{ horizontalCell }}
-        <!-- top indices row -->
-      </div>
-      <ng-container *ngFor="let verticalCell of verticalMapIndices; let j = index">
-        <div 
-            class="grid-cell horizontal-cell-index">
-          {{ verticalCell }}
-          <!-- left indices column -->
+  
+      <div class="grid"
+          [ngStyle]="{'grid-template-columns': '2rem repeat(' + this.map.gridWidth + ',' + gridCellWidth + 'px)',
+                      'grid-template-rows': '2rem repeat(' + this.map.gridHeight + ',' + gridCellHeight + 'px)'}"
+          *ngIf="map.gridHeight != null && map.gridWidth != null">
+        <div class="grid-cell top-left-cell">
+          <!-- top left empty square -->
         </div>
-
         <div 
-            [ngStyle]="{'border-right-color': (showGrid && i !== (updatedMapGridWidth - 1) ) ? mapGridColor : 'transparent',
-                        'border-bottom-color': (showGrid && j !== (updatedMapGridHeight - 1)) ? mapGridColor : 'transparent'}"
-            class="grid-cell" 
-            *ngFor="let cell of horizontalMapIndices; let i = index">
-          <!-- cell[i][j] -->
+            class="grid-cell vertical-cell-index" 
+            *ngFor="let horizontalCell of horizontalMapIndices">
+          {{ horizontalCell }}
+          <!-- top indices row -->
         </div>
-      </ng-container>
-      <!-- TODO -->
-    </div>
-
-    <div class="participants-on-map">
-      <!-- TODO -->
-    </div>
-  </div>
-
-  <div class="participants-list">
-    <div class="participant" *ngFor="let participant of (encounterParticipants$ | async)">
-      <div 
-          class="participant-icon"
-          [style.border-color]="participant.color"
-      >
-        {{ iconText(participant.name) }}
+        <ng-container *ngFor="let verticalCell of verticalMapIndices; let j = index">
+          <div 
+              class="grid-cell horizontal-cell-index">
+            {{ verticalCell }}
+            <!-- left indices column -->
+          </div>
+  
+          <div *ngFor="let cell of horizontalMapIndices; let i = index"
+              [ngStyle]="{'border-right-color': (showGrid && i !== (this.map.gridWidth - 1) ) ? mapGridColor : 'transparent',
+                          'border-bottom-color': (showGrid && j !== (this.map.gridHeight - 1)) ? mapGridColor : 'transparent'}"
+              class="grid-cell">
+            <!-- cell[i][j] -->
+          </div>
+        </ng-container>
+        <!-- TODO -->
       </div>
-      <div class="participant-name">
-        {{ participant.name }}
+  
+
+      <!-- [ngStyle]="{
+            'width': (gridCellWidth * map.gridWidth) + 'px',
+            'height': (gridCellHeight * map.gridHeight) + 'px'
+          }" -->
+      <div class="participants-on-map"
+          [ngStyle]="{
+            'width': mapImageElement.getBoundingClientRect().width + 'px',
+            'height': mapImageElement.getBoundingClientRect().height + 'px'
+          }"
+          (drop)="dropParticipantOnMap($event)" 
+          (dragover.out-zone)="dragParticipantOverMap($event)"
+          >
+        <div 
+            *ngFor="let participant of participantsOnMap; let i = index"
+            class="participant-on-map"
+            cdkDrag
+            cdkDragBoundary=".participants-on-map"
+            (cdkDragEnded)="dragMapParticipantEnded($event, i)"
+            [style.width.px]="gridCellWidth"
+            [style.height.px]="gridCellHeight"
+            [style.font-size.px]="16 * mapParticipantScale"
+            [style.z-index]="(i + 1)"
+            [style.top.px]="participant.initialCoord.y"
+            [style.left.px]="participant.initialCoord.x"
+            [style.border-color]="participant.participant.color || '#ffffff'">
+          {{ iconText(participant.participant.name) }}
+        </div>
+        <!-- TODO -->
       </div>
+    </div>
+    <div class="participants-container">
+      <div class="participants-list">
+        <div class="participant-row" *ngFor="let participant of (encounterParticipants$ | async)" >
+          <div 
+              class="participant"
+              [class.undraggable]="isParticipantOnMap(participant.id)"
+              [draggable]="!isParticipantOnMap(participant.id)" 
+              (dragstart)="startDraggingListedParticipant($event, participant, draggedIcon)"
+              (dragend)="stopDraggingListedParticipant($event)"> 
+            <div 
+                #draggedIcon
+                class="participant-icon dragged-icon"
+                [style.border-color]="participant.color || '#ffffff'"
+            >
+              {{ iconText(participant.name) }}
+            </div>
+            <app-color-value [color]="participant.color" [showEmpty]="false"></app-color-value>
+            <div class="participant-name">
+              {{ participant.name }}
+            </div>
+          </div>
+          <button 
+              class="blue-button"
+              [disabled]="!isParticipantOnMap(participant.id)"
+              type="button" 
+              (click)="removeParticipantFromMap(participant.id)">
+            <fa-icon [icon]="exitIcon"></fa-icon>
+            Remove from map
+          </button>
+        </div>
+      </div >
     </div>
   </div>
 </div>

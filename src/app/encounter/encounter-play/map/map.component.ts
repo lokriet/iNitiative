@@ -1,6 +1,8 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
+import { AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
-import { guid } from '@datorama/akita';
+import { EntityActions, guid } from '@datorama/akita';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'src/app/messages/state/message.service';
@@ -10,7 +12,7 @@ import { EncounterParticipantQuery } from '../../encounter-participant/state/enc
 import { Encounter } from '../../state/encounter.model';
 import { EncounterQuery } from '../../state/encounter.query';
 import { EncounterService } from '../../state/encounter.service';
-import { Map, ParticipantCoordinate } from './state/map.model';
+import { Map } from './state/map.model';
 import { MapQuery } from './state/map.query';
 import { MapService } from './state/map.service';
 import { StringIdGenerator } from './string-id-generator';
@@ -21,6 +23,8 @@ import { StringIdGenerator } from './string-id-generator';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit, AfterViewChecked {
+  exitIcon = faSignOutAlt;
+
   @Input() encounterId: string;
   encounter: Encounter;
   encounterParticipants$: Observable<EncounterParticipant[]>;
@@ -43,9 +47,14 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
   loadingNewMap = false;
 
-  participantsOnMap: ParticipantCoordinate[] = [];
+  participantsOnMap = [];
   snapToGrid = false;
   showGrid = true;
+
+  isDraggingParticipantFromList = false;
+  draggedParticipantFromList = null;
+
+  mapParticipantScale = 1;
 
   @ViewChild('mapImageElement') mapImageElement: ElementRef;
 
@@ -73,14 +82,38 @@ export class MapComponent implements OnInit, AfterViewChecked {
       this.updatedMapGridHeight = this.map.gridHeight;
       this.updatedMapGridWidth = this.map.gridWidth;
       this.generateMapIndices();
+
+
+      if (this.map.participantCoordinates && this.map.participantCoordinates.length > 0) {
+        for (const mapParticipant of this.map.participantCoordinates) {
+          const participant = this.encounterParticipantQuery.getEntity(mapParticipant.participantId);
+          this.participantsOnMap.push({
+            participant,
+            initialCoord: {
+              x: mapParticipant.x,
+              y: mapParticipant.y
+            },
+            currentCoord: {
+              x: mapParticipant.x,
+              y: mapParticipant.y
+            }
+          });
+        }
+      }
     }
+
+    this.encounterParticipantQuery.selectEntityAction(EntityActions.Remove).subscribe(removedIds => {
+      this.participantsOnMap = this.participantsOnMap.filter(item => !removedIds.includes(item.participant.id));
+      this.saveMapParticipants();
+    });
   }
 
   ngAfterViewChecked(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    setTimeout(() => {
-      this.calcGridCellSize();
-    }, 10);
+    if (this.map && !this.gridCellWidth && !this.gridCellHeight) {
+      setTimeout(() => {
+        this.calcGridCellSize();
+      }, 0);
+    }
   }
 
   loadNewMap() {
@@ -120,7 +153,6 @@ export class MapComponent implements OnInit, AfterViewChecked {
     });
   }
 
-
   fileChanged(event) {
     this.mapFile = event.target.files[0];
   }
@@ -153,7 +185,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
   }
 
   updateGridSize() {
-    this.mapService.update({...this.map, gridWidth: this.updatedMapGridWidth, gridHeight: this.updatedMapGridHeight});
+    this.map = {...this.map, gridWidth: this.updatedMapGridWidth, gridHeight: this.updatedMapGridHeight};
+    this.mapService.update(this.map);
+    console.log('saved map', this.map);
     this.generateMapIndices();
     this.messageService.addInfo('Updated map size');
   }
@@ -164,33 +198,148 @@ export class MapComponent implements OnInit, AfterViewChecked {
   }
 
   generateMapIndices() {
-    if (this.updatedMapGridHeight && this.updatedMapGridWidth) {
+    if (this.map.gridHeight && this.map.gridWidth) {
       this.horizontalMapIndices = [];
       const stringIdGenerator = new StringIdGenerator();
-      for (let i = 0; i < this.updatedMapGridWidth; i++) {
+      for (let i = 0; i < this.map.gridWidth; i++) {
         this.horizontalMapIndices.push(stringIdGenerator.next());
-        // this.horizontalMapIndices.push(i.toString());
       }
 
       this.verticalMapIndices = [];
-      for (let j = 0; j < this.updatedMapGridHeight; j++) {
-        this.verticalMapIndices.push(j.toString());
+      for (let j = 0; j < this.map.gridHeight; j++) {
+        this.verticalMapIndices.push((j + 1).toString());
       }
 
       setTimeout(() => {
         this.calcGridCellSize();
-      }, 100);
+      }, 0);
     }
-
   }
 
   calcGridCellSize() {
-    if (this.updatedMapGridHeight && this.updatedMapGridWidth) {
+    if (this.map.gridWidth && this.map.gridHeight) {
       const imageElement = (this.mapImageElement.nativeElement as HTMLElement);
-      // console.log('calculating cell size', imageElement.getBoundingClientRect(), imageElement.offsetHeight, imageElement.offsetWidth);
-      this.gridCellWidth = imageElement.getBoundingClientRect().width / this.updatedMapGridWidth;
-      this.gridCellHeight = imageElement.getBoundingClientRect().height / this.updatedMapGridHeight;
-      // console.log(`w: ${this.gridCellWidth}, h: ${this.gridCellHeight}`);
+      this.gridCellWidth = imageElement.getBoundingClientRect().width / this.map.gridWidth;
+      this.gridCellHeight = imageElement.getBoundingClientRect().height / this.map.gridHeight;
+
+      const participantScaleX = this.gridCellWidth / 20;
+      const participantScaleY = this.gridCellHeight / 20;
+
+      this.mapParticipantScale = Math.min(participantScaleX, participantScaleY);
+    }
+  }
+
+  startDraggingListedParticipant(event: DragEvent, participant: EncounterParticipant, draggedIcon) {
+    event.dataTransfer.setDragImage(draggedIcon, 0, 0);
+    this.isDraggingParticipantFromList = true;
+    this.draggedParticipantFromList = participant;
+  }
+
+  stopDraggingListedParticipant(event: DragEvent) {
+    this.isDraggingParticipantFromList = false;
+  }
+
+  dragParticipantOverMap(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  dropParticipantOnMap(event: DragEvent) {
+    event.preventDefault();
+    const imgCoords = this.mapImageElement.nativeElement.getBoundingClientRect();
+    if (this.isDraggingParticipantFromList) {
+      let participantCoordX;
+      let participantCoordY;
+
+      if (this.snapToGrid && this.map.gridWidth && this.map.gridHeight) {
+        const cellX = Math.floor((event.clientX - imgCoords.left) / this.gridCellWidth);
+        const cellY = Math.floor((event.clientY - imgCoords.top) / this.gridCellHeight);
+        participantCoordX = cellX * this.gridCellWidth;
+        participantCoordY = cellY * this.gridCellHeight;
+      } else {
+        participantCoordX = event.clientX - imgCoords.left;
+        participantCoordY = event.clientY - imgCoords.top;
+      }
+
+      const participantCoordinate = {
+        participantId: this.draggedParticipantFromList.id,
+        x: participantCoordX,
+        y: participantCoordY
+      };
+
+      this.participantsOnMap.push({
+        participant: this.draggedParticipantFromList,
+        initialCoord: participantCoordinate,
+        currentCoord: participantCoordinate});
+
+      this.draggedParticipantFromList = null;
+      this.saveMapParticipants();
+    }
+  }
+
+  isParticipantOnMap(participantId: string) {
+    const result = this.participantsOnMap.findIndex(item => item.participant.id === participantId) >= 0;
+    return result;
+  }
+
+  removeParticipantFromMap(participantId) {
+    this.participantsOnMap = this.participantsOnMap.filter(item => item.participant.id !== participantId);
+    this.saveMapParticipants();
+  }
+
+  dragMapParticipantEnded(event: CdkDragEnd, mapParticipantIndex: number) {
+    const participantPos = event.source.element.nativeElement.getBoundingClientRect();
+    const imgCoords = this.mapImageElement.nativeElement.getBoundingClientRect();
+
+    let newCoordX = participantPos.left - imgCoords.left;
+    let newCoordY = participantPos.top - imgCoords.top;
+
+    if (this.snapToGrid && this.map.gridWidth && this.map.gridHeight) {
+      const cellX = Math.floor((participantPos.left - imgCoords.left) / this.gridCellWidth);
+      const cellY = Math.floor((participantPos.top - imgCoords.top) / this.gridCellHeight);
+      const snappedCoordX = cellX * this.gridCellWidth;
+      const snappedCoordY = cellY * this.gridCellHeight;
+
+      const coordShiftX = snappedCoordX - newCoordX;
+      const coordShiftY = snappedCoordY - newCoordY;
+
+      const initialCoord = this.participantsOnMap[mapParticipantIndex].initialCoord;
+
+      this.participantsOnMap[mapParticipantIndex].initialCoord = {
+        x: initialCoord.x + coordShiftX,
+        y: initialCoord.y + coordShiftY
+      };
+
+      newCoordX = snappedCoordX;
+      newCoordY = snappedCoordY;
+    }
+
+    this.participantsOnMap[mapParticipantIndex].currentCoord = {
+      x: newCoordX,
+      y: newCoordY
+    };
+    this.saveMapParticipants();
+  }
+
+  saveMapParticipants() {
+    const participantCoordinates = [];
+    for (const mapParticipant of this.participantsOnMap) {
+      const coord = {
+        participantId: mapParticipant.participant.id,
+        x: mapParticipant.currentCoord.x,
+        y: mapParticipant.currentCoord.y
+      };
+      participantCoordinates.push(coord);
+    }
+    this.map = {...this.map, participantCoordinates};
+    this.mapService.update(this.map);
+  }
+
+
+  deleteMap() {
+    if (this.map) {
+      this.mapService.remove(this.map.id);
+      this.map = null;
+      this.participantsOnMap = [];
     }
   }
 }

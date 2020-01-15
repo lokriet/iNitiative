@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { SetupModule } from '../setup/setup.module';
 import { SharedModule } from '../shared/shared.module';
@@ -48,6 +49,7 @@ import { MapComponent } from './encounter-play/map/map.component';
   ],
   imports: [
     CommonModule,
+    DragDropModule,
     SharedModule,
     SetupModule,
     EncounterRoutingModule
