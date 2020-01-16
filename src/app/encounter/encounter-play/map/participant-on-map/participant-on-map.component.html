@@ -16,7 +16,10 @@
     {{ iconText(participant.name) }}
   </div>
 
-  <div class="info" cdkDrag
+  <div 
+    *ngIf="showInfo"
+    class="info" 
+    cdkDrag
     (cdkDragEnded)="dragInfoEnded($event)"
     [ngStyle]="this.initialInfoPos ? {'transform':'translate3D(' + this.initialX + 'px, ' + this.initialY + 'px, 0)'} : {}"
   >

@@ -52,6 +52,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
   participantsOnMap = [];
   snapToGrid = true;
   showGrid = true;
+  showInfo = true;
 
   isDraggingParticipantFromList = false;
   draggedParticipantFromList = null;

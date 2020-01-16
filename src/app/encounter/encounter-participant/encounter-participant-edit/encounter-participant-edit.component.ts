@@ -245,6 +245,7 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
     });
     if ((!encounterParticipants || encounterParticipants.length === 0) &&
         (!participantTemplates || participantTemplates.length === 0)) {
+      console.log('delete!');
       this.storage.storage.refFromURL(imageUrl).delete();
     }
   }

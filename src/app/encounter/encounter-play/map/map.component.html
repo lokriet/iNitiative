@@ -58,7 +58,10 @@
       <input type="checkbox" name="showGrid" id="showGrid" [(ngModel)]="showGrid">
       <label for="showGrid">Show grid</label>
     </div>
-
+    <div class="form-row">
+      <input type="checkbox" name="showInfo" id="showInfo" [(ngModel)]="showInfo">
+      <label for="showInfo">Show info</label>
+    </div> 
     <div class="form-row">
       <app-popup 
           [floating]="true"
@@ -84,7 +87,7 @@
           </div>
         </ng-template>
       </app-popup>
-    </div>    
+    </div>   
   </div>
 
   <div class="map-and-list" *ngIf="map && !loadingNewMap">
@@ -146,6 +149,7 @@
           <app-participant-on-map 
               [participant]="participant.participant$ | async"
               [initialInfoPos]="participant.initialInfoPos"
+              [showInfo]="showInfo"
               (infoMoved)="onMapParticipantInfoMoved($event, i)"
           ></app-participant-on-map>
         </div>

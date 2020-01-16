@@ -14,6 +14,7 @@ import { ParticipantType } from 'src/app/setup/state/participants/participant.mo
 export class ParticipantOnMapComponent implements OnInit {
   @Input() participant: EncounterParticipant;
   @Input() initialInfoPos: {x: number, y: number};
+  @Input() showInfo = true;
   initialX: number;
   initialY: number;
 

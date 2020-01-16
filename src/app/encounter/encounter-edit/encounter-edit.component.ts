@@ -77,6 +77,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     console.log('destroying encounter edit');
+    console.log('deleting in onDestroy...')
     this.deleteUnusedAvatarsFromStorage();
 
     this.sub.unsubscribe();
@@ -134,7 +135,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       if (this.encounterParticipantsQuery.getEntity(participant.id) == null) {
         await this.encounterParticipantsService.add(participant);
       } else {
-        this.encounterParticipantsService.update(participant);
+        await this.encounterParticipantsService.update(participant);
       }
     }
 
@@ -174,7 +175,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
         this.router.navigate(['encounters']);
       }
     } else {
-      this.encounterService.update(newEncounter);
+      await this.encounterService.update(newEncounter);
       this.messageService.addInfo(`Yay, encounter ${this.encounterName} saved!`);
 
       if (startPlaying) {
@@ -184,6 +185,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       }
     }
 
+    console.log('deleting in submit form...');
     this.deleteUnusedAvatarsFromStorage();
   }
 
@@ -288,6 +290,8 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
           // console.log('delete unfiltered avatars in last check', avatarUrls);
           // if anything left delete them
           for (const avatarUrl of avatarUrls) {
+
+            console.log('delete!')
             this.storage.storage.refFromURL(avatarUrl).delete();
           }
         }
