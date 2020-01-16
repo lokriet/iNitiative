@@ -1,7 +1,7 @@
 <div class="map-container">
   <app-popup 
       [floating]="true"
-      [resizable]="true"
+      [resizable]="false"
       [showCloseButton]="true" 
       windowName="Load new map">
     <ng-template #popupToggleTemplate let-toggle=toggle>
@@ -125,14 +125,23 @@
             cdkDrag
             cdkDragBoundary=".participants-on-map"
             (cdkDragEnded)="dragMapParticipantEnded($event, i)"
-            [style.width.px]="gridCellWidth"
-            [style.height.px]="gridCellHeight"
-            [style.font-size.px]="16 * mapParticipantScale"
+            [style.width.px]="gridCellWidth * (participant.participant$ | async).mapSizeX"
+            [style.height.px]="gridCellHeight * (participant.participant$ | async).mapSizeY"
             [style.z-index]="(i + 1)"
             [style.top.px]="participant.initialCoord.y"
             [style.left.px]="participant.initialCoord.x"
-            [style.border-color]="participant.participant.color || '#ffffff'">
-          {{ iconText(participant.participant.name) }}
+            [style.background-color]="(participant.participant$ | async).color || 'transparent'"
+            [style.border-width.px]="(participant.participant$ | async).color == null ? 0 : 3"
+            [style.border-color]="(participant.participant$ | async).color || 'transparent'">
+          <img *ngIf="(participant.participant$ | async).avatarUrl != null"
+              [src]="(participant.participant$ | async).avatarUrl"
+              class="participant-on-map__avatar">
+          <div *ngIf="(participant.participant$ | async).avatarUrl == null"
+              class="participant-on-map__letter"
+              [style.font-size.px]="16 * mapParticipantScale * (participant.participant$ | async).mapSizeY"
+          >
+            {{ iconText((participant.participant$ | async).name) }}
+          </div>
         </div>
         <!-- TODO -->
       </div>
@@ -146,18 +155,71 @@
               [draggable]="!isParticipantOnMap(participant.id)" 
               (dragstart)="startDraggingListedParticipant($event, participant, draggedIcon)"
               (dragend)="stopDraggingListedParticipant($event)"> 
-            <div 
-                #draggedIcon
-                class="participant-icon dragged-icon"
-                [style.border-color]="participant.color || '#ffffff'"
-            >
-              {{ iconText(participant.name) }}
+            <div #draggedIcon
+                class="participant-icon" 
+                [style.border-color]="participant.color || 'transparent'"
+                [style.border-width.px]="participant.color == null ? 0 : 3"
+                [style.background-color]="participant.color || 'transparent'">
+              <img *ngIf="participant.avatarUrl != null" [src]="participant.avatarUrl" class="participant-avatar">
+              <div class="participant-letter" *ngIf="participant.avatarUrl == null">
+                {{ iconText(participant.name) }}
+              </div>
             </div>
-            <app-color-value [color]="participant.color" [showEmpty]="false"></app-color-value>
             <div class="participant-name">
               {{ participant.name }}
             </div>
           </div>
+
+          <label>Size:</label>
+          <div>{{participant.mapSizeX + 'x' + participant.mapSizeY}}</div>
+          <app-popup 
+              [floating]="true"
+              [resizable]="false"
+              [showCloseButton]="true" 
+              windowName="Change size on map">
+            <ng-template #popupToggleTemplate let-toggle=toggle>
+              <div class="form-row">
+                <button type="button" (click)="toggle()">Change</button>
+              </div>
+            </ng-template>
+
+            <ng-template #popupInsidesTemplate let-hide="hide">
+              <div>
+                <div class="form-row">
+                  <label>W:</label>
+                  <input 
+                      class="number-input" 
+                      type="number" 
+                      name="widthOnMap" 
+                      [ngModel]="participant.mapSizeX" #widthInput>
+                  <label>H:</label>
+                  <input 
+                      class="number-input" 
+                      type="number" 
+                      name="heightOnMap" 
+                      [ngModel]="participant.mapSizeY" #heightInput>
+                </div>
+                <div class="form-row">
+                  <button type="button" (click)="updateParticipantSizes(widthInput.value, heightInput.value, participant);hide()">Save</button>
+                  <button type="button" (click)="revertParticipantSizes(widthInput, heightInput, participant);hide()">Revert</button>
+                </div>
+              </div>
+            </ng-template>
+          </app-popup>
+          <!-- <label>W:</label>
+          <input 
+              class="number-input" 
+              type="number" 
+              name="widthOnMap" 
+              [ngModel]="participant.mapSizeX" #widthInput>
+          <label>H:</label>
+          <input 
+              class="number-input" 
+              type="number" 
+              name="heightOnMap" 
+              [ngModel]="participant.mapSizeY" #heightInput>
+          <button type="button" (click)="updateParticipantSizes(widthInput.value, heightInput.value, participant)">Save</button>
+          <button type="button" (click)="revertParticipantSizes(widthInput, heightInput, participant)">Revert</button> -->
           <button 
               class="blue-button"
               [disabled]="!isParticipantOnMap(participant.id)"

@@ -9,6 +9,7 @@ import { MessageService } from 'src/app/messages/state/message.service';
 
 import { EncounterParticipant } from '../../encounter-participant/state/encounter-participant.model';
 import { EncounterParticipantQuery } from '../../encounter-participant/state/encounter-participant.query';
+import { EncounterParticipantService } from '../../encounter-participant/state/encounter-participant.service';
 import { Encounter } from '../../state/encounter.model';
 import { EncounterQuery } from '../../state/encounter.query';
 import { EncounterService } from '../../state/encounter.service';
@@ -49,7 +50,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
   fileSizeError = false;
 
   participantsOnMap = [];
-  snapToGrid = false;
+  snapToGrid = true;
   showGrid = true;
 
   isDraggingParticipantFromList = false;
@@ -61,6 +62,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
   constructor(private storage: AngularFireStorage,
               private encounterParticipantQuery: EncounterParticipantQuery,
+              private encounterParticipantService: EncounterParticipantService,
               private mapService: MapService,
               private mapQuery: MapQuery,
               private encouterService: EncounterService,
@@ -87,9 +89,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
       if (this.map.participantCoordinates && this.map.participantCoordinates.length > 0) {
         for (const mapParticipant of this.map.participantCoordinates) {
-          const participant = this.encounterParticipantQuery.getEntity(mapParticipant.participantId);
+          const participant$ = this.encounterParticipantQuery.selectEntity(mapParticipant.participantId);
           this.participantsOnMap.push({
-            participant,
+            participantId: mapParticipant.participantId,
+            participant$,
             initialCoord: {
               x: mapParticipant.x,
               y: mapParticipant.y
@@ -104,7 +107,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
 
     this.encounterParticipantQuery.selectEntityAction(EntityActions.Remove).subscribe(removedIds => {
-      this.participantsOnMap = this.participantsOnMap.filter(item => !removedIds.includes(item.participant.id));
+      this.participantsOnMap = this.participantsOnMap.filter(item => !removedIds.includes(item.participantId));
       this.saveMapParticipants();
     });
   }
@@ -276,7 +279,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
       };
 
       this.participantsOnMap.push({
-        participant: this.draggedParticipantFromList,
+        participantId: this.draggedParticipantFromList.id,
+        participant$: this.encounterParticipantQuery.selectEntity(this.draggedParticipantFromList.id),
         initialCoord: participantCoordinate,
         currentCoord: participantCoordinate});
 
@@ -286,12 +290,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
   }
 
   isParticipantOnMap(participantId: string) {
-    const result = this.participantsOnMap.findIndex(item => item.participant.id === participantId) >= 0;
+    const result = this.participantsOnMap.findIndex(item => item.participantId === participantId) >= 0;
     return result;
   }
 
   removeParticipantFromMap(participantId) {
-    this.participantsOnMap = this.participantsOnMap.filter(item => item.participant.id !== participantId);
+    this.participantsOnMap = this.participantsOnMap.filter(item => item.participantId !== participantId);
     this.saveMapParticipants();
   }
 
@@ -333,7 +337,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     const participantCoordinates = [];
     for (const mapParticipant of this.participantsOnMap) {
       const coord = {
-        participantId: mapParticipant.participant.id,
+        participantId: mapParticipant.participantId,
         x: mapParticipant.currentCoord.x,
         y: mapParticipant.currentCoord.y
       };
@@ -351,5 +355,16 @@ export class MapComponent implements OnInit, AfterViewChecked {
       this.map = null;
       this.participantsOnMap = [];
     }
+  }
+
+  updateParticipantSizes(width: number, height: number, participant: EncounterParticipant) {
+    console.log(width, height, participant);
+    this.encounterParticipantService.update({...participant, mapSizeX: width, mapSizeY: height});
+    this.messageService.addInfo('Updated participant map size');
+  }
+
+  revertParticipantSizes(widthInput, heightInput, participant: EncounterParticipant) {
+    widthInput.value = participant.mapSizeX;
+    heightInput.value = participant.mapSizeY;
   }
 }
