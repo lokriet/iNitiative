@@ -130,7 +130,7 @@
             [style.z-index]="(i + 1)"
             [style.top.px]="participant.initialCoord.y"
             [style.left.px]="participant.initialCoord.x"
-            [style.background-color]="(participant.participant$ | async).color || 'transparent'"
+            [style.background-color]="(participant.participant$ | async).color || '#000'"
             [style.border-width.px]="(participant.participant$ | async).color == null ? 0 : 3"
             [style.border-color]="(participant.participant$ | async).color || 'transparent'">
           <img *ngIf="(participant.participant$ | async).avatarUrl != null"
@@ -206,20 +206,6 @@
               </div>
             </ng-template>
           </app-popup>
-          <!-- <label>W:</label>
-          <input 
-              class="number-input" 
-              type="number" 
-              name="widthOnMap" 
-              [ngModel]="participant.mapSizeX" #widthInput>
-          <label>H:</label>
-          <input 
-              class="number-input" 
-              type="number" 
-              name="heightOnMap" 
-              [ngModel]="participant.mapSizeY" #heightInput>
-          <button type="button" (click)="updateParticipantSizes(widthInput.value, heightInput.value, participant)">Save</button>
-          <button type="button" (click)="revertParticipantSizes(widthInput, heightInput, participant)">Revert</button> -->
           <button 
               class="blue-button"
               [disabled]="!isParticipantOnMap(participant.id)"
