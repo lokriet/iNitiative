@@ -5,6 +5,7 @@ export interface EncounterParticipant {
   owner: string;
   type: ParticipantType;
   color: string;
+  avatarUrl: string;
   name: string;
   initiative: number;
   initiativeModifier: number;
@@ -22,6 +23,8 @@ export interface EncounterParticipant {
   conditionIds: string[];
   comments: string;
   advantages: string;
+  mapSizeX: number;
+  mapSizeY: number;
 }
 
 export function createEncounterParticipant(params: Partial<EncounterParticipant>) {

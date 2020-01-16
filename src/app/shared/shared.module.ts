@@ -1,17 +1,20 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ColorsPopupComponent } from './colors/colors-popup/colors-popup.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { FilterPopupComponent } from './filter-popup/filter-popup.component';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { AutosizeModule } from 'ngx-autosize';
+
+import { AvatarUploaderComponent } from './avatar-uploader/avatar-uploader.component';
 import { ColorValueComponent } from './colors/color-value/color-value.component';
+import { ColorsPopupComponent } from './colors/colors-popup/colors-popup.component';
+import { FilterByNamePipe } from './filter-by-name.pipe';
+import { FilterPopupComponent } from './filter-popup/filter-popup.component';
+import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { PopupComponent } from './popup/popup.component';
 import { PopupWindowDirective } from './popup/popup.directive';
-import { SortIconComponent } from './sort-icon/sort-icon.component';
-import { FilterByNamePipe } from './filter-by-name.pipe';
 import { SearchInputComponent } from './search-input/search-input.component';
-import { AutosizeModule } from 'ngx-autosize';
+import { SortIconComponent } from './sort-icon/sort-icon.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,9 @@ import { AutosizeModule } from 'ngx-autosize';
     PopupWindowDirective,
     SortIconComponent,
     FilterByNamePipe,
-    SearchInputComponent
+    SearchInputComponent,
+    AvatarUploaderComponent,
+    LoadingSpinnerComponent
   ],
   imports: [
     CommonModule,
@@ -43,7 +48,9 @@ import { AutosizeModule } from 'ngx-autosize';
     FormsModule,
     FontAwesomeModule,
     NgSelectModule,
-    AutosizeModule
+    AutosizeModule,
+    AvatarUploaderComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class SharedModule { }

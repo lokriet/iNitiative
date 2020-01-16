@@ -21,6 +21,13 @@
       <!-- <div class="color-picker field"> -->
         <label>Color: </label><app-colors-popup [(ngModel)]="color" name="color"></app-colors-popup>
       <!-- </div> -->
+
+      <label>Avatar:</label>
+      <div class="avatar">
+        <!-- <input type="file" name="avatar"> -->
+        <app-avatar-uploader [ngModel]="avatarUrl" (ngModelChange)="avatarChanged($event)" name="avatarUrl"></app-avatar-uploader>
+        <button type="button" (click)="deleteAvatar()">Delete avatar</button>
+      </div>
   
       <!-- <div class="name field"> -->
         <label>Name:</label>
@@ -161,7 +168,13 @@
         <label>Comments:</label>
         <textarea [(ngModel)]="comments" name="comments"></textarea>
       <!-- </div> -->
-
+        <label>Size on map:</label>
+        <div>
+          <label>W: </label>
+          <input type="number" class="number-input" [(ngModel)]="mapSizeX" name="mapSizeX">
+          <label>H: </label>
+          <input type="number" class="number-input" [(ngModel)]="mapSizeY" name="mapSizeY">
+        </div>
       <div class="full-table-cell error-message" *ngIf="!!errorMessage">{{errorMessage}}</div>
       <div>
         <button type="submit" class="full-table-cell" [disabled]="!f.valid">Save</button>

@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { EncounterParticipant } from '../state/encounter-participant.model';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Order } from '@datorama/akita';
+
+import { EncounterParticipant } from '../state/encounter-participant.model';
 
 @Component({
   selector: 'app-encounter-participants-list',
@@ -33,7 +34,7 @@ export class EncounterParticipantsListComponent implements OnInit {
     if (!this.participants) {
       return;
     }
-    
+
     this.participants.sort((a, b) => {
       if (this.sortBy === 'name') {
         let result = a.name.localeCompare(b.name);

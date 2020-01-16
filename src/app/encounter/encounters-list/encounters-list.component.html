@@ -89,7 +89,7 @@
         <button class="edit-button icon-button" [routerLink]="'/encounters/edit/' + encounter.id">
           <fa-icon [icon]="editIcon"></fa-icon>
         </button>
-        <button class="delete-button" (click)="onDeleteEncounter(encounter.id)">
+        <button class="delete-button" (click)="onDeleteEncounter(encounter)">
           <fa-icon [icon]="deleteIcon"></fa-icon>
         </button>
       </div>

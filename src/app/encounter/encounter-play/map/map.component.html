@@ -16,6 +16,7 @@
         <div class="form-row">
           <input type="file" name="mapImage" (change)="fileChanged($event)"  access=".png,.jpg">
         </div>
+        <div class="form-row info" [class.error]="fileSizeError">No more than 5Mb per image pls!</div>
         <div class="form-row">
           <label>Grid width:</label>
           <input type="number" name="gridWidth" class="number-input" [(ngModel)]="newMapGridWidth">
@@ -25,14 +26,27 @@
           <input type="number" name="gridHeight" class="number-input" [(ngModel)]="newMapGridHeight">
         </div>
         <div class="form-row">
-          <button type="button" (click)="loadNewMap(); hide();">Load</button>
+          <button type="button" (click)="loadNewMap(hide)">Load</button>
           <button type="button" (click)="hide()">Cancel</button>
         </div>
       </div>
     </ng-template>
   </app-popup>
+
+  <div *ngIf="(percentage$ | async) as percent" [hidden]="percent && percent >= 100">
+    <progress class="progress " 
+              [value]="percent" 
+              max="100">        
+    </progress>
+    <span> {{ percent | number }}%</span>
+  </div>
   
-  <div class="form" *ngIf="map">
+  <div class="loading-map" *ngIf="loadingNewMap">
+    <app-loading-spinner></app-loading-spinner>
+    <!-- TODO -->
+  </div>
+
+  <div class="form" *ngIf="map && !loadingNewMap">
     <div class="form-row">
       <input type="color" id="gridColor" name="gridColor" [(ngModel)]="mapGridColor">
       <label for="gridColor">Grid color</label>
@@ -55,15 +69,12 @@
     </div>
   </div>
 
-  <div class="map-and-list" *ngIf="map">
+  <div class="map-and-list" *ngIf="map && !loadingNewMap">
     <div class="map">
       <img
           [src]="map.mapUrl" 
           class="map-img" 
           #mapImageElement>
-      <div class="loading-map">
-        <!-- TODO -->
-      </div>
   
       <div class="grid"
           [ngStyle]="{'grid-template-columns': '2rem repeat(' + this.map.gridWidth + ',' + gridCellWidth + 'px)',

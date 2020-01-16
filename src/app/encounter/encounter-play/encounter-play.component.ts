@@ -398,6 +398,7 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
       type: participantTemplate.type,
       name: this.findNameWithNo(participantTemplate.name),
       color: participantTemplate.color,
+      avatarUrl: participantTemplate.avatarUrl || null,
       initiative: null,
       initiativeModifier: participantTemplate.initiativeModifier,
       currentHp: participantTemplate.maxHp,
@@ -413,7 +414,9 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
       featureIds: participantTemplate.featureIds ? [...participantTemplate.featureIds] : [],
       conditionIds: [],
       comments: participantTemplate.comments,
-      advantages: null
+      advantages: null,
+      mapSizeX: participantTemplate.mapSizeX || 1,
+      mapSizeY: participantTemplate.mapSizeY || 1
     };
 
     this.summonedParticipant = encounterParticipant;

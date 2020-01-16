@@ -28,6 +28,9 @@
   </div>
   
   <div class="participant-view__details" [@collapse]="expanded ? 'expanded' : 'collapsed'">
+    <div class="detail" *ngIf="participantTemplate.avatarUrl">
+      <img [src]="participantTemplate.avatarUrl">
+    </div>
     <div class="detail">
       <div class="detail-label">Ini Mod:</div>
       <div class="detail-value">{{participantTemplate.initiativeModifier}}</div>
@@ -100,5 +103,11 @@
         </div>
       </div>
     </div>
+
+    <div class="detail">
+      <div class="detail-label">Size on Map:</div>
+      <div class="detail-value">{{(participantTemplate.mapSizeX || 1) + 'x' + (participantTemplate.mapSizeY || 1)}}</div>
+    </div>
+    <br>
   </div>
 </div>

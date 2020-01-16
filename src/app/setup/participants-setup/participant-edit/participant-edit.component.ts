@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
 import { faToggleOff, faToggleOn } from '@fortawesome/free-solid-svg-icons';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
+import { EncounterParticipantQuery } from 'src/app/encounter/encounter-participant/state/encounter-participant.query';
 import { MessageService } from 'src/app/messages/state/message.service';
 
 import { Condition } from '../../state/conditions/condition.model';
@@ -46,6 +48,11 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
 
   comments: string = null;
 
+  mapSizeX = 1;
+  mapSizeY = 1;
+  avatarUrl: string = null;
+  initialAvatarUrl: string = null;
+
   errorMessage: string = null;
 
   allDamageTypes$: Observable<DamageType[]>;
@@ -62,10 +69,12 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
               private conditionQuery: ConditionsQuery,
               private participantService: ParticipantService,
               private participantQuery: ParticipantQuery,
+              private encounterParticipantQuery: EncounterParticipantQuery,
               private authService: AuthService,
               private router: Router,
               private route: ActivatedRoute,
-              private messageService: MessageService) { }
+              private messageService: MessageService,
+              private storage: AngularFireStorage) { }
 
   ngOnInit() {
     this.damageTypesLoading$ = this.damageTypeQuery.selectLoading();
@@ -98,7 +107,12 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.avatarUrl && this.avatarUrl !== this.initialAvatarUrl) {
+      console.log('deleting in onDestroy function', this.avatarUrl);
+      this.storage.storage.refFromURL(this.avatarUrl).delete();
+    }
     this.routeSub.unsubscribe();
+    console.log('destroying participant-template-edit');
   }
 
   initForm(editedParticipantId: string) {
@@ -124,6 +138,10 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
     this.resistances = this.editedParticipant.resistanceIds ? [...this.editedParticipant.resistanceIds] : [];
     this.features = this.editedParticipant.featureIds ? [...this.editedParticipant.featureIds] : [];
     this.comments = this.editedParticipant.comments;
+    this.mapSizeX = this.editedParticipant.mapSizeX || 1;
+    this.mapSizeY = this.editedParticipant.mapSizeY || 1;
+    this.avatarUrl = this.editedParticipant.avatarUrl || null;
+    this.initialAvatarUrl = this.avatarUrl;
   }
 
   getImmunities(damageTypes, conditions) {
@@ -131,6 +149,30 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
     result.push(...damageTypes.map(damageType => ({...damageType, type: 'Damage Types'})));
     result.push(...conditions.map(condition => ({...condition, type: 'Conditions'})));
     return result;
+  }
+
+  avatarChanged(newUrl: string) {
+    if (this.avatarUrl && this.avatarUrl !== newUrl) {
+      if (this.initialAvatarUrl !== this.avatarUrl) {
+        console.log('deleting in update function');
+        this.storage.storage.refFromURL(this.avatarUrl).delete();
+      }
+    }
+
+    if (this.avatarUrl !== newUrl) {
+      this.avatarUrl = newUrl;
+    }
+  }
+
+  deleteAvatar() {
+    if (this.avatarUrl != null) {
+      if (this.initialAvatarUrl !== this.avatarUrl) {
+        console.log('deleting in delete function');
+        this.storage.storage.refFromURL(this.avatarUrl).delete();
+      }
+
+      this.avatarUrl = null;
+    }
   }
 
   onSubmit() {
@@ -156,7 +198,10 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
       resistanceIds: this.resistances,
       immunityIds: this.immunities,
       featureIds: this.features,
-      comments: this.comments
+      comments: this.comments,
+      mapSizeX: this.mapSizeX,
+      mapSizeY: this.mapSizeY,
+      avatarUrl: this.avatarUrl
     };
 
 
@@ -180,5 +225,21 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
       });
     }
 
+    if (this.initialAvatarUrl && this.initialAvatarUrl !== this.avatarUrl) {
+      console.log('deleting in save function');
+      this.deleteImageFromStorage(this.initialAvatarUrl);
+    }
+
+    this.initialAvatarUrl = null;
+    this.avatarUrl = null;
+  }
+
+  deleteImageFromStorage(imageUrl) {
+    const encounterParticipants = this.encounterParticipantQuery.getAll({
+      filterBy: item => item.avatarUrl === imageUrl
+    });
+    if (!encounterParticipants || encounterParticipants.length === 0) {
+      this.storage.storage.refFromURL(imageUrl).delete();
+    }
   }
 }

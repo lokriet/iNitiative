@@ -1,0 +1,4 @@
+<div class="avatar-control">
+  <input type="file" (change)="startUpload($event.target.files)" />
+  <img *ngIf="avatarUrl" [src]="avatarUrl" [style.max-width.px]="maxSize" [style.max-height.px]="maxSize">
+</div>

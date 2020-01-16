@@ -1,5 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { faCheck, faChevronRight, faDiceD6, faTimes, faUndoAlt } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/state/auth.service';
@@ -9,8 +10,10 @@ import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
 import { Feature } from 'src/app/setup/state/features/feature.model';
 import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
+import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
 import { EncounterParticipant } from '../state/encounter-participant.model';
+import { EncounterParticipantQuery } from '../state/encounter-participant.query';
 
 @Component({
   selector: 'app-encounter-participant-edit',
@@ -24,7 +27,7 @@ import { EncounterParticipant } from '../state/encounter-participant.model';
     ])
   ]
 })
-export class EncounterParticipantEditComponent implements OnInit {
+export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
   @Input() participant: EncounterParticipant;
   @Output() changesSaved = new EventEmitter<EncounterParticipant>();
   @Output() changesCancelled = new EventEmitter<null>();
@@ -56,6 +59,10 @@ export class EncounterParticipantEditComponent implements OnInit {
   features: string[] = [];
   comments: string;
 
+  mapSizeX = 1;
+  mapSizeY = 1;
+  avatarUrl: string = null;
+  initialAvatarUrl: string = null;
 
   allDamageTypes$: Observable<DamageType[]>;
   allConditions$: Observable<Condition[]>;
@@ -64,10 +71,17 @@ export class EncounterParticipantEditComponent implements OnInit {
   constructor(private damageTypeQuery: DamageTypeQuery,
               private conditionsQuery: ConditionsQuery,
               private featureQuery: FeatureQuery,
-              private authService: AuthService) { }
+              private authService: AuthService,
+              private participantQuery: ParticipantQuery,
+              private encounterParticipantQuery: EncounterParticipantQuery,
+              private storage: AngularFireStorage) { }
 
   ngOnInit() {
+    console.log('initial avatar', this.participant.avatarUrl);
+
     this.color = this.participant.color;
+    this.avatarUrl = this.participant.avatarUrl || null;
+    this.initialAvatarUrl = this.avatarUrl;
     this.name = this.participant.name;
     this.initiative = this.participant.initiative;
     this.initiativeModifier = this.participant.initiativeModifier;
@@ -77,6 +91,8 @@ export class EncounterParticipantEditComponent implements OnInit {
     this.armorClass = this.participant.armorClass;
     this.speed = this.participant.speed;
     this.comments = this.participant.comments;
+    this.mapSizeX = this.participant.mapSizeX || 1;
+    this.mapSizeY = this.participant.mapSizeY || 1;
 
     if (this.participant.conditionIds) {
       this.conditions = [...this.participant.conditionIds];
@@ -126,6 +142,14 @@ export class EncounterParticipantEditComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.avatarUrl && this.avatarUrl !== this.initialAvatarUrl) {
+      console.log('deleting in onDestroy function');
+      this.deleteImageFromStorage(this.avatarUrl);
+    }
+    console.log('destroying encounter-participant-edit');
+  }
+
   switchExpanded() {
     this.expanded = !this.expanded;
     this.expandedChanged.emit(this.expanded);
@@ -147,15 +171,47 @@ export class EncounterParticipantEditComponent implements OnInit {
   }
 
   cancelEdit() {
+    if (this.avatarUrl && this.avatarUrl !== this.initialAvatarUrl) {
+      console.log('deleting in onDestroy function');
+      this.deleteImageFromStorage(this.avatarUrl);
+      this.avatarUrl = this.initialAvatarUrl;
+    }
     this.changesCancelled.emit();
   }
 
+  avatarChanged(newUrl: string) {
+    if (this.avatarUrl && this.avatarUrl !== newUrl) {
+      if (this.avatarUrl !== this.initialAvatarUrl) {
+        console.log('deleting in update function');
+        this.deleteImageFromStorage(this.avatarUrl);
+      }
+    }
+
+    if (this.avatarUrl !== newUrl) {
+      this.avatarUrl = newUrl;
+      console.log('updated avatar url', this.avatarUrl);
+    }
+  }
+
+  deleteAvatar() {
+    if (this.avatarUrl) {
+      if (this.avatarUrl !== this.initialAvatarUrl) {
+        console.log('deleting in delete function');
+        this.deleteImageFromStorage(this.avatarUrl);
+      }
+
+      this.avatarUrl = null;
+    }
+  }
+
   applyChanges() {
+    console.log('saving participant', this.avatarUrl);
     const newParticipant = {
       id: this.participant.id,
       owner: this.participant.owner,
       type: this.participant.type,
       color: this.color,
+      avatarUrl: this.avatarUrl,
       name: this.name,
       initiative: this.initiative,
       initiativeModifier: this.initiativeModifier,
@@ -172,9 +228,32 @@ export class EncounterParticipantEditComponent implements OnInit {
       conditionIds: this.conditions,
       featureIds: this.features,
       comments: this.comments,
-      advantages: null
+      advantages: this.participant.advantages || null,
+      mapSizeX: this.mapSizeX || 1,
+      mapSizeY: this.mapSizeY || 1
     };
 
     this.changesSaved.emit(newParticipant);
+    console.log(newParticipant);
+
+    // if (this.initialAvatarUrl && this.initialAvatarUrl !== this.avatarUrl) {
+    //   console.log('deleting in save function');
+    //   this.deleteImageFromStorage(this.initialAvatarUrl);
+    // }
+    this.initialAvatarUrl = null;
+    this.avatarUrl = null;
+  }
+
+  deleteImageFromStorage(imageUrl) {
+    const encounterParticipants = this.encounterParticipantQuery.getAll({
+      filterBy: item => item.avatarUrl === imageUrl
+    });
+    const participantTemplates = this.participantQuery.getAll({
+      filterBy: item => item.avatarUrl === imageUrl
+    });
+    if ((!encounterParticipants || encounterParticipants.length === 0) &&
+        (!participantTemplates || participantTemplates.length === 0)) {
+      this.storage.storage.refFromURL(imageUrl).delete();
+    }
   }
 }

@@ -19,6 +19,11 @@
   display: inline-block;
 }
 
+.avatar {
+  display: flex;
+  flex-direction: column;
+}
+
 .field {
   display: flex;
   align-items: center;

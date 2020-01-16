@@ -3,6 +3,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { faDiceD6 } from '@fortawesome/free-solid-svg-icons';
 
 import { EncounterParticipant } from '../state/encounter-participant.model';
+import { EncounterParticipantQuery } from '../state/encounter-participant.query';
 
 
 export const ENCOUNTER_PARTICIPANTS_VALUE_ACCESSOR: any = {
@@ -46,7 +47,8 @@ export class SetupAddedParticipantsViewComponent implements ControlValueAccessor
   }
 
   changeParticipant(participant: EncounterParticipant) {
-    this.addedParticipants.splice(this.addedParticipants.findIndex(item => item.id === participant.id), 1, participant);
+    const participantIndex = this.addedParticipants.findIndex(item => item.id === participant.id);
+    this.addedParticipants.splice(participantIndex, 1, participant);
     this.onChange(this.addedParticipants);
   }
 

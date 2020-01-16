@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
@@ -37,6 +38,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
   errorMessage: string = null;
 
   addedParticipants: EncounterParticipant[] = [];
+  avatarUrlsToCheck = new Set<string>();
 
   editMode = false;
   editedEncounter: Encounter;
@@ -50,6 +52,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
               private damageTypesQuery: DamageTypeQuery,
               private conditionsQuery: ConditionsQuery,
               private featuresQuery: FeatureQuery,
+              private storage: AngularFireStorage,
               private authService: AuthService,
               private messageService: MessageService,
               private router: Router,
@@ -73,6 +76,9 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    console.log('destroying encounter edit');
+    this.deleteUnusedAvatarsFromStorage();
+
     this.sub.unsubscribe();
   }
 
@@ -95,6 +101,12 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
                                             immunityIds: item.immunityIds ? [...item.immunityIds] : [],
                                             resistanceIds: item.resistanceIds ? [...item.resistanceIds] : [],
                                             vulnerabilityIds: item.vulnerabilityIds ? [...item.vulnerabilityIds] : []}));
+
+          for (const participant of this.addedParticipants) {
+            if (participant.avatarUrl != null) {
+              this.avatarUrlsToCheck.add(participant.avatarUrl);
+            }
+          }
         } else {
           this.addedParticipants = [];
         }
@@ -102,7 +114,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmitForm(startPlaying: boolean) {
+  async onSubmitForm(startPlaying: boolean) {
     if (!this.encounterName) {
       this.errorMessage = 'You forgot to name your encounter!';
       return;
@@ -120,9 +132,18 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
 
     for (const participant of this.addedParticipants) {
       if (this.encounterParticipantsQuery.getEntity(participant.id) == null) {
-        this.encounterParticipantsService.add(participant);
+        await this.encounterParticipantsService.add(participant);
       } else {
         this.encounterParticipantsService.update(participant);
+      }
+    }
+
+    if (this.editMode) {
+      const deletedParticipants =
+        this.editedEncounter.participantIds.filter(participantId =>
+                                                      this.addedParticipants.findIndex(item => item.id === participantId) < 0);
+      if (deletedParticipants && deletedParticipants.length > 0) {
+        await this.encounterParticipantsService.remove(deletedParticipants);
       }
     }
 
@@ -143,26 +164,27 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
     };
 
     if (!this.editMode) {
-      this.encounterService.add(newEncounter).then(value => {
-        this.messageService.addInfo(`Yay, encounter ${this.encounterName} created!`);
+      await this.encounterService.add(newEncounter);
 
-        if (startPlaying) {
-          this.router.navigate(['encounters', 'play', newEncounter.id]);
-        } else {
-          this.router.navigate(['encounters']);
-        }
-      });
+      this.messageService.addInfo(`Yay, encounter ${this.encounterName} created!`);
+
+      if (startPlaying) {
+        this.router.navigate(['encounters', 'play', newEncounter.id]);
+      } else {
+        this.router.navigate(['encounters']);
+      }
     } else {
-      this.encounterService.update(newEncounter).then(value => {
-        this.messageService.addInfo(`Yay, encounter ${this.encounterName} saved!`);
+      this.encounterService.update(newEncounter);
+      this.messageService.addInfo(`Yay, encounter ${this.encounterName} saved!`);
 
-        if (startPlaying) {
-          this.router.navigate(['encounters', 'play', newEncounter.id]);
-        } else {
-          this.router.navigate(['encounters']);
-        }
-      });
+      if (startPlaying) {
+        this.router.navigate(['encounters', 'play', newEncounter.id]);
+      } else {
+        this.router.navigate(['encounters']);
+      }
     }
+
+    this.deleteUnusedAvatarsFromStorage();
   }
 
   findNameWithNo(name: string): string {
@@ -184,6 +206,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       owner: this.authService.user.uid,
       type: participantTemplate.type,
       name: this.findNameWithNo(participantTemplate.name),
+      avatarUrl: participantTemplate.avatarUrl,
       color: participantTemplate.color,
       initiative: null,
       initiativeModifier: participantTemplate.initiativeModifier,
@@ -200,9 +223,77 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       conditionIds: [],
       featureIds: participantTemplate.featureIds ? [...participantTemplate.featureIds] : [],
       comments: participantTemplate.comments,
-      advantages: null
+      advantages: null,
+      mapSizeX: participantTemplate.mapSizeX || 1,
+      mapSizeY: participantTemplate.mapSizeY || 1
     };
 
     this.addedParticipants.push(encounterParticipant);
+    if (participantTemplate.avatarUrl != null) {
+      this.avatarUrlsToCheck.add(participantTemplate.avatarUrl);
+    }
+  }
+
+  onParticipantsChanged(updatedParticipants) {
+    // console.log('participants changed', updatedParticipants);
+    for (const participant of updatedParticipants) {
+      if (participant.avatarUrl != null) {
+        this.avatarUrlsToCheck.add(participant.avatarUrl);
+      }
+    }
+
+    this.addedParticipants = updatedParticipants;
+    console.log(this.avatarUrlsToCheck);
+  }
+
+  deleteUnusedAvatarsFromStorage() {
+    let avatarUrls = Array.from(this.avatarUrlsToCheck);
+    // console.log('checking avatars', avatarUrls);
+
+    // 1. delete participant avatars from storage
+    if (avatarUrls.length > 0) {
+
+      // filter out avatars used by existing participant templates
+      const participantTemplates = this.participantTemplateQuery.getAll({filterBy: item =>
+        item.avatarUrl != null && avatarUrls.includes(item.avatarUrl)
+      });
+
+      if (participantTemplates && participantTemplates.length > 0) {
+        avatarUrls = avatarUrls.filter(avatarUrl =>
+          participantTemplates.findIndex(item =>
+            item.avatarUrl === avatarUrl
+          ) < 0
+        );
+      }
+
+      if (avatarUrls.length > 0) {
+        // console.log('filtered participant templates, avatars to check left', avatarUrls);
+        // filter out avatars used by participants of other encounters
+        const encounterParticipants = this.encounterParticipantsQuery.getAll({filterBy: item =>
+          item.avatarUrl != null && avatarUrls.includes(item.avatarUrl)
+        });
+        // console.log('encounter participants found', encounterParticipants);
+
+
+
+        if (encounterParticipants && encounterParticipants.length > 0) {
+          avatarUrls = avatarUrls.filter(avatarUrl =>
+            encounterParticipants.findIndex(item =>
+              item.avatarUrl === avatarUrl
+            ) < 0
+          );
+        }
+
+        if (avatarUrls.length > 0) {
+          // console.log('delete unfiltered avatars in last check', avatarUrls);
+          // if anything left delete them
+          for (const avatarUrl of avatarUrls) {
+            this.storage.storage.refFromURL(avatarUrl).delete();
+          }
+        }
+      }
+    }
+
+    this.avatarUrlsToCheck = new Set<string>();
   }
 }

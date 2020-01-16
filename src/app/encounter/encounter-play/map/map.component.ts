@@ -46,6 +46,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
   mapGridColor = '#aaaaaa';
 
   loadingNewMap = false;
+  fileSizeError = false;
 
   participantsOnMap = [];
   snapToGrid = false;
@@ -116,7 +117,11 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  loadNewMap() {
+  loadNewMap(hideFn) {
+    if (this.fileSizeError) {
+      return;
+    }
+
     this.loadingNewMap = true;
 
     this.startUpload(this.mapFile, imageUrl => {
@@ -151,10 +156,14 @@ export class MapComponent implements OnInit, AfterViewChecked {
       this.participantsOnMap = [];
       this.loadingNewMap = false;
     });
+
+    hideFn();
   }
 
   fileChanged(event) {
     this.mapFile = event.target.files[0];
+    const fileSize = this.mapFile.size / (1024 * 1024);
+    this.fileSizeError = fileSize > 5;
   }
 
   startUpload(file, callback) {
@@ -337,6 +346,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
   deleteMap() {
     if (this.map) {
+      this.storage.storage.refFromURL(this.map.mapUrl).delete();
       this.mapService.remove(this.map.id);
       this.map = null;
       this.participantsOnMap = [];

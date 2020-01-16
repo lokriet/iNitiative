@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { Order, SortBy } from '@datorama/akita';
-import { faTimes, faPlay, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faPlay, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/auth/state/auth.service';
+import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
+import { DateFilterValue } from 'src/app/shared/filter-popup/filter-popup.component';
 
+import { EncounterParticipantQuery } from '../encounter-participant/state/encounter-participant.query';
+import { EncounterParticipantService } from '../encounter-participant/state/encounter-participant.service';
+import { MapQuery } from '../encounter-play/map/state/map.query';
+import { MapService } from '../encounter-play/map/state/map.service';
 import { Encounter } from '../state/encounter.model';
 import { EncounterQuery } from '../state/encounter.query';
 import { EncounterService } from '../state/encounter.service';
-import { DateFilterValue } from 'src/app/shared/filter-popup/filter-popup.component';
-import { AuthService } from 'src/app/auth/state/auth.service';
 
 @Component({
   selector: 'app-encounters-list',
@@ -18,7 +24,6 @@ export class EncountersListComponent implements OnInit {
   deleteIcon = faTimes;
   playIcon = faPlay;
   editIcon = faCog;
-  
 
   encountersLoading$: Observable<boolean>;
   encounters$: Observable<Encounter[]>;
@@ -32,6 +37,12 @@ export class EncountersListComponent implements OnInit {
 
   constructor(private encounterQuery: EncounterQuery,
               private encounterService: EncounterService,
+              private encounterParticipantQuery: EncounterParticipantQuery,
+              private encounterParticipantService: EncounterParticipantService,
+              private participantTemplateQuery: ParticipantQuery,
+              private mapQuery: MapQuery,
+              private mapService: MapService,
+              private storage: AngularFireStorage,
               private authService: AuthService) { }
 
   ngOnInit() {
@@ -48,9 +59,79 @@ export class EncountersListComponent implements OnInit {
     });
   }
 
-  onDeleteEncounter(id: string) {
+  onDeleteEncounter(encounter: Encounter) {
     if (confirm('Delete encounter?')) {
-      this.encounterService.remove(id);
+      if (encounter.participantIds && encounter.participantIds.length > 0) {
+
+        // 1. delete participant avatars from storage
+
+        // get deleted encounter participants with avatars
+        const participants = this.encounterParticipantQuery.getAll({filterBy: item =>
+          encounter.participantIds.includes(item.id) && item.avatarUrl != null
+        });
+
+        if (participants && participants.length > 0) {
+          let avatarUrls = Array.from(new Set(participants.map(item => item.avatarUrl)));
+
+          if (avatarUrls.length > 0) {
+            // filter out avatars used by existing participant templates
+            const participantTemplates = this.participantTemplateQuery.getAll({filterBy: item =>
+              avatarUrls.includes(item.avatarUrl)
+            });
+
+            if (participantTemplates && participantTemplates.length > 0) {
+              avatarUrls = avatarUrls.filter(avatarUrl =>
+                participantTemplates.findIndex(item =>
+                  item.avatarUrl === avatarUrl
+                ) < 0
+              );
+            }
+
+            if (avatarUrls.length > 0) {
+
+              // filter out avatars used by participants of other encounters
+              const encounterParticipants = this.encounterParticipantQuery.getAll({filterBy: item =>
+                item.avatarUrl && avatarUrls.includes(item.avatarUrl)
+              });
+
+              if (encounterParticipants && encounterParticipants.length > 0) {
+                avatarUrls = avatarUrls.filter(avatarUrl =>
+                  encounterParticipants.findIndex(item =>
+                    item.avatarUrl === avatarUrl
+                  ) < 0
+                );
+              }
+
+              if (avatarUrls.length > 0) {
+                // if anything left delete them
+
+                for (const avatarUrl of avatarUrls) {
+                  this.storage.storage.refFromURL(avatarUrl).delete();
+                }
+              }
+            }
+          }
+        }
+
+        // 2. delete participants from db
+        this.encounterParticipantService.remove(encounter.participantIds);
+      }
+
+      if (encounter.mapId) {
+        // 3. delete map img from storage
+
+        const map = this.mapQuery.getEntity(encounter.mapId);
+        if (map.mapUrl) {
+          this.storage.storage.refFromURL(map.mapUrl).delete();
+        }
+
+        // 4. delete map from db
+        this.mapService.remove(encounter.mapId);
+      }
+
+
+      // 5. Delete encounter from db
+      this.encounterService.remove(encounter.id);
     }
   }
 

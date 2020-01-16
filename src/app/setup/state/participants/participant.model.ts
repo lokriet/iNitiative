@@ -8,6 +8,7 @@ export interface Participant {
   owner: string;
   name: string;
   type: ParticipantType;
+  avatarUrl: string;
   color: string;
   initiativeModifier: number;
   maxHp: number;
@@ -18,6 +19,8 @@ export interface Participant {
   immunityIds: string[];
   featureIds: string[];
   comments: string;
+  mapSizeX: number;
+  mapSizeY: number;
 }
 
 export function createParticipant(params: Partial<Participant>) {

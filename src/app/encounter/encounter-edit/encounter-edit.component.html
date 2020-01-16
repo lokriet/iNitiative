@@ -40,7 +40,11 @@
     <div class="participants-view">
       <app-add-participants-view (onParticipantAdded)="addParticipant($event)"></app-add-participants-view>
   
-      <app-setup-added-participants-view [(ngModel)]="addedParticipants" name="addedParticipants"></app-setup-added-participants-view>
+      <app-setup-added-participants-view 
+          [ngModel]="addedParticipants" 
+          (ngModelChange)="onParticipantsChanged($event)"
+          name="addedParticipants"
+          ></app-setup-added-participants-view>
     </div>
   </form>
 </ng-template>

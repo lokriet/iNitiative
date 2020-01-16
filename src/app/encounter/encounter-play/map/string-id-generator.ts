@@ -5,7 +5,7 @@ export class StringIdGenerator {
   _nextId;
 
   constructor() {
-    this._chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    this._chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     this._nextId = [0];
   }
 
