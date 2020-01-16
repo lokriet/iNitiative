@@ -170,7 +170,7 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     return participant.currentHp <= 0;
   }
 
-  removeDeadParticipant(participant) {
+  async removeDeadParticipant(participant) {
     if (this.isDead(participant)) {
       if (this.activeParticipantId === participant.id) {
         this.nextMove();
@@ -178,7 +178,7 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
 
       const newParticipants = this.encounter.participantIds.filter(item => item !== participant.id);
       this.encounterService.update({...this.encounter, participantIds: newParticipants, activeParticipantId: this.activeParticipantId});
-      this.encounterParticipantsService.remove(participant.id);
+      await this.encounterParticipantsService.remove(participant.id);
     }
   }
 

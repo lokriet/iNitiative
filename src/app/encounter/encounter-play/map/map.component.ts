@@ -364,7 +364,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
   }
 
   revertParticipantSizes(widthInput, heightInput, participant: EncounterParticipant) {
-    widthInput.value = participant.mapSizeX;
-    heightInput.value = participant.mapSizeY;
+    widthInput.value = participant.mapSizeX || 1;
+    heightInput.value = participant.mapSizeY || 1;
   }
 }

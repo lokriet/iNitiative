@@ -103,14 +103,8 @@
             <!-- cell[i][j] -->
           </div>
         </ng-container>
-        <!-- TODO -->
       </div>
   
-
-      <!-- [ngStyle]="{
-            'width': (gridCellWidth * map.gridWidth) + 'px',
-            'height': (gridCellHeight * map.gridHeight) + 'px'
-          }" -->
       <div class="participants-on-map"
           [ngStyle]="{
             'width': mapImageElement.getBoundingClientRect().width + 'px',
@@ -125,8 +119,8 @@
             cdkDrag
             cdkDragBoundary=".participants-on-map"
             (cdkDragEnded)="dragMapParticipantEnded($event, i)"
-            [style.width.px]="gridCellWidth * (participant.participant$ | async).mapSizeX"
-            [style.height.px]="gridCellHeight * (participant.participant$ | async).mapSizeY"
+            [style.width.px]="gridCellWidth * ((participant.participant$ | async).mapSizeX || 1)"
+            [style.height.px]="gridCellHeight * ((participant.participant$ | async).mapSizeY || 1)"
             [style.z-index]="(i + 1)"
             [style.top.px]="participant.initialCoord.y"
             [style.left.px]="participant.initialCoord.x"
@@ -138,7 +132,7 @@
               class="participant-on-map__avatar">
           <div *ngIf="(participant.participant$ | async).avatarUrl == null"
               class="participant-on-map__letter"
-              [style.font-size.px]="16 * mapParticipantScale * (participant.participant$ | async).mapSizeY"
+              [style.font-size.px]="16 * mapParticipantScale * ((participant.participant$ | async).mapSizeY || 1)"
           >
             {{ iconText((participant.participant$ | async).name) }}
           </div>
@@ -171,7 +165,7 @@
           </div>
 
           <label>Size:</label>
-          <div>{{participant.mapSizeX + 'x' + participant.mapSizeY}}</div>
+          <div>{{(participant.mapSizeX || 1) + 'x' + (participant.mapSizeY || 1)}}</div>
           <app-popup 
               [floating]="true"
               [resizable]="false"
@@ -191,13 +185,13 @@
                       class="number-input" 
                       type="number" 
                       name="widthOnMap" 
-                      [ngModel]="participant.mapSizeX" #widthInput>
+                      [ngModel]="participant.mapSizeX || 1" #widthInput>
                   <label>H:</label>
                   <input 
                       class="number-input" 
                       type="number" 
                       name="heightOnMap" 
-                      [ngModel]="participant.mapSizeY" #heightInput>
+                      [ngModel]="participant.mapSizeY || 1" #heightInput>
                 </div>
                 <div class="form-row">
                   <button type="button" (click)="updateParticipantSizes(widthInput.value, heightInput.value, participant);hide()">Save</button>

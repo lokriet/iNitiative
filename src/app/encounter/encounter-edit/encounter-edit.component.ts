@@ -206,7 +206,7 @@ export class EncounterEditComponent implements OnInit, OnDestroy {
       owner: this.authService.user.uid,
       type: participantTemplate.type,
       name: this.findNameWithNo(participantTemplate.name),
-      avatarUrl: participantTemplate.avatarUrl,
+      avatarUrl: participantTemplate.avatarUrl || null,
       color: participantTemplate.color,
       initiative: null,
       initiativeModifier: participantTemplate.initiativeModifier,
