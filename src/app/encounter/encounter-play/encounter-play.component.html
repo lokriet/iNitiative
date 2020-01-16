@@ -40,7 +40,9 @@
   
             <app-encounter-participant 
                 *ngIf="summonedParticipant != null;else addSummon"
-                [(participant)]="summonedParticipant"
+                [participant]="summonedParticipant"
+                (delete)="summonedParticipantRemoved()"
+                (participantChanged)="summonedParticipantChanged($event)"
             ></app-encounter-participant>
             <ng-template #addSummon>
               <div class="add-summon">Choose a summon</div>

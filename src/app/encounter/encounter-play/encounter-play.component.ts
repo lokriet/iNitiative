@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { guid } from '@datorama/akita';
 import { faCheck, faCog, faPlay, faPlus, faSkull, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -85,6 +86,7 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
               private conditionsService: ConditionsService,
               private authService: AuthService,
               private messageService: MessageService,
+              private storage: AngularFireStorage,
               private router: Router,
               private route: ActivatedRoute) { }
 
@@ -154,6 +156,9 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.summonedParticipant && this.summonedParticipant.avatarUrl != null) {
+      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+    }
     this.sub.unsubscribe();
   }
 
@@ -382,16 +387,34 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     this.newDamageTypeType = DamageTypeType.DamageType;
   }
 
-  addSummonToTheGame() {
+  summonedParticipantRemoved() {
+    if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
+      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+    }
+    this.summonedParticipant = null;
+  }
+
+  summonedParticipantChanged(participant: EncounterParticipant) {
+    if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
+      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+    }
+    this.summonedParticipant = participant;
+  }
+
+  async addSummonToTheGame() {
     this.encounterService.update({...this.encounter,
       participantIds: [...this.encounter.participantIds, this.summonedParticipant.id] });
 
-    this.encounterParticipantsService.add(this.summonedParticipant);
+    await this.encounterParticipantsService.add(this.summonedParticipant);
 
     this.summonedParticipant = null;
   }
 
   addParticipant(participantTemplate: Participant) {
+    if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
+      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+    }
+
     const encounterParticipant = {
       id: guid(),
       owner: this.authService.user.uid,
@@ -479,6 +502,19 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
         const initiative = Math.ceil(Math.random() * 20);
         this.encounterParticipantsService.update({...participant, initiative});
       }
+    }
+  }
+
+  deleteImageFromStorage(imageUrl) {
+    const encounterParticipants = this.encounterParticipantsQuery.getAll({
+      filterBy: item => item.avatarUrl === imageUrl
+    });
+    const participantTemplates = this.participantTemplateQuery.getAll({
+      filterBy: item => item.avatarUrl === imageUrl
+    });
+    if ((!encounterParticipants || encounterParticipants.length === 0) &&
+        (!participantTemplates || participantTemplates.length === 0)) {
+      this.storage.storage.refFromURL(imageUrl).delete();
     }
   }
 }

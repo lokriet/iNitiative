@@ -77,8 +77,6 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
               private storage: AngularFireStorage) { }
 
   ngOnInit() {
-    console.log('initial avatar', this.participant.avatarUrl);
-
     this.color = this.participant.color;
     this.avatarUrl = this.participant.avatarUrl || null;
     this.initialAvatarUrl = this.avatarUrl;
@@ -189,7 +187,6 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
 
     if (this.avatarUrl !== newUrl) {
       this.avatarUrl = newUrl;
-      console.log('updated avatar url', this.avatarUrl);
     }
   }
 
@@ -234,12 +231,7 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
     };
 
     this.changesSaved.emit(newParticipant);
-    console.log(newParticipant);
 
-    // if (this.initialAvatarUrl && this.initialAvatarUrl !== this.avatarUrl) {
-    //   console.log('deleting in save function');
-    //   this.deleteImageFromStorage(this.initialAvatarUrl);
-    // }
     this.initialAvatarUrl = null;
     this.avatarUrl = null;
   }
