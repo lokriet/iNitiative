@@ -32,6 +32,11 @@ enum EditingField {
   Conditions = 'conditions'
 }
 
+enum EncounterPlayView {
+  Map = 'map',
+  Details = 'details'
+}
+
 @Component({
   selector: 'app-encounter-play',
   templateUrl: './encounter-play.component.html',
@@ -73,6 +78,8 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
   editingField: EditingField = null;
 
   summonedParticipant: EncounterParticipant = null;
+
+  activeView = EncounterPlayView.Details;
 
   constructor(private encounterService: EncounterService,
               private encounterQuery: EncounterQuery,
@@ -516,5 +523,9 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
         (!participantTemplates || participantTemplates.length === 0)) {
       this.storage.storage.refFromURL(imageUrl).delete();
     }
+  }
+
+  switchActiveView(view: EncounterPlayView) {
+    this.activeView = view;
   }
 }

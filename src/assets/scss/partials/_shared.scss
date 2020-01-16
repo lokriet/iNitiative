@@ -105,6 +105,16 @@ $header-font: 'Baloo Bhai', Arial, sans-serif;
   }
 }
 
+.tab-screen-view {
+  padding: 1rem;
+  border-top: 1px solid $blue;
+  width: 100%;
+
+  &.hidden {
+    display: none;
+  }
+}
+
 .tab-view {
   padding: 1rem;
   border: 1px solid $blue;

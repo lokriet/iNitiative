@@ -43,30 +43,48 @@
   
   <div class="loading-map" *ngIf="loadingNewMap">
     <app-loading-spinner></app-loading-spinner>
-    <!-- TODO -->
   </div>
 
-  <div class="form" *ngIf="map && !loadingNewMap">
+  <div class="horizontal-form" *ngIf="map && !loadingNewMap">
     <div class="form-row">
       <input type="color" id="gridColor" name="gridColor" [(ngModel)]="mapGridColor">
       <label for="gridColor">Grid color</label>
     </div>
     <div class="form-row">
       <input type="checkbox" name="snapToGrid" id="snapToGrid" [(ngModel)]="snapToGrid">
-      <label for="snapToGrid">Snap coordinates to grid</label>
+      <label for="snapToGrid">Snap to grid</label>
     </div>
     <div class="form-row">
       <input type="checkbox" name="showGrid" id="showGrid" [(ngModel)]="showGrid">
       <label for="showGrid">Show grid</label>
     </div>
+
     <div class="form-row">
-      <label>W:</label>
-      <input type="number" class="number-input" [(ngModel)]="updatedMapGridWidth">
-      <label>H:</label>
-      <input type="number" class="number-input" [(ngModel)]="updatedMapGridHeight">
-      <button type="button" (click)="updateGridSize()">Save</button>
-      <button type="button" (click)="revertGridSizeFieldValues()">Revert</button>
-    </div>
+      <app-popup 
+          [floating]="true"
+          [resizable]="false"
+          [showCloseButton]="true" 
+          windowName="Change grid size">
+        <ng-template #popupToggleTemplate let-toggle=toggle>
+          <div class="form-row">
+            <button type="button" (click)="toggle()">Change grid size</button>
+          </div>
+        </ng-template>
+
+        <ng-template #popupInsidesTemplate let-hide="hide">
+          <div>
+            <div class="form-row">
+              <label>W:</label>
+              <input type="number" class="number-input" [(ngModel)]="updatedMapGridWidth">
+              <label>H:</label>
+              <input type="number" class="number-input" [(ngModel)]="updatedMapGridHeight">
+              <button type="button" (click)="updateGridSize();hide();">Save</button>
+              <button type="button" (click)="revertGridSizeFieldValues();hide()">Cancel</button>
+            </div>
+          </div>
+        </ng-template>
+      </app-popup>
+    </div>    
   </div>
 
   <div class="map-and-list" *ngIf="map && !loadingNewMap">
@@ -76,7 +94,7 @@
           class="map-img" 
           #mapImageElement>
   
-      <div class="grid"
+          <div class="grid"
           [ngStyle]="{'grid-template-columns': '2rem repeat(' + this.map.gridWidth + ',' + gridCellWidth + 'px)',
                       'grid-template-rows': '2rem repeat(' + this.map.gridHeight + ',' + gridCellHeight + 'px)'}"
           *ngIf="map.gridHeight != null && map.gridWidth != null">
@@ -113,31 +131,31 @@
           (drop)="dropParticipantOnMap($event)" 
           (dragover.out-zone)="dragParticipantOverMap($event)"
           >
-        <div 
-            *ngFor="let participant of participantsOnMap; let i = index"
-            class="participant-on-map"
-            cdkDrag
-            cdkDragBoundary=".participants-on-map"
-            (cdkDragEnded)="dragMapParticipantEnded($event, i)"
-            [style.width.px]="gridCellWidth * ((participant.participant$ | async).mapSizeX || 1)"
-            [style.height.px]="gridCellHeight * ((participant.participant$ | async).mapSizeY || 1)"
-            [style.z-index]="(i + 1)"
-            [style.top.px]="participant.initialCoord.y"
-            [style.left.px]="participant.initialCoord.x"
-            [style.background-color]="(participant.participant$ | async).color || '#000'"
-            [style.border-width.px]="(participant.participant$ | async).color == null ? 0 : 3"
-            [style.border-color]="(participant.participant$ | async).color || 'transparent'">
-          <img *ngIf="(participant.participant$ | async).avatarUrl != null"
-              [src]="(participant.participant$ | async).avatarUrl"
-              class="participant-on-map__avatar">
-          <div *ngIf="(participant.participant$ | async).avatarUrl == null"
-              class="participant-on-map__letter"
-              [style.font-size.px]="16 * mapParticipantScale * ((participant.participant$ | async).mapSizeY || 1)"
-          >
-            {{ iconText((participant.participant$ | async).name) }}
-          </div>
+          <div 
+          *ngFor="let participant of participantsOnMap; let i = index"
+          class="participant-on-map"
+          cdkDrag
+          cdkDragBoundary=".participants-on-map"
+          (cdkDragEnded)="dragMapParticipantEnded($event, i)"
+          [style.width.px]="gridCellWidth * ((participant.participant$ | async).mapSizeX || 1)"
+          [style.height.px]="gridCellHeight * ((participant.participant$ | async).mapSizeY || 1)"
+          [style.z-index]="(i + 1)"
+          [style.top.px]="participant.initialCoord.y"
+          [style.left.px]="participant.initialCoord.x"
+          [style.background-color]="(participant.participant$ | async).color || '#000'"
+          [style.border-width.px]="(participant.participant$ | async).color == null ? 0 : 3"
+          [style.border-color]="(participant.participant$ | async).color || 'transparent'">
+        <img *ngIf="(participant.participant$ | async).avatarUrl != null"
+            [src]="(participant.participant$ | async).avatarUrl"
+            class="participant-on-map__avatar">
+        <div *ngIf="(participant.participant$ | async).avatarUrl == null"
+            class="participant-on-map__letter"
+            [style.font-size.px]="16 * mapParticipantScale * ((participant.participant$ | async).mapSizeY || 1)"
+        >
+          {{ iconText((participant.participant$ | async).name) }}
         </div>
-        <!-- TODO -->
+      </div>
+      <!-- TODO -->
       </div>
     </div>
     <div class="participants-container">

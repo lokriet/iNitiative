@@ -2,11 +2,6 @@
 @import '../../../../assets/scss/partials/colors';
 @import '../../../../assets/scss/partials/shared';
 
-.map-container {
-  margin-top: 2rem;
-  margin-left: 2rem;
-}
-
 .participants-container {
   display: inline-block;
 }
@@ -74,6 +69,11 @@
   display: flex;
   flex-direction: column;
   margin: 1rem;
+}
+
+.horizontal-form {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .form-row {
