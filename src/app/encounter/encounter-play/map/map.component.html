@@ -131,7 +131,7 @@
           (drop)="dropParticipantOnMap($event)" 
           (dragover.out-zone)="dragParticipantOverMap($event)"
           >
-          <div 
+        <div 
           *ngFor="let participant of participantsOnMap; let i = index"
           class="participant-on-map"
           cdkDrag
@@ -142,19 +142,13 @@
           [style.z-index]="(i + 1)"
           [style.top.px]="participant.initialCoord.y"
           [style.left.px]="participant.initialCoord.x"
-          [style.background-color]="(participant.participant$ | async).color || '#000'"
-          [style.border-width.px]="(participant.participant$ | async).color == null ? 0 : 3"
-          [style.border-color]="(participant.participant$ | async).color || 'transparent'">
-        <img *ngIf="(participant.participant$ | async).avatarUrl != null"
-            [src]="(participant.participant$ | async).avatarUrl"
-            class="participant-on-map__avatar">
-        <div *ngIf="(participant.participant$ | async).avatarUrl == null"
-            class="participant-on-map__letter"
-            [style.font-size.px]="16 * mapParticipantScale * ((participant.participant$ | async).mapSizeY || 1)"
         >
-          {{ iconText((participant.participant$ | async).name) }}
+          <app-participant-on-map 
+              [participant]="participant.participant$ | async"
+              [initialInfoPos]="participant.initialInfoPos"
+              (infoMoved)="onMapParticipantInfoMoved($event, i)"
+          ></app-participant-on-map>
         </div>
-      </div>
       <!-- TODO -->
       </div>
     </div>

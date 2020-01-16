@@ -93,6 +93,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
           this.participantsOnMap.push({
             participantId: mapParticipant.participantId,
             participant$,
+            initialInfoPos: (mapParticipant.infoX != null && mapParticipant.infoY != null) ? {
+              x: mapParticipant.infoX,
+              y: mapParticipant.infoY
+            } : null,
             initialCoord: {
               x: mapParticipant.x,
               y: mapParticipant.y
@@ -281,6 +285,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
       this.participantsOnMap.push({
         participantId: this.draggedParticipantFromList.id,
         participant$: this.encounterParticipantQuery.selectEntity(this.draggedParticipantFromList.id),
+        initialInfoPos: null,
         initialCoord: participantCoordinate,
         currentCoord: participantCoordinate});
 
@@ -339,7 +344,11 @@ export class MapComponent implements OnInit, AfterViewChecked {
       const coord = {
         participantId: mapParticipant.participantId,
         x: mapParticipant.currentCoord.x,
-        y: mapParticipant.currentCoord.y
+        y: mapParticipant.currentCoord.y,
+        infoX: mapParticipant.initialInfoPos ? mapParticipant.initialInfoPos.x : null,
+        infoY: mapParticipant.initialInfoPos ? mapParticipant.initialInfoPos.y : null,
+        gridX: null,
+        gridY: null
       };
       participantCoordinates.push(coord);
     }
@@ -358,13 +367,16 @@ export class MapComponent implements OnInit, AfterViewChecked {
   }
 
   updateParticipantSizes(width: number, height: number, participant: EncounterParticipant) {
-    console.log(width, height, participant);
     this.encounterParticipantService.update({...participant, mapSizeX: width, mapSizeY: height});
-    this.messageService.addInfo('Updated participant map size');
   }
 
   revertParticipantSizes(widthInput, heightInput, participant: EncounterParticipant) {
     widthInput.value = participant.mapSizeX || 1;
     heightInput.value = participant.mapSizeY || 1;
+  }
+
+  onMapParticipantInfoMoved(infoPos, i) {
+    this.participantsOnMap[i].initialInfoPos = infoPos;
+    this.saveMapParticipants();
   }
 }

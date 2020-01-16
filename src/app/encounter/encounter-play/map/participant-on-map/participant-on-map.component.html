@@ -1,0 +1,31 @@
+
+<div class="participant-on-map"
+  [style.background-color]="participant.color || '#000'"
+  [style.border-width.px]="participant.color == null ? 0 : 3"
+  [style.border-color]="participant.color || 'transparent'"
+
+  #participantOnMap
+>
+  <img *ngIf="participant.avatarUrl != null"
+      [src]="participant.avatarUrl"
+      class="participant-on-map__avatar">
+  <div *ngIf="participant.avatarUrl == null"
+      class="participant-on-map__letter"
+      [style.font-size.px]="fontSize()"
+  >
+    {{ iconText(participant.name) }}
+  </div>
+
+  <div class="info" cdkDrag
+    (cdkDragEnded)="dragInfoEnded($event)"
+    [ngStyle]="this.initialInfoPos ? {'transform':'translate3D(' + this.initialX + 'px, ' + this.initialY + 'px, 0)'} : {}"
+  >
+    <div *ngIf="hasConditions()" class="conditions-info">
+      <div *ngFor="let condition of (conditions$ | async)" class="condition-info">
+        <app-color-value [color]="condition.color" [showEmpty]="false"></app-color-value  > 
+          <span>{{condition.name}}</span>
+      </div>
+    </div>
+    <div class="hp-info">{{ getHp() }}</div>
+  </div>
+</div>

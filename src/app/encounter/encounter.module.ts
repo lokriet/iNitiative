@@ -27,6 +27,7 @@ import {
   ParticipantTemplatesListComponent,
 } from './participant-templates/participant-templates-list/participant-templates-list.component';
 import { ToDatePipe } from './to-date.pipe';
+import { ParticipantOnMapComponent } from './encounter-play/map/participant-on-map/participant-on-map.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { ToDatePipe } from './to-date.pipe';
     SetupAddedParticipantsViewComponent,
     SelectListComponent,
     SelectImmunitiesListComponent,
-    MapComponent
+    MapComponent,
+    ParticipantOnMapComponent
   ],
   imports: [
     CommonModule,
