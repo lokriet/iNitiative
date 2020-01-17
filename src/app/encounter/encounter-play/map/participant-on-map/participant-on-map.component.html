@@ -17,7 +17,7 @@
   </div>
 
   <div 
-    *ngIf="showInfo"
+    [class.hidden]="!showInfo"
     class="info" 
     cdkDrag
     (cdkDragEnded)="dragInfoEnded($event)"
