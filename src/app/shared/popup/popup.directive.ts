@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, Output, EventEmitter, NgZone, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: '[appPopup]'
@@ -25,7 +25,10 @@ export class PopupWindowDirective implements OnInit {
   boundMousemoveMove;
   boundMousemoveResize;
 
-  constructor(el: ElementRef) {
+  private unlistenMousemoveMove: Function;
+  private unlistenMousemoveResize: Function;
+
+  constructor(el: ElementRef, private ngZone: NgZone, private renderer: Renderer2) {
     this.htmlElement = (el.nativeElement as HTMLElement);
   }
 
@@ -69,12 +72,23 @@ export class PopupWindowDirective implements OnInit {
         this.htmlElement.offsetLeft - $event.clientX,
         this.htmlElement.offsetTop - $event.clientY
     ];
-    document.body.addEventListener('mousemove', this.boundMousemoveMove);
+
+    this.ngZone.runOutsideAngular(() => {
+      this.unlistenMousemoveMove = this.renderer.listen(
+        document.body,
+        'mousemove',
+        this.boundMousemoveMove
+      );
+    });
+
+
+    // document.body.addEventListener('mousemove', this.boundMousemoveMove);
   }
 
   mouseupMove($event) {
     this.isMoving = false;
-    document.body.removeEventListener('mousemove', this.boundMousemoveMove);
+    // document.body.removeEventListener('mousemove', this.boundMousemoveMove);
+    this.unlistenMousemoveMove();
   }
 
   mousemoveMove($event) {
@@ -97,13 +111,22 @@ export class PopupWindowDirective implements OnInit {
     this.initialSize = { x: parseFloat(getComputedStyle(this.htmlElement).width),
                          y: parseFloat(getComputedStyle(this.htmlElement).height) };
 
-    document.body.addEventListener('mousemove', this.boundMousemoveResize);
+    // document.body.addEventListener('mousemove', this.boundMousemoveResize);
+    this.ngZone.runOutsideAngular(() => {
+      this.unlistenMousemoveResize = this.renderer.listen(
+        document.body,
+        'mousemove',
+        this.boundMousemoveResize
+      );
+    });
+
     $event.stopPropagation();
   }
 
   mouseupResize($event) {
     this.isResizing = false;
-    document.body.removeEventListener('mousemove', this.boundMousemoveResize);
+    // document.body.removeEventListener('mousemove', this.boundMousemoveResize);
+    this.unlistenMousemoveResize();
   }
 
   mousemoveResize($event) {
