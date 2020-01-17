@@ -33,6 +33,35 @@
     </ng-template>
   </app-popup>
 
+  <app-popup 
+      [floating]="true"
+      [resizable]="true"
+      [showCloseButton]="true" 
+      windowName="Map Info">
+    <ng-template #popupToggleTemplate let-toggle=toggle>
+      <!-- <div class="form-row"> -->
+        <button type="button" class="blue-button" (click)="toggle()">Show map info</button>
+      <!-- </div> -->
+    </ng-template>
+
+    <ng-template #popupInsidesTemplate>
+      <div class="participants-status">
+        <ng-container *ngFor="let participant of (encounterParticipants$ | async)">
+          <div *ngIf="!isDead(participant) || showDead" class="participant-status">
+            <div class="participant-info">
+              <app-color-value [color]="participant.color" [showEmpty]="false"></app-color-value>
+              {{getParticipantMapInfo(participant)}}
+            </div>
+            <div class="participant-condition" *ngFor="let condition of getConditions(participant)">
+              <app-color-value [color]="condition.color" [showEmpty]="false"></app-color-value>
+              <div>{{condition.name}}</div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-template>
+  </app-popup>
+
   <div *ngIf="(percentage$ | async) as percent" [hidden]="percent && percent >= 100">
     <progress class="progress " 
               [value]="percent" 
@@ -184,9 +213,12 @@
                   [style.border-color]="participant.color || 'transparent'"
                   [style.border-width.px]="participant.color == null ? 0 : 3"
                   [style.background-color]="participant.color || 'transparent'">
-                <img *ngIf="participant.avatarUrl != null" [src]="participant.avatarUrl" class="participant-avatar">
-                <div class="participant-letter" *ngIf="participant.avatarUrl == null">
+                <img *ngIf="!isDead(participant) && participant.avatarUrl != null" [src]="participant.avatarUrl" class="participant-avatar">
+                <div class="participant-letter" *ngIf="!isDead(participant) && participant.avatarUrl == null">
                   {{ iconText(participant.name) }}
+                </div>
+                <div class="participant-letter" *ngIf="isDead(participant)">
+                  <fa-icon [icon]="skullIcon"></fa-icon>
                 </div>
               </div>
               <div class="participant-name">
@@ -261,33 +293,4 @@
       </div >
     </div>
   </div>
-
-  <app-popup 
-        [floating]="true"
-        [resizable]="true"
-        [showCloseButton]="true" 
-        windowName="Map Info">
-      <ng-template #popupToggleTemplate let-toggle=toggle>
-        <!-- <div class="form-row"> -->
-          <button type="button" class="blue-button" (click)="toggle()">Show map info</button>
-        <!-- </div> -->
-      </ng-template>
-
-      <ng-template #popupInsidesTemplate>
-        <div class="participants-status">
-          <ng-container *ngFor="let participant of (encounterParticipants$ | async)">
-            <div *ngIf="!isDead(participant) || showDead" class="participant-status">
-              <div class="participant-info">
-                <app-color-value [color]="participant.color" [showEmpty]="false"></app-color-value>
-                {{getParticipantMapInfo(participant)}}
-              </div>
-              <div class="participant-condition" *ngFor="let condition of getConditions(participant)">
-                <app-color-value [color]="condition.color" [showEmpty]="false"></app-color-value>
-                <div>{{condition.name}}</div>
-              </div>
-            </div>
-          </ng-container>
-        </div>
-      </ng-template>
-    </app-popup>
 </div>

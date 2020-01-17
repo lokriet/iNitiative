@@ -2,7 +2,7 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 import { EntityActions, guid } from '@datorama/akita';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSignOutAlt, faSkull } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'src/app/messages/state/message.service';
@@ -27,6 +27,7 @@ import { StringIdGenerator } from './string-id-generator';
 })
 export class MapComponent implements OnInit, AfterViewChecked {
   exitIcon = faSignOutAlt;
+  skullIcon = faSkull;
 
   @Input() encounterId: string;
   encounter: Encounter;
@@ -387,7 +388,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     this.saveMapParticipants();
   }
 
-  saveMapParticipants() {
+  async saveMapParticipants() {
     const participantCoordinates = [];
     for (const mapParticipant of this.participantsOnMap) {
       const coord = {
@@ -402,7 +403,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
       participantCoordinates.push(coord);
     }
     this.map = {...this.map, participantCoordinates};
-    this.mapService.update(this.map);
+    await this.mapService.update(this.map);
   }
 
 
