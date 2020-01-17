@@ -474,7 +474,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
     } else {
       let hp;
       if (participant.type === ParticipantType.Monster) {
-        hp = `HP: ${participant.currentHp - participant.maxHp}`;
+        hp = `DMG: ${participant.currentHp - participant.maxHp}`;
       } else {
         hp = `HP: ${participant.currentHp}/${participant.maxHp}`;
       }

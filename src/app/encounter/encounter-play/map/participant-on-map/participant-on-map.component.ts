@@ -48,7 +48,7 @@ export class ParticipantOnMapComponent implements OnInit {
 
   getHp(): string {
     if (this.participant.type === ParticipantType.Monster) {
-      return `HP: ${this.participant.currentHp - this.participant.maxHp}`;
+      return `DMG: ${this.participant.currentHp - this.participant.maxHp}`;
     } else {
       return `HP: ${this.participant.currentHp}/${this.participant.maxHp}`;
     }
