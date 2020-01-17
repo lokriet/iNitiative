@@ -155,4 +155,27 @@
   height: 24px;
 }
 
+.participant-grid-coord {
+  width: 2rem;
+  text-align: center;
+}
 
+.participants-status {
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-status {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.25rem;
+}
+
+.participant-info {
+  white-space: nowrap;
+}
+
+.participant-condition {
+  margin-left: 1.5rem;
+  display: flex;
+}

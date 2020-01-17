@@ -6,6 +6,8 @@ import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { MessageService } from 'src/app/messages/state/message.service';
+import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
+import { ParticipantType } from 'src/app/setup/state/participants/participant.model';
 
 import { EncounterParticipant } from '../../encounter-participant/state/encounter-participant.model';
 import { EncounterParticipantQuery } from '../../encounter-participant/state/encounter-participant.query';
@@ -64,6 +66,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
   constructor(private storage: AngularFireStorage,
               private encounterParticipantQuery: EncounterParticipantQuery,
               private encounterParticipantService: EncounterParticipantService,
+              private conditionsQuery: ConditionsQuery,
               private mapService: MapService,
               private mapQuery: MapQuery,
               private encouterService: EncounterService,
@@ -78,7 +81,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     this.encounterParticipants$ = this.encounterParticipantQuery.selectAll({
       filterBy: encounterParticipant => this.encounter.participantIds.includes(encounterParticipant.id),
-      sortBy: 'name'
+      sortBy: (a, b) => (b.initiative + b.initiativeModifier) - (a.initiative + a.initiativeModifier)
     });
 
     if (this.encounter.mapId) {
@@ -105,6 +108,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
             currentCoord: {
               x: mapParticipant.x,
               y: mapParticipant.y
+            },
+            gridCoord: {
+              x: mapParticipant.gridX,
+              y: mapParticipant.gridY
             }
           });
         }
@@ -267,9 +274,15 @@ export class MapComponent implements OnInit, AfterViewChecked {
       let participantCoordX;
       let participantCoordY;
 
+      let cellX = null;
+      let cellY = null;
+
+      if (this.map.gridHeight && this.map.gridWidth) {
+        cellX = Math.floor((event.clientX - imgCoords.left) / this.gridCellWidth);
+        cellY = Math.floor((event.clientY - imgCoords.top) / this.gridCellHeight);
+      }
+
       if (this.snapToGrid && this.map.gridWidth && this.map.gridHeight) {
-        const cellX = Math.floor((event.clientX - imgCoords.left) / this.gridCellWidth);
-        const cellY = Math.floor((event.clientY - imgCoords.top) / this.gridCellHeight);
         participantCoordX = cellX * this.gridCellWidth;
         participantCoordY = cellY * this.gridCellHeight;
       } else {
@@ -288,7 +301,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
         participant$: this.encounterParticipantQuery.selectEntity(this.draggedParticipantFromList.id),
         initialInfoPos: null,
         initialCoord: participantCoordinate,
-        currentCoord: participantCoordinate});
+        currentCoord: participantCoordinate,
+        gridCoord: {
+          x: cellX >= 0 ? this.horizontalMapIndices[cellX] : null,
+          y: cellY >= 0 ? this.verticalMapIndices[cellY] : null
+        }
+      });
 
       this.draggedParticipantFromList = null;
       this.saveMapParticipants();
@@ -312,9 +330,15 @@ export class MapComponent implements OnInit, AfterViewChecked {
     let newCoordX = participantPos.left - imgCoords.left;
     let newCoordY = participantPos.top - imgCoords.top;
 
+    let cellX = null;
+    let cellY = null;
+
+    if (this.map.gridHeight && this.map.gridWidth) {
+      cellX = Math.floor((participantPos.left - imgCoords.left) / this.gridCellWidth);
+      cellY = Math.floor((participantPos.top - imgCoords.top) / this.gridCellHeight);
+    }
+
     if (this.snapToGrid && this.map.gridWidth && this.map.gridHeight) {
-      const cellX = Math.floor((participantPos.left - imgCoords.left) / this.gridCellWidth);
-      const cellY = Math.floor((participantPos.top - imgCoords.top) / this.gridCellHeight);
       const snappedCoordX = cellX * this.gridCellWidth;
       const snappedCoordY = cellY * this.gridCellHeight;
 
@@ -336,6 +360,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
       x: newCoordX,
       y: newCoordY
     };
+    this.participantsOnMap[mapParticipantIndex].gridCoord = {
+      x: cellX >= 0 ? this.horizontalMapIndices[cellX] : null,
+      y: cellY >= 0 ? this.verticalMapIndices[cellY] : null
+    };
     this.saveMapParticipants();
   }
 
@@ -348,8 +376,8 @@ export class MapComponent implements OnInit, AfterViewChecked {
         y: mapParticipant.currentCoord.y,
         infoX: mapParticipant.initialInfoPos ? mapParticipant.initialInfoPos.x : null,
         infoY: mapParticipant.initialInfoPos ? mapParticipant.initialInfoPos.y : null,
-        gridX: null,
-        gridY: null
+        gridX: mapParticipant.gridCoord ? mapParticipant.gridCoord.x : null,
+        gridY: mapParticipant.gridCoord ? mapParticipant.gridCoord.y : null
       };
       participantCoordinates.push(coord);
     }
@@ -379,5 +407,70 @@ export class MapComponent implements OnInit, AfterViewChecked {
   onMapParticipantInfoMoved(infoPos, i) {
     this.participantsOnMap[i].initialInfoPos = infoPos;
     this.saveMapParticipants();
+  }
+
+  getGridX(participantId) {
+    const mapParticipant = this.participantsOnMap.find(item => item.participantId === participantId);
+    if (!mapParticipant || !mapParticipant.gridCoord) {
+      return null;
+    }
+    return mapParticipant.gridCoord.x;
+  }
+
+  getGridY(participantId) {
+    const mapParticipant = this.participantsOnMap.find(item => item.participantId === participantId);
+    if (!mapParticipant || !mapParticipant.gridCoord) {
+      return null;
+    }
+    return mapParticipant.gridCoord.y;
+  }
+
+  setGridX(participantId, gridX) {
+    const mapParticipant = this.participantsOnMap.find(item => item.participantId === participantId);
+    if (!mapParticipant || !mapParticipant.gridCoord) {
+      return;
+    }
+    mapParticipant.gridCoord.x = gridX;
+    this.saveMapParticipants();
+  }
+
+  setGridY(participantId, gridY) {
+    const mapParticipant = this.participantsOnMap.find(item => item.participantId === participantId);
+    if (!mapParticipant || !mapParticipant.gridCoord) {
+      return;
+    }
+    mapParticipant.gridCoord.y = gridY;
+    this.saveMapParticipants();
+  }
+
+  getParticipantMapInfo(participant: EncounterParticipant) {
+    const mapParticipant = this.participantsOnMap.find(item => item.participantId === participant.id);
+    if (!mapParticipant) {
+      return `${participant.name}: -`;
+    } else {
+      let hp;
+      if (participant.type === ParticipantType.Monster) {
+        hp = `HP: ${participant.currentHp - participant.maxHp}`;
+      } else {
+        hp = `HP: ${participant.currentHp}/${participant.maxHp}`;
+      }
+
+      let coord = '';
+      if (mapParticipant.gridCoord && mapParticipant.gridCoord.x != null && mapParticipant.gridCoord.y !== null) {
+        coord = `[${mapParticipant.gridCoord.x}${mapParticipant.gridCoord.y}]`;
+      }
+
+      return `${participant.name} ${coord}: ${hp}`;
+    }
+  }
+
+  getConditions(participant: EncounterParticipant) {
+    if (this.isParticipantOnMap(participant.id) && participant.conditionIds && participant.conditionIds.length > 0) {
+      return this.conditionsQuery.getAll({
+        filterBy: item => participant.conditionIds.includes(item.id)
+      });
+    } else {
+      return [];
+    }
   }
 }

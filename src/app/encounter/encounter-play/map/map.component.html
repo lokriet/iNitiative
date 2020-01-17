@@ -180,17 +180,17 @@
             </div>
           </div>
 
-          <label>Size:</label>
-          <div>{{(participant.mapSizeX || 1) + 'x' + (participant.mapSizeY || 1)}}</div>
+          <!-- <label>Size:</label>
+          <div>{{(participant.mapSizeX || 1) + 'x' + (participant.mapSizeY || 1)}}</div> -->
           <app-popup 
               [floating]="true"
               [resizable]="false"
               [showCloseButton]="true" 
               windowName="Change size on map">
             <ng-template #popupToggleTemplate let-toggle=toggle>
-              <div class="form-row">
-                <button type="button" (click)="toggle()">Change</button>
-              </div>
+              <!-- <div class="form-row"> -->
+                <button type="button" (click)="toggle()">Change size</button>
+              <!-- </div> -->
             </ng-template>
 
             <ng-template #popupInsidesTemplate let-hide="hide">
@@ -216,6 +216,24 @@
               </div>
             </ng-template>
           </app-popup>
+          <div>
+            <label>X:</label>
+            <input 
+                type="string" 
+                class="string-input participant-grid-coord" 
+                [ngModel]="getGridX(participant.id)" 
+                (ngModelChange)="setGridX(participant.id, $event)"
+                name="gridCoordX"
+                [disabled]="!isParticipantOnMap(participant.id)">
+            <label>Y:</label>
+            <input 
+                type="string" 
+                class="string-input participant-grid-coord" 
+                [ngModel]="getGridY(participant.id)"
+                (ngModelChange)="setGridY(participant.id, $event)"
+                name="gridCoordY"
+                [disabled]="!isParticipantOnMap(participant.id)">
+          </div>
           <button 
               class="blue-button"
               [disabled]="!isParticipantOnMap(participant.id)"
@@ -228,4 +246,31 @@
       </div >
     </div>
   </div>
+
+  <app-popup 
+        [floating]="true"
+        [resizable]="true"
+        [showCloseButton]="true" 
+        windowName="Map Info">
+      <ng-template #popupToggleTemplate let-toggle=toggle>
+        <!-- <div class="form-row"> -->
+          <button type="button" class="blue-button" (click)="toggle()">Show map info</button>
+        <!-- </div> -->
+      </ng-template>
+
+      <ng-template #popupInsidesTemplate>
+        <div class="participants-status">
+          <div *ngFor="let participant of (encounterParticipants$ | async)" class="participant-status">
+            <div class="participant-info">
+              <app-color-value [color]="participant.color" [showEmpty]="false"></app-color-value>
+              {{getParticipantMapInfo(participant)}}
+            </div>
+            <div class="participant-condition" *ngFor="let condition of getConditions(participant)">
+              <app-color-value [color]="condition.color" [showEmpty]="false"></app-color-value>
+              <div>{{condition.name}}</div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </app-popup>
 </div>
