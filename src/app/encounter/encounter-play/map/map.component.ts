@@ -54,6 +54,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
   participantsOnMap = [];
   snapToGrid = true;
   showGrid = true;
+  showDead = false;
   showInfo = true;
 
   isDraggingParticipantFromList = false;
@@ -112,10 +113,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
               x: mapParticipant.x,
               y: mapParticipant.y
             },
-            gridCoord: {
+            gridCoord: (mapParticipant.gridX != null && mapParticipant.gridY != null) ? {
               x: mapParticipant.gridX,
               y: mapParticipant.gridY
-            }
+            } : null
           });
         }
       }
@@ -463,6 +464,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
   }
 
   getParticipantMapInfo(participant: EncounterParticipant) {
+    if (this.isDead(participant)) {
+      return `${participant.name}: DEAD`;
+    }
+
     const mapParticipant = this.participantsOnMap.find(item => item.participantId === participant.id);
     if (!mapParticipant) {
       return `${participant.name}: -`;
@@ -484,6 +489,10 @@ export class MapComponent implements OnInit, AfterViewChecked {
   }
 
   getConditions(participant: EncounterParticipant) {
+    if (this.isDead(participant)) {
+      return [];
+    }
+
     if (this.isParticipantOnMap(participant.id) && participant.conditionIds && participant.conditionIds.length > 0) {
       return this.conditionsQuery.getAll({
         filterBy: item => participant.conditionIds.includes(item.id)
@@ -491,5 +500,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
     } else {
       return [];
     }
+  }
+
+  isDead(participant: EncounterParticipant) {
+    return participant.currentHp <= 0;
   }
 }

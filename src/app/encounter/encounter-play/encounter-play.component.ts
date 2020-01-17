@@ -80,6 +80,7 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
   summonedParticipant: EncounterParticipant = null;
 
   activeView = EncounterPlayView.Details;
+  showDeadParticipants = false;
 
   constructor(private encounterService: EncounterService,
               private encounterQuery: EncounterQuery,
