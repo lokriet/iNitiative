@@ -17,7 +17,7 @@
       [movable]="floating || isModalQuestion"
       [class.hidden]="hidden"
       (closed)="hidePopup()"
-      [ngStyle]="popupLeftShift && {left: popupLeftShift}"
+      [ngStyle]="initialPopupShiftTransform && { transform: initialPopupShiftTransform }"
       #popupElement
       >
 

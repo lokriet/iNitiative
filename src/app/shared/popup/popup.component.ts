@@ -35,7 +35,7 @@ export class PopupComponent implements OnInit {
 
   hidden = true;
 
-  popupLeftShift = null;
+  initialPopupShiftTransform = null;
 
   constructor() { }
 
@@ -51,23 +51,30 @@ export class PopupComponent implements OnInit {
 
     setTimeout(() => {
       if (!this.hidden && !this.isModalQuestion) {
-        this.popupLeftShift = this.getLeftShift();
+        this.initialPopupShiftTransform = this.getInitialShift();
       }
     }, 0);
   }
 
-  getLeftShift() {
+  getInitialShift() {
     const windowWidth = document.documentElement.clientWidth;
     const popupElementRect = (this.popup.nativeElement as HTMLElement).getBoundingClientRect();
     const popupRightSide = popupElementRect.right;
-    const currentLeft = parseFloat(getComputedStyle(this.popup.nativeElement).left);
 
-    let leftShift = currentLeft;
+    let leftShift = 0;
     if (popupRightSide > windowWidth) {
-      leftShift = currentLeft - (popupRightSide - windowWidth);
+      leftShift = windowWidth - popupRightSide;
     }
 
-    return leftShift + 'px';
+    const windowHeight = document.documentElement.clientHeight;
+    const popupBottom = popupElementRect.bottom;
+
+    let topShift = 0;
+    if (popupBottom > windowHeight) {
+      topShift = windowHeight - popupBottom;
+    }
+
+    return `translate3D(${leftShift}px, ${topShift}px, 0)`;
   }
 
 }
