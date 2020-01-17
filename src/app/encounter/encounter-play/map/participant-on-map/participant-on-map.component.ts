@@ -15,8 +15,8 @@ export class ParticipantOnMapComponent implements OnInit {
   @Input() participant: EncounterParticipant;
   @Input() initialInfoPos: {x: number, y: number};
   @Input() showInfo = true;
-  initialX: number;
-  initialY: number;
+  initialX: number = null;
+  initialY: number = null;
 
   @Output() infoMoved = new EventEmitter<{x: number, y: number}>();
 
@@ -55,19 +55,15 @@ export class ParticipantOnMapComponent implements OnInit {
   }
 
   dragInfoEnded(event: CdkDragEnd) {
-    console.log(event);
     const transform = event.source.element.nativeElement.style.transform;
     const regex = /translate3d\(\s?([-]?\d*)px,\s?([-]?\d*)px,\s?([-]?\d*)px\)/;
     const values = regex.exec(transform);
-    console.log(transform);
     const offset = { x: parseInt(values[1]), y: parseInt(values[2]) };
 
-    if (this.initialInfoPos) {
-      offset.x = offset.x + this.initialInfoPos.x;
-      offset.y = offset.y + this.initialInfoPos.y;
+    if (this.initialX != null && this.initialY != null) {
+      offset.x = offset.x + this.initialX;
+      offset.y = offset.y + this.initialY;
     }
-
-    console.log(offset);
 
     this.infoMoved.emit(offset);
   }
