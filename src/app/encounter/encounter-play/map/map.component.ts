@@ -59,6 +59,9 @@ export class MapComponent implements OnInit, AfterViewChecked {
   isDraggingParticipantFromList = false;
   draggedParticipantFromList = null;
 
+  isDraggingMapParticipant = false;
+  mapParticipantDraggedFrom = null; // {x, y}
+
   mapParticipantScale = 1;
 
   @ViewChild('mapImageElement') mapImageElement: ElementRef;
@@ -323,7 +326,23 @@ export class MapComponent implements OnInit, AfterViewChecked {
     this.saveMapParticipants();
   }
 
+  dragMapParticipantStarted(mapParticipantIndex) {
+    this.isDraggingMapParticipant = true;
+    const mapParticipant = this.participantsOnMap[mapParticipantIndex];
+    if (mapParticipant.gridCoord && mapParticipant.gridCoord.x != null && mapParticipant.gridCoord.y != null) {
+      this.mapParticipantDraggedFrom = {
+        x: this.horizontalMapIndices.indexOf(mapParticipant.gridCoord.x),
+        y: this.verticalMapIndices.indexOf(mapParticipant.gridCoord.y)
+      };
+    } else {
+      this.mapParticipantDraggedFrom = null;
+    }
+  }
+
   dragMapParticipantEnded(event: CdkDragEnd, mapParticipantIndex: number) {
+    this.isDraggingMapParticipant = false;
+    this.mapParticipantDraggedFrom = null;
+
     const participantPos = event.source.element.nativeElement.getBoundingClientRect();
     const imgCoords = this.mapImageElement.nativeElement.getBoundingClientRect();
 

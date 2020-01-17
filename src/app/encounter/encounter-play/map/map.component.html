@@ -120,7 +120,12 @@
           <div *ngFor="let cell of horizontalMapIndices; let i = index"
               [ngStyle]="{'border-right-color': (showGrid && i !== (this.map.gridWidth - 1) ) ? mapGridColor : 'transparent',
                           'border-bottom-color': (showGrid && j !== (this.map.gridHeight - 1)) ? mapGridColor : 'transparent'}"
-              class="grid-cell">
+              class="grid-cell"
+              [class.dragged-from-cell]="isDraggingMapParticipant && 
+                                         mapParticipantDraggedFrom && 
+                                         mapParticipantDraggedFrom.x === i &&
+                                         mapParticipantDraggedFrom.y === j"
+              >
             <!-- cell[i][j] -->
           </div>
         </ng-container>
@@ -139,6 +144,7 @@
           class="participant-on-map"
           cdkDrag
           cdkDragBoundary=".participants-on-map"
+          (cdkDragStarted)="dragMapParticipantStarted(i)"
           (cdkDragEnded)="dragMapParticipantEnded($event, i)"
           [style.width.px]="gridCellWidth * ((participant.participant$ | async).mapSizeX || 1)"
           [style.height.px]="gridCellHeight * ((participant.participant$ | async).mapSizeY || 1)"

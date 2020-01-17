@@ -120,6 +120,10 @@
 
 .grid-cell {
   border: 1px solid transparent;
+
+  &.dragged-from-cell {
+    background-color: rgba($color: #ffffff, $alpha: 0.5);
+  }
 }
 
 .highlight-cell {
