@@ -59,8 +59,7 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
   features: string[] = [];
   comments: string;
 
-  mapSizeX = 1;
-  mapSizeY = 1;
+  mapSize = 1;
   avatarUrl: string = null;
   initialAvatarUrl: string = null;
 
@@ -89,8 +88,7 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
     this.armorClass = this.participant.armorClass;
     this.speed = this.participant.speed;
     this.comments = this.participant.comments;
-    this.mapSizeX = this.participant.mapSizeX || 1;
-    this.mapSizeY = this.participant.mapSizeY || 1;
+    this.mapSize = this.participant.mapSizeX || 1;
 
     if (this.participant.conditionIds) {
       this.conditions = [...this.participant.conditionIds];
@@ -226,8 +224,8 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
       featureIds: this.features,
       comments: this.comments,
       advantages: this.participant.advantages || null,
-      mapSizeX: this.mapSizeX || 1,
-      mapSizeY: this.mapSizeY || 1
+      mapSizeX: this.mapSize || 1,
+      mapSizeY: this.mapSize || 1
     };
 
     this.changesSaved.emit(newParticipant);

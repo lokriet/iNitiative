@@ -232,7 +232,7 @@
                 [floating]="true"
                 [resizable]="false"
                 [showCloseButton]="true" 
-                windowName="Change size on map">
+                windowName="Change size">
               <ng-template #popupToggleTemplate let-toggle=toggle>
                 <!-- <div class="form-row"> -->
                   <button type="button" (click)="toggle()">Change size</button>
@@ -242,22 +242,22 @@
               <ng-template #popupInsidesTemplate let-hide="hide">
                 <div>
                   <div class="form-row">
-                    <label>W:</label>
+                    <label class="form-label">Size on map:</label>
                     <input 
                         class="number-input" 
                         type="number" 
                         name="widthOnMap" 
-                        [ngModel]="participant.mapSizeX || 1" #widthInput>
-                    <label>H:</label>
+                        [ngModel]="participant.mapSizeX || 1" #sizeInput>
+                    <!-- <label>H:</label>
                     <input 
                         class="number-input" 
                         type="number" 
                         name="heightOnMap" 
-                        [ngModel]="participant.mapSizeY || 1" #heightInput>
+                        [ngModel]="participant.mapSizeY || 1" #heightInput> -->
                   </div>
                   <div class="form-row">
-                    <button type="button" (click)="updateParticipantSizes(widthInput.value, heightInput.value, participant);hide()">Save</button>
-                    <button type="button" (click)="revertParticipantSizes(widthInput, heightInput, participant);hide()">Revert</button>
+                    <button type="button" (click)="updateParticipantSizes(sizeInput.value,participant);hide()">Save</button>
+                    <button type="button" (click)="revertParticipantSizes(sizeInput, participant);hide()">Cancel</button>
                   </div>
                 </div>
               </ng-template>

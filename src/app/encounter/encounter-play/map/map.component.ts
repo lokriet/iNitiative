@@ -416,13 +416,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  updateParticipantSizes(width: number, height: number, participant: EncounterParticipant) {
-    this.encounterParticipantService.update({...participant, mapSizeX: width, mapSizeY: height});
+  updateParticipantSizes(size: number, participant: EncounterParticipant) {
+    this.encounterParticipantService.update({...participant, mapSizeX: size, mapSizeY: size});
   }
 
-  revertParticipantSizes(widthInput, heightInput, participant: EncounterParticipant) {
-    widthInput.value = participant.mapSizeX || 1;
-    heightInput.value = participant.mapSizeY || 1;
+  revertParticipantSizes(sizeInput, participant: EncounterParticipant) {
+    sizeInput.value = participant.mapSizeX || 1;
   }
 
   onMapParticipantInfoMoved(infoPos, i) {

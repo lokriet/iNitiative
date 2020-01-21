@@ -60,7 +60,7 @@
         <!-- <input type="file" name="avatar"> -->
         <div class="avatar">
           <app-avatar-uploader [ngModel]="avatarUrl" (ngModelChange)="avatarChanged($event)" name="avatarUrl"></app-avatar-uploader>
-          <div><button type="button" (click)="deleteAvatar()">Delete avatar</button></div>
+          <div><button type="button" (click)="deleteAvatar()" [class.hidden]="!avatarUrl">Delete avatar</button></div>
         </div>
       </div>
       <div class="detail">
@@ -239,12 +239,13 @@
 
       <div class="detail">
         <label class="detail-label">Size on map:</label>
-        <div>
+        <input type="number" class="number-input" [(ngModel)]="mapSize" name="mapSize">
+        <!-- <div>
           <label>W: </label>
           <input type="number" class="number-input" [(ngModel)]="mapSizeX" name="mapSizeX">
           <label>H: </label>
           <input type="number" class="number-input" [(ngModel)]="mapSizeY" name="mapSizeY">
-        </div>
+        </div> -->
       </div>
       <br>
     </div>

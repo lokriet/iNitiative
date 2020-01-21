@@ -48,8 +48,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
 
   comments: string = null;
 
-  mapSizeX = 1;
-  mapSizeY = 1;
+  mapSize = 1;
   avatarUrl: string = null;
   initialAvatarUrl: string = null;
 
@@ -138,8 +137,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
     this.resistances = this.editedParticipant.resistanceIds ? [...this.editedParticipant.resistanceIds] : [];
     this.features = this.editedParticipant.featureIds ? [...this.editedParticipant.featureIds] : [];
     this.comments = this.editedParticipant.comments;
-    this.mapSizeX = this.editedParticipant.mapSizeX || 1;
-    this.mapSizeY = this.editedParticipant.mapSizeY || 1;
+    this.mapSize = this.editedParticipant.mapSizeX || 1;
     this.avatarUrl = this.editedParticipant.avatarUrl || null;
     this.initialAvatarUrl = this.avatarUrl;
   }
@@ -199,8 +197,8 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
       immunityIds: this.immunities,
       featureIds: this.features,
       comments: this.comments,
-      mapSizeX: this.mapSizeX,
-      mapSizeY: this.mapSizeY,
+      mapSizeX: this.mapSize,
+      mapSizeY: this.mapSize,
       avatarUrl: this.avatarUrl
     };
 
@@ -209,7 +207,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
       this.participantService.update(newParticipant)
       .then(value => {
         this.messageService.addInfo(`${this.name} updated!`);
-        this.router.navigate(['/setup-participants']);
+        this.router.navigate(['/setup-participants'], { queryParams: { tab: newParticipant.type } });
       }).catch(error => {
         this.messageService.addError('Could not update participant :(');
         console.log(error);
@@ -218,7 +216,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
       this.participantService.add(newParticipant)
       .then(value => {
         this.messageService.addInfo(`${this.name} created!`);
-        this.router.navigate(['/setup-participants']);
+        this.router.navigate(['/setup-participants'], { queryParams: { tab: newParticipant.type } });
       }).catch(error => {
         this.messageService.addError('Could not create participant :(');
         console.log(error);

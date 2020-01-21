@@ -110,19 +110,16 @@ $header-font: 'Baloo Bhai', Arial, sans-serif;
   border-top: 1px solid $blue;
   width: 100%;
 
-  &.hidden {
-    display: none;
-  }
+}
+
+.hidden {
+  display: none !important;
 }
 
 .tab-view {
   padding: 1rem;
   border: 1px solid $blue;
   display: inline-block;
-
-  &.hidden {
-    display: none;
-  }
 }
 
 // buttons
