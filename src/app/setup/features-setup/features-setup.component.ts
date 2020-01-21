@@ -49,7 +49,13 @@ export class FeaturesSetupComponent implements OnInit {
     });
 
     this.allFeatures$.subscribe(features => {
-      this.allFeatureTypes = Array.from(new Set(features.map(item => item.type)));
+      const set = new Set();
+      for (const feature of features) {
+        if (feature.type) {
+          set.add(feature.type);
+        }
+      }
+      this.allFeatureTypes = Array.from(set);
       this.allFeatureTypes.sort().map(item => ({type: item}));
     });
   }
@@ -58,10 +64,6 @@ export class FeaturesSetupComponent implements OnInit {
     return this.sortByOrder === Order.ASC;
   }
 
-  // switchSortOrder() {
-  //   this.sortByOrder = this.sortByOrder === Order.ASC ? Order.DESC : Order.ASC;
-  //   this.selectFeatures();
-  // }
 
   switchSortOrder(sortBy: SortBy<Feature, any>) {
     if (this.sortBy === sortBy) {
@@ -72,11 +74,6 @@ export class FeaturesSetupComponent implements OnInit {
     }
     this.selectFeatures();
   }
-
-  // changeSortOrder(toAsc: boolean) {
-  //   this.sortByOrder = toAsc ? Order.ASC : Order.DESC;
-  //   this.selectFeatures();
-  // }
 
   changeSortOrder(sortBy: SortBy<Feature, any>, isAsc: boolean) {
     if (this.sortBy === sortBy &&
@@ -142,4 +139,5 @@ export class FeaturesSetupComponent implements OnInit {
   addTagFn(name) {
     return {type: name};
   }
+
 }
