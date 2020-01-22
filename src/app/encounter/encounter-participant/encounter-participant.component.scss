@@ -38,6 +38,12 @@
 
 .name {
   flex-grow: 1;
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.divider {
+  color: grey;
 }
 
 .initiative {

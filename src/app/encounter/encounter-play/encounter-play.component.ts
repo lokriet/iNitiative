@@ -77,7 +77,9 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
   editingParticipantId: string = null;
   editingField: EditingField = null;
 
-  summonedParticipant: EncounterParticipant = null;
+  // summonedParticipant: EncounterParticipant = null;
+  summonedParticipants: EncounterParticipant[] = [];
+  avatarUrlsToCheck = new Set<string>();
 
   activeView = EncounterPlayView.Details;
   showDeadParticipants = false;
@@ -164,8 +166,9 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.summonedParticipant && this.summonedParticipant.avatarUrl != null) {
-      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+    const avatarUrlsToCheckArray = Array.from(this.avatarUrlsToCheck);
+    for (const avatarUrl of avatarUrlsToCheckArray) {
+      this.deleteImageFromStorage(avatarUrl);
     }
     this.sub.unsubscribe();
   }
@@ -395,33 +398,42 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     this.newDamageTypeType = DamageTypeType.DamageType;
   }
 
-  summonedParticipantRemoved() {
-    if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
-      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+  summonedParticipantRemoved(participantIndex: number) {
+    if (this.summonedParticipants[participantIndex].avatarUrl) {
+      const deleted = this.deleteImageFromStorage(this.summonedParticipants[participantIndex].avatarUrl);
+      if (deleted) {
+        this.avatarUrlsToCheck.delete(this.summonedParticipants[participantIndex].avatarUrl);
+      }
     }
-    this.summonedParticipant = null;
+    this.summonedParticipants.splice(participantIndex, 1);
   }
 
-  summonedParticipantChanged(participant: EncounterParticipant) {
-    if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
-      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+  summonedParticipantChanged(participantIndex: number, participant: EncounterParticipant) {
+    if (this.summonedParticipants[participantIndex].avatarUrl) {
+      this.avatarUrlsToCheck.add(this.summonedParticipants[participantIndex].avatarUrl);
     }
-    this.summonedParticipant = participant;
+    this.summonedParticipants[participantIndex] = participant;
   }
 
   async addSummonToTheGame() {
     this.encounterService.update({...this.encounter,
-      participantIds: [...this.encounter.participantIds, this.summonedParticipant.id] });
+      participantIds: [...this.encounter.participantIds, ...this.summonedParticipants.map(item => item.id)] });
 
-    await this.encounterParticipantsService.add(this.summonedParticipant);
+    await this.encounterParticipantsService.add(this.summonedParticipants);
 
-    this.summonedParticipant = null;
+    this.summonedParticipants = [];
+
+    const avatarUrlsToCheckArray = Array.from(this.avatarUrlsToCheck);
+    for (const avatarUrl of avatarUrlsToCheckArray) {
+      this.deleteImageFromStorage(avatarUrl);
+    }
+    this.avatarUrlsToCheck.clear();
   }
 
   addParticipant(participantTemplate: Participant) {
-    if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
-      this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
-    }
+    // if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
+    //   this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
+    // }
 
     const encounterParticipant = {
       id: guid(),
@@ -450,19 +462,21 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
       mapSizeY: participantTemplate.mapSizeY || 1
     };
 
-    this.summonedParticipant = encounterParticipant;
+    // this.summonedParticipant = encounterParticipant;
+    this.summonedParticipants.push(encounterParticipant);
   }
 
   findNameWithNo(name: string): string {
-    const names = this.encounterParticipantsQuery.getAll({
+    const namesInEncounter = this.encounterParticipantsQuery.getAll({
       filterBy: this.participantsFilter
     }).map(item => item.name);
+    const summonedNames = this.summonedParticipants.map(item => item.name);
 
     let counter = 0;
     let nextName = name;
     while (true) {
-      if (names.indexOf(nextName) === -1 &&
-          names.indexOf(nextName) === -1) {
+      if (namesInEncounter.indexOf(nextName) === -1 &&
+          summonedNames.indexOf(nextName) === -1) {
         return nextName;
       } else {
         counter++;
@@ -513,7 +527,7 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteImageFromStorage(imageUrl) {
+  deleteImageFromStorage(imageUrl): boolean {
     const encounterParticipants = this.encounterParticipantsQuery.getAll({
       filterBy: item => item.avatarUrl === imageUrl
     });
@@ -523,7 +537,9 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     if ((!encounterParticipants || encounterParticipants.length === 0) &&
         (!participantTemplates || participantTemplates.length === 0)) {
       this.storage.storage.refFromURL(imageUrl).delete();
+      return true;
     }
+    return false;
   }
 
   switchActiveView(view: EncounterPlayView) {

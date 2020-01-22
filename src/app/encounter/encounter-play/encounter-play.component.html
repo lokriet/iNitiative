@@ -47,15 +47,17 @@
                       type="button" 
                       class="summon-button" 
                       (click)="addSummonToTheGame(); hide();"
-                      [disabled]="summonedParticipant == null">Summon!</button>
+                      [disabled]="summonedParticipants == null || summonedParticipants.length === 0">Summon!</button>
                 </div>
       
-                <app-encounter-participant 
-                    *ngIf="summonedParticipant != null;else addSummon"
-                    [participant]="summonedParticipant"
-                    (delete)="summonedParticipantRemoved()"
-                    (participantChanged)="summonedParticipantChanged($event)"
-                ></app-encounter-participant>
+                <ng-container *ngIf="summonedParticipants != null && summonedParticipants.length > 0;else addSummon">
+                  <app-encounter-participant 
+                      *ngFor="let summonedParticipant of summonedParticipants; let i = index"
+                      [participant]="summonedParticipant"
+                      (delete)="summonedParticipantRemoved(i)"
+                      (participantChanged)="summonedParticipantChanged(i, $event)"
+                  ></app-encounter-participant>
+                </ng-container>
                 <ng-template #addSummon>
                   <div class="add-summon">Choose a summon</div>
                 </ng-template>
