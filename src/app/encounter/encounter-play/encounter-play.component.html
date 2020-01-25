@@ -26,7 +26,7 @@
         class="tab-screen-view" 
         [class.hidden]="activeView !== 'details'">
         <div class="buttons">
-          <button type="button" class="next-move-button" (click)="nextMove()" [disabled]="hasMissingInitiatives()">
+          <button type="button" class="next-move-button" *ngIf="(allParticipants$ | async) as asyncParticipants" (click)="nextMove(asyncParticipants)" [disabled]="hasMissingInitiatives()">
             <fa-icon [icon]="activeParticpantIcon"></fa-icon>
             {{ encounter.activeParticipantId == null ? 'First move' : 'Next move' }}
           </button>
@@ -135,8 +135,8 @@
                 <fa-icon [icon]="activeParticpantIcon" *ngIf="isActive(participant)"></fa-icon>
                 <fa-icon 
                     [icon]="skullIcon" 
-                    *ngIf="encounter.activeParticipantId != null && isDead(participant)" 
-                    (click)="removeDeadParticipant(participant)"></fa-icon>
+                    *ngIf="encounter.activeParticipantId != null && isDead(participant) && (allParticipants$ | async) as asyncParticipants" 
+                    (click)="removeDeadParticipant(participant, asyncParticipants)"></fa-icon>
               </div>
         
               <div class="participant-name" [class.odd]="i % 2 === 0">

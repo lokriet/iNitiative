@@ -181,10 +181,10 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     return participant.currentHp <= 0;
   }
 
-  async removeDeadParticipant(participant) {
+  async removeDeadParticipant(participant, allParticipants) {
     if (this.isDead(participant)) {
       if (this.activeParticipantId === participant.id) {
-        this.nextMove();
+        this.nextMove(allParticipants);
       }
 
       const newParticipants = this.encounter.participantIds.filter(item => item !== participant.id);
@@ -261,27 +261,28 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     });
   }
 
-  nextMove() {
-    const participants = this.encounterParticipantsQuery.getAll({
-      filterBy: this.participantsFilter,
-      sortBy: this.partisipantsSort
-    });
-
-    let activeParticipantId = null;
+  nextMove(participants: EncounterParticipant[]) {
+    let activeParticipant = null;
     if (this.encounter.activeParticipantId == null) {
-      activeParticipantId = participants[0].id;
+      activeParticipant = participants[0];
     } else {
       const currentIndex = participants.findIndex(item => item.id === this.encounter.activeParticipantId);
       if (currentIndex === -1) {
         console.log(':(');
       } else {
-        const nextIndex = (currentIndex + 1) % participants.length;
-        activeParticipantId = participants[nextIndex].id;
+        for (let i = 1; i <= participants.length; i++) {
+          const nextIndex = (currentIndex + i) % participants.length;
+          activeParticipant = participants[nextIndex];
+
+          if (!this.isDead(activeParticipant)) {
+            break;
+          }
+        }
       }
     }
 
-    this.activeParticipantId = activeParticipantId;
-    this.encounterService.update({...this.encounter, activeParticipantId});
+    this.activeParticipantId = activeParticipant.id;
+    this.encounterService.update({...this.encounter, activeParticipantId: activeParticipant.id});
   }
 
   changeHp(participant: EncounterParticipant, dmgValue: number, heal: boolean) {
