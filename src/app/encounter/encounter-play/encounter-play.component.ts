@@ -115,7 +115,19 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  partisipantsSort = (a, b) => (b.initiative + b.initiativeModifier) - (a.initiative + a.initiativeModifier);
+  partisipantsSort = (a: EncounterParticipant, b: EncounterParticipant) => {
+    let result = (b.initiative + b.initiativeModifier) - (a.initiative + a.initiativeModifier);
+
+    if (result === 0) {
+      result = a.type - b.type;
+    }
+
+    if (result === 0) {
+      result = a.name.localeCompare(b.name);
+    }
+
+    return result;
+  }
 
   ngOnInit() {
     this.encountersLoading$ = this.encounterQuery.selectLoading();

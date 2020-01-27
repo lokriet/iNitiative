@@ -68,6 +68,20 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
   @ViewChild('mapImageElement') mapImageElement: ElementRef;
 
+  partisipantsSort = (a: EncounterParticipant, b: EncounterParticipant) => {
+    let result = (b.initiative + b.initiativeModifier) - (a.initiative + a.initiativeModifier);
+
+    if (result === 0) {
+      result = a.type - b.type;
+    }
+
+    if (result === 0) {
+      result = a.name.localeCompare(b.name);
+    }
+
+    return result;
+  }
+
   constructor(private storage: AngularFireStorage,
               private encounterParticipantQuery: EncounterParticipantQuery,
               private encounterParticipantService: EncounterParticipantService,
@@ -86,7 +100,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
 
     this.encounterParticipants$ = this.encounterParticipantQuery.selectAll({
       filterBy: encounterParticipant => this.encounter.participantIds.includes(encounterParticipant.id),
-      sortBy: (a, b) => (b.initiative + b.initiativeModifier) - (a.initiative + a.initiativeModifier)
+      sortBy: this.partisipantsSort
     });
 
     if (this.encounter.mapId) {
