@@ -13,7 +13,7 @@ import { ConditionsQuery } from '../../state/conditions/conditions.query';
 import { DamageType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
 import { Feature } from '../../state/features/feature.model';
-import { FeatureQuery } from '../../state/features/feature.query';
+import { FeatureQuery, compareFeatures } from '../../state/features/feature.query';
 import { Participant, ParticipantType } from '../../state/participants/participant.model';
 import { ParticipantQuery } from '../../state/participants/participant.query';
 import { ParticipantService } from '../../state/participants/participant.service';
@@ -88,7 +88,7 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
 
     this.allFeatures$ = this.featureQuery.selectAll({
       filterBy: item => item.owner === this.authService.user.uid,
-      sortBy: 'name'
+      sortBy: compareFeatures
     });
 
     this.allConditions$ = this.conditionQuery.selectAll({

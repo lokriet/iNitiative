@@ -9,7 +9,7 @@ import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query
 import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
 import { Feature } from 'src/app/setup/state/features/feature.model';
-import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
+import { FeatureQuery, compareFeatures } from 'src/app/setup/state/features/feature.query';
 import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
 import { EncounterParticipant } from '../state/encounter-participant.model';
@@ -134,7 +134,7 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
         }
         return true;
       },
-      sortBy: 'name'
+      sortBy: compareFeatures
     });
   }
 

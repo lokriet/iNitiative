@@ -13,7 +13,7 @@ import { DamageType, DamageTypeType } from 'src/app/setup/state/damage-type/dama
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
 import { DamageTypeService } from 'src/app/setup/state/damage-type/damage-type.service';
 import { Feature } from 'src/app/setup/state/features/feature.model';
-import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
+import { FeatureQuery, compareFeatures } from 'src/app/setup/state/features/feature.query';
 import { Participant } from 'src/app/setup/state/participants/participant.model';
 import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
@@ -168,7 +168,7 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
 
     this.allFeatures$ = this.featuresQuery.selectAll({
       filterBy: item => item.owner === this.authService.user.uid,
-      sortBy: 'name'
+      sortBy: compareFeatures
     });
 
     this.allDamageTypes$ = this.damageTypesQuery.selectAll({
