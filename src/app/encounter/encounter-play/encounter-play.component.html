@@ -231,13 +231,24 @@
                 >
                   <ng-template #popupToggleTemplate let-toggle=toggle>
                     <div class="speed" (click)="toggle()">
-                      {{participant.temporarySpeed || participant.speed}}{{ participant.temporarySpeed ? '*' : '' }}
+                      <div>
+                        {{participant.temporarySpeed || participant.speed}}{{ !!participant.temporarySpeed ? '*' : '' }}
+                      </div>
+                      <div *ngIf="!!participant.temporarySwimSpeed || !!participant.swimSpeed">
+                        {{'swim ' + (participant.temporarySwimSpeed || participant.swimSpeed)}}{{ !!participant.temporarySwimSpeed ? '*' : '' }}
+                      </div>
+                      <div *ngIf="!!participant.temporaryClimbSpeed || !!participant.climbSpeed">
+                        {{'climb ' + (participant.temporaryClimbSpeed || participant.climbSpeed)}}{{ !!participant.temporaryClimbSpeed ? '*' : '' }}
+                      </div>
+                      <div *ngIf="!!participant.temporaryFlySpeed || !!participant.flySpeed">
+                        {{'fly ' + (participant.temporaryFlySpeed || participant.flySpeed)}}{{ !!participant.temporaryFlySpeed ? '*' : '' }}
+                      </div>
                     </div>
                   </ng-template>
-            
+
                   <ng-template #popupInsidesTemplate let-hide="hide">
-                    <div class="tmp-value-popup">
-                      <input type="number" min="0" class="tmp-value-input" [value]="participant.temporaryArmorClass" #tmpSpeed>
+                    <div class="tmp-value-popup-row">
+                      <input type="number" min="0" class="tmp-value-input" [value]="participant.temporarySpeed" #tmpSpeed>
                       <button
                         type="button"
                         class="tmp-popup-button"
@@ -249,6 +260,51 @@
                         (click)="setTmpSpeed(participant, null)"
                       >Reset</button>
                     </div> 
+
+                    <div class="tmp-value-popup-row">
+                      <label class="tmp-value-label">Swim</label>
+                      <input type="number" min="0" class="tmp-value-input" [value]="participant.temporarySwimSpeed" #tmpSwimSpeed>
+                      <button
+                        type="button"
+                        class="tmp-popup-button"
+                        (click)="setTmpSwimSpeed(participant, tmpSwimSpeed.value)"
+                      >Set</button>
+                      <button
+                        type="button"
+                        class="tmp-popup-button"
+                        (click)="setTmpSwimSpeed(participant, null)"
+                      >Reset</button>
+                    </div> 
+
+                    <div class="tmp-value-popup-row">
+                      <label class="tmp-value-label">Climb</label>
+                      <input type="number" min="0" class="tmp-value-input" [value]="participant.temporaryClimbSpeed" #tmpClimbSpeed>
+                      <button
+                        type="button"
+                        class="tmp-popup-button"
+                        (click)="setTmpClimbSpeed(participant, tmpClimbSpeed.value)"
+                      >Set</button>
+                      <button
+                        type="button"
+                        class="tmp-popup-button"
+                        (click)="setTmpClimbSpeed(participant, null)"
+                      >Reset</button>
+                    </div> 
+
+                    <div class="tmp-value-popup-row">
+                      <label class="tmp-value-label">Fly</label>
+                      <input type="number" min="0" class="tmp-value-input" [value]="participant.temporaryFlySpeed" #tmpFlySpeed>
+                      <button
+                        type="button"
+                        class="tmp-popup-button"
+                        (click)="setTmpFlySpeed(participant, tmpFlySpeed.value)"
+                      >Set</button>
+                      <button
+                        type="button"
+                        class="tmp-popup-button"
+                        (click)="setTmpFlySpeed(participant, null)"
+                      >Reset</button>
+                    </div>
                   </ng-template>
                 </app-popup>
               </div>

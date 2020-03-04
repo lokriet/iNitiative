@@ -14,6 +14,9 @@ export interface Participant {
   maxHp: number;
   armorClass: number;
   speed: number;
+  swimSpeed: number;
+  climbSpeed: number;
+  flySpeed: number;
   vulnerabilityIds: string[];
   resistanceIds: string[];
   immunityIds: string[];

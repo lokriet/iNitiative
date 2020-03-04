@@ -13,7 +13,7 @@ import { ConditionsQuery } from '../../state/conditions/conditions.query';
 import { DamageType } from '../../state/damage-type/damage-type.model';
 import { DamageTypeQuery } from '../../state/damage-type/damage-type.query';
 import { Feature } from '../../state/features/feature.model';
-import { FeatureQuery, compareFeatures } from '../../state/features/feature.query';
+import { compareFeatures, FeatureQuery } from '../../state/features/feature.query';
 import { Participant, ParticipantType } from '../../state/participants/participant.model';
 import { ParticipantQuery } from '../../state/participants/participant.query';
 import { ParticipantService } from '../../state/participants/participant.service';
@@ -39,6 +39,9 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
   hp: number;
   armorClass: number;
   speed: number;
+  swimSpeed: number;
+  climbSpeed: number;
+  flySpeed: number;
 
   immunities: string[] = [];
   resistances: string[] = [];
@@ -131,6 +134,9 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
     this.initiativeModifier = this.editedParticipant.initiativeModifier;
     this.armorClass = this.editedParticipant.armorClass;
     this.speed = this.editedParticipant.speed;
+    this.swimSpeed = this.editedParticipant.swimSpeed;
+    this.climbSpeed = this.editedParticipant.climbSpeed;
+    this.flySpeed = this.editedParticipant.flySpeed;
     this.hp = this.editedParticipant.maxHp;
     this.immunities = this.editedParticipant.immunityIds ? [...this.editedParticipant.immunityIds] : [];
     this.weaknesses = this.editedParticipant.vulnerabilityIds ? [...this.editedParticipant.vulnerabilityIds] : [];
@@ -192,6 +198,9 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
       maxHp: this.hp,
       armorClass: this.armorClass,
       speed: this.speed,
+      swimSpeed: this.swimSpeed,
+      climbSpeed: this.climbSpeed,
+      flySpeed: this.flySpeed,
       vulnerabilityIds: this.weaknesses,
       resistanceIds: this.resistances,
       immunityIds: this.immunities,

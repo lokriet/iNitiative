@@ -1,13 +1,13 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { Condition } from 'src/app/setup/state/conditions/condition.model';
+import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
 import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
-import { Participant } from 'src/app/setup/state/participants/participant.model';
-import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
 import { Feature } from 'src/app/setup/state/features/feature.model';
-import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query';
-import { Condition } from 'src/app/setup/state/conditions/condition.model';
+import { FeatureQuery } from 'src/app/setup/state/features/feature.query';
+import { Participant } from 'src/app/setup/state/participants/participant.model';
 
 @Component({
   selector: 'app-participant-template',
@@ -61,6 +61,27 @@ export class ParticipantTemplateComponent implements OnInit {
       return result;
     } else {
       return this.conditionQuery.getEntity(immunityId);
+    }
+  }
+
+  getExtraSpeeds(participantTemplate: Participant) {
+    if (!!participantTemplate.swimSpeed ||
+        !!participantTemplate.climbSpeed ||
+        !!participantTemplate.flySpeed) {
+      let result = ' (';
+      if (!!participantTemplate.swimSpeed) {
+        result += 'swim ' + participantTemplate.swimSpeed + ', ';
+      }
+      if (!!participantTemplate.climbSpeed) {
+        result += 'climb ' + participantTemplate.climbSpeed + ', ';
+      }
+      if (!!participantTemplate.flySpeed) {
+        result += 'fly ' + participantTemplate.flySpeed + ', ';
+      }
+      result = result.slice(0, result.length - 2) + ')';
+      return result;
+    } else {
+      return '';
     }
   }
 }

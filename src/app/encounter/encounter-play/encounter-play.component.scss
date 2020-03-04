@@ -155,8 +155,14 @@
   cursor: pointer;
 }
 
-.tmp-value-popup {
+.tmp-value-popup-row {
   display: flex;
+  margin-bottom: 0.5rem;
+
+  .tmp-value-label {
+    margin-right: 0.25rem;
+    width: 3rem;
+  }
 
   .tmp-value-input {
     width: 3rem;

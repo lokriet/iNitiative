@@ -45,7 +45,10 @@
     </div>
     <div class="detail">
       <div class="detail-label">Speed:</div>
-      <div class="detail-value">{{participantTemplate.speed}}</div>
+      <div class="detail-value">
+        {{participantTemplate.speed}}
+        {{getExtraSpeeds(participantTemplate)}}
+      </div>
     </div>
     
     <div class="damage-types-list">

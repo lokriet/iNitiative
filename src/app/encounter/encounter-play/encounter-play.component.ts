@@ -13,7 +13,7 @@ import { DamageType, DamageTypeType } from 'src/app/setup/state/damage-type/dama
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
 import { DamageTypeService } from 'src/app/setup/state/damage-type/damage-type.service';
 import { Feature } from 'src/app/setup/state/features/feature.model';
-import { FeatureQuery, compareFeatures } from 'src/app/setup/state/features/feature.query';
+import { compareFeatures, FeatureQuery } from 'src/app/setup/state/features/feature.query';
 import { Participant } from 'src/app/setup/state/participants/participant.model';
 import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
@@ -376,6 +376,18 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
     this.encounterParticipantsService.update({ ...participant, temporarySpeed });
   }
 
+  setTmpSwimSpeed(participant: EncounterParticipant, temporarySwimSpeed: number) {
+    this.encounterParticipantsService.update({ ...participant, temporarySwimSpeed });
+  }
+
+  setTmpClimbSpeed(participant: EncounterParticipant, temporaryClimbSpeed: number) {
+    this.encounterParticipantsService.update({ ...participant, temporaryClimbSpeed });
+  }
+
+  setTmpFlySpeed(participant: EncounterParticipant, temporaryFlySpeed: number) {
+    this.encounterParticipantsService.update({ ...participant, temporaryFlySpeed });
+  }
+
   addNewCondition() {
     if (this.newConditionName == null) {
       return;
@@ -444,10 +456,6 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
   }
 
   addParticipant(participantTemplate: Participant) {
-    // if (this.summonedParticipant && this.summonedParticipant.avatarUrl) {
-    //   this.deleteImageFromStorage(this.summonedParticipant.avatarUrl);
-    // }
-
     const encounterParticipant = {
       id: guid(),
       owner: this.authService.user.uid,
@@ -463,7 +471,13 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
       armorClass: participantTemplate.armorClass,
       temporaryArmorClass: null,
       speed: participantTemplate.speed,
+      swimSpeed: participantTemplate.swimSpeed,
+      climbSpeed: participantTemplate.climbSpeed,
+      flySpeed: participantTemplate.flySpeed,
       temporarySpeed: null,
+      temporarySwimSpeed: null,
+      temporaryClimbSpeed: null,
+      temporaryFlySpeed: null,
       vulnerabilityIds: participantTemplate.vulnerabilityIds ? [...participantTemplate.vulnerabilityIds] : [],
       immunityIds: participantTemplate.immunityIds ? [...participantTemplate.immunityIds] : [],
       resistanceIds: participantTemplate.resistanceIds ? [...participantTemplate.resistanceIds] : [],
@@ -475,7 +489,6 @@ export class EncounterPlayComponent implements OnInit, OnDestroy {
       mapSizeY: participantTemplate.mapSizeY || 1
     };
 
-    // this.summonedParticipant = encounterParticipant;
     this.summonedParticipants.push(encounterParticipant);
   }
 

@@ -193,7 +193,18 @@
           <div class="number-field" [class.odd]="i % 2 === 0"> {{ participant.initiativeModifier }} </div>
           <div class="number-field" [class.odd]="i % 2 === 0"> {{ participant.maxHp }} </div>
           <div class="number-field" [class.odd]="i % 2 === 0"> {{ participant.armorClass }} </div>
-          <div class="number-field" [class.odd]="i % 2 === 0"> {{ participant.speed }} </div>
+          <div class="number-field" [class.odd]="i % 2 === 0">
+             <div>{{ participant.speed }}</div>
+             <div *ngIf="participant.swimSpeed != null">
+               {{ 'swim ' + participant.swimSpeed }}
+             </div>
+             <div *ngIf="participant.climbSpeed != null">
+               {{ 'climb ' + participant.climbSpeed }}
+             </div>
+             <div *ngIf="participant.flySpeed != null">
+               {{ 'fly ' + participant.flySpeed }}
+             </div>
+          </div>
     
           <div class="damage-types-list" [class.odd]="i % 2 === 0">
             <div class="damage-type-item" *ngFor="let immunity of getDamageTypesByIds((allDamageTypes$ | async), participant.immunityIds)">

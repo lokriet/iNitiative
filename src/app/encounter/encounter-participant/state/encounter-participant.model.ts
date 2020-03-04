@@ -15,7 +15,13 @@ export interface EncounterParticipant {
   armorClass: number;
   temporaryArmorClass: number;
   speed: number;
+  swimSpeed: number;
+  climbSpeed: number;
+  flySpeed: number;
   temporarySpeed: number;
+  temporarySwimSpeed: number;
+  temporaryClimbSpeed: number;
+  temporaryFlySpeed: number;
   vulnerabilityIds: string[];
   immunityIds: string[];
   resistanceIds: string[];

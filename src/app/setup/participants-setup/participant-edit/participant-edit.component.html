@@ -52,6 +52,18 @@
       <!-- <div class="speed field"> -->
         <label>Speed:</label>
         <input type="number" [(ngModel)]="speed" name="speed" required min="0">
+
+        <label><!-- other speeds --></label>
+        <div>
+          <label>Swim</label>
+          <input class="speed-extra" type="number" [(ngModel)]="swimSpeed" name="swimSpeed" min="0" />
+
+          <label>Climb</label>
+          <input class="speed-extra" type="number" [(ngModel)]="climbSpeed" name="climbSpeed" min="0" />
+
+          <label>Fly</label>
+          <input class="speed-extra" type="number" [(ngModel)]="flySpeed" name="flySpeed" min="0" />
+        </div>
       <!-- </div> -->
   
       <!-- <div class="immunities field"> -->

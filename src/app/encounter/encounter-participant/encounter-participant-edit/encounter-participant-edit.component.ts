@@ -9,7 +9,7 @@ import { ConditionsQuery } from 'src/app/setup/state/conditions/conditions.query
 import { DamageType } from 'src/app/setup/state/damage-type/damage-type.model';
 import { DamageTypeQuery } from 'src/app/setup/state/damage-type/damage-type.query';
 import { Feature } from 'src/app/setup/state/features/feature.model';
-import { FeatureQuery, compareFeatures } from 'src/app/setup/state/features/feature.query';
+import { compareFeatures, FeatureQuery } from 'src/app/setup/state/features/feature.query';
 import { ParticipantQuery } from 'src/app/setup/state/participants/participant.query';
 
 import { EncounterParticipant } from '../state/encounter-participant.model';
@@ -52,6 +52,9 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
   temporaryHp: number;
   armorClass: number;
   speed: number;
+  swimSpeed: number;
+  climbSpeed: number;
+  flySpeed: number;
   vulnerabilities: string[];
   immunities: string[] = [];
   resistances: string[] = [];
@@ -87,6 +90,9 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
     this.temporaryHp = this.participant.temporaryHp;
     this.armorClass = this.participant.armorClass;
     this.speed = this.participant.speed;
+    this.swimSpeed = this.participant.swimSpeed;
+    this.climbSpeed = this.participant.climbSpeed;
+    this.flySpeed = this.participant.flySpeed;
     this.comments = this.participant.comments;
     this.mapSize = this.participant.mapSizeX || 1;
 
@@ -216,7 +222,13 @@ export class EncounterParticipantEditComponent implements OnInit, OnDestroy {
       armorClass: this.armorClass,
       temporaryArmorClass: this.participant.temporaryArmorClass || null,
       speed: this.speed,
+      swimSpeed: this.swimSpeed,
+      climbSpeed: this.climbSpeed,
+      flySpeed: this.flySpeed,
       temporarySpeed: this.participant.temporarySpeed || null,
+      temporarySwimSpeed: this.participant.temporarySwimSpeed || null,
+      temporaryClimbSpeed: this.participant.temporaryClimbSpeed || null,
+      temporaryFlySpeed: this.participant.temporaryFlySpeed || null,
       vulnerabilityIds: this.vulnerabilities,
       resistanceIds: this.resistances,
       immunityIds: this.immunities,

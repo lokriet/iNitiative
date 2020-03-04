@@ -67,6 +67,27 @@ export class EncounterParticipantComponent implements OnInit {
     }
   }
 
+  getExtraSpeeds(participant: EncounterParticipant): string {
+    if (!!participant.swimSpeed ||
+      !!participant.climbSpeed ||
+      !!participant.flySpeed) {
+    let result = ' (';
+    if (!!participant.swimSpeed) {
+      result += 'swim ' + participant.swimSpeed + ', ';
+    }
+    if (!!participant.climbSpeed) {
+      result += 'climb ' + participant.climbSpeed + ', ';
+    }
+    if (!!participant.flySpeed) {
+      result += 'fly ' + participant.flySpeed + ', ';
+    }
+    result = result.slice(0, result.length - 2) + ')';
+    return result;
+  } else {
+    return '';
+  }
+  }
+
   deleteParticipant() {
     this.delete.emit();
   }
