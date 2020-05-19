@@ -68,17 +68,17 @@ export class EncounterParticipantComponent implements OnInit {
   }
 
   getExtraSpeeds(participant: EncounterParticipant): string {
-    if (!!participant.swimSpeed ||
-      !!participant.climbSpeed ||
-      !!participant.flySpeed) {
+    if (participant.swimSpeed != null ||
+      participant.climbSpeed != null ||
+      participant.flySpeed != null) {
     let result = ' (';
-    if (!!participant.swimSpeed) {
+    if (participant.swimSpeed != null) {
       result += 'swim ' + participant.swimSpeed + ', ';
     }
-    if (!!participant.climbSpeed) {
+    if (participant.climbSpeed != null) {
       result += 'climb ' + participant.climbSpeed + ', ';
     }
-    if (!!participant.flySpeed) {
+    if (participant.flySpeed != null) {
       result += 'fly ' + participant.flySpeed + ', ';
     }
     result = result.slice(0, result.length - 2) + ')';

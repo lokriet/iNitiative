@@ -65,17 +65,17 @@ export class ParticipantTemplateComponent implements OnInit {
   }
 
   getExtraSpeeds(participantTemplate: Participant) {
-    if (!!participantTemplate.swimSpeed ||
-        !!participantTemplate.climbSpeed ||
-        !!participantTemplate.flySpeed) {
+    if (participantTemplate.swimSpeed != null ||
+        participantTemplate.climbSpeed != null ||
+        participantTemplate.flySpeed != null) {
       let result = ' (';
-      if (!!participantTemplate.swimSpeed) {
+      if (participantTemplate.swimSpeed != null) {
         result += 'swim ' + participantTemplate.swimSpeed + ', ';
       }
-      if (!!participantTemplate.climbSpeed) {
+      if (participantTemplate.climbSpeed != null) {
         result += 'climb ' + participantTemplate.climbSpeed + ', ';
       }
-      if (!!participantTemplate.flySpeed) {
+      if (participantTemplate.flySpeed != null) {
         result += 'fly ' + participantTemplate.flySpeed + ', ';
       }
       result = result.slice(0, result.length - 2) + ')';

@@ -39,9 +39,9 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
   hp: number;
   armorClass: number;
   speed: number;
-  swimSpeed: number;
-  climbSpeed: number;
-  flySpeed: number;
+  swimSpeed: number = null;
+  climbSpeed: number = null;
+  flySpeed: number = null;
 
   immunities: string[] = [];
   resistances: string[] = [];
@@ -134,9 +134,9 @@ export class ParticipantEditComponent implements OnInit, OnDestroy {
     this.initiativeModifier = this.editedParticipant.initiativeModifier;
     this.armorClass = this.editedParticipant.armorClass;
     this.speed = this.editedParticipant.speed;
-    this.swimSpeed = this.editedParticipant.swimSpeed;
-    this.climbSpeed = this.editedParticipant.climbSpeed;
-    this.flySpeed = this.editedParticipant.flySpeed;
+    this.swimSpeed = this.editedParticipant.swimSpeed == null ? null : this.editedParticipant.swimSpeed;
+    this.climbSpeed = this.editedParticipant.climbSpeed == null ? null : this.editedParticipant.climbSpeed;
+    this.flySpeed = this.editedParticipant.flySpeed == null ? null : this.editedParticipant.flySpeed;
     this.hp = this.editedParticipant.maxHp;
     this.immunities = this.editedParticipant.immunityIds ? [...this.editedParticipant.immunityIds] : [];
     this.weaknesses = this.editedParticipant.vulnerabilityIds ? [...this.editedParticipant.vulnerabilityIds] : [];

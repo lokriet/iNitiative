@@ -232,16 +232,16 @@
                   <ng-template #popupToggleTemplate let-toggle=toggle>
                     <div class="speed" (click)="toggle()">
                       <div>
-                        {{participant.temporarySpeed || participant.speed}}{{ !!participant.temporarySpeed ? '*' : '' }}
+                        {{participant.temporarySpeed != null ? participant.temporarySpeed : participant.speed}}{{ participant.temporarySpeed != null ? '*' : '' }}
                       </div>
-                      <div *ngIf="!!participant.temporarySwimSpeed || !!participant.swimSpeed">
-                        {{'swim ' + (participant.temporarySwimSpeed || participant.swimSpeed)}}{{ !!participant.temporarySwimSpeed ? '*' : '' }}
+                      <div *ngIf="participant.temporarySwimSpeed != null || participant.swimSpeed != null">
+                        {{'swim ' + (participant.temporarySwimSpeed == null ? participant.temporarySwimSpeed : participant.swimSpeed)}}{{ participant.temporarySwimSpeed != null ? '*' : '' }}
                       </div>
-                      <div *ngIf="!!participant.temporaryClimbSpeed || !!participant.climbSpeed">
-                        {{'climb ' + (participant.temporaryClimbSpeed || participant.climbSpeed)}}{{ !!participant.temporaryClimbSpeed ? '*' : '' }}
+                      <div *ngIf="participant.temporaryClimbSpeed != null || participant.climbSpeed != null">
+                        {{'climb ' + (participant.temporaryClimbSpeed == null ? participant.temporaryClimbSpeed : participant.climbSpeed)}}{{ participant.temporaryClimbSpeed != null ? '*' : '' }}
                       </div>
-                      <div *ngIf="!!participant.temporaryFlySpeed || !!participant.flySpeed">
-                        {{'fly ' + (participant.temporaryFlySpeed || participant.flySpeed)}}{{ !!participant.temporaryFlySpeed ? '*' : '' }}
+                      <div *ngIf="participant.temporaryFlySpeed != null || participant.flySpeed != null">
+                        {{'fly ' + (participant.temporaryFlySpeed == null ? participant.temporaryFlySpeed : participant.flySpeed)}}{{ participant.temporaryFlySpeed != null ? '*' : '' }}
                       </div>
                     </div>
                   </ng-template>
