@@ -4,5 +4,7 @@ This is an encounter tracker for DnD game masters. Live version can be seen here
 
 # Technologies used
 Angular
+
 Akita state management
+
 Firebase
